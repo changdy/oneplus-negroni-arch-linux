@@ -27,16 +27,10 @@ diag() {
 }
 
 reload_card() {
-    # The card needs the topology at probe time; rebinding the APM service re-runs it.
-    modprobe -r snd_soc_sc8280xp 2>/dev/null || true
-    apm=/sys/bus/aprbus/drivers/qcom-apm
-    if [[ -e $apm/gprsvc:service:2:1 ]]; then
-        echo gprsvc:service:2:1 > "$apm/unbind" || true
-    fi
-    sleep 1
-    echo gprsvc:service:2:1 > "$apm/bind" 2>/dev/null || true
-    modprobe snd_soc_sc8280xp || true
-    sleep 3
+    # Do not unbind/bind qcom-apm: apr_device_remove() drops the GPR port from the
+    # router's idr and bind does not re-add it, so DSP replies to port 1 are then
+    # discarded ("GPR: Port(1) is not registered"). The topology is read at boot.
+    echo "Topology/UCM installed; reboot so the sound card probes with them."
 }
 
 slot_part() {
@@ -52,8 +46,6 @@ install)
     install -D -m 0644 "$here/ucm2/conf.d/sm8450/OnePlus-10-Pro.conf" "$ucm/conf.d/sm8450/OnePlus-10-Pro.conf"
     install -D -m 0644 "$here/ucm2/OnePlus/negroni/HiFi.conf" "$ucm/OnePlus/negroni/HiFi.conf"
     reload_card
-    diag
-    echo "If no card appears, reboot once (topology is read at card probe) and run: sudo bash $0 probe"
     ;;
 probe)
     diag

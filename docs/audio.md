@@ -1,6 +1,6 @@
 # 音频（扬声器、麦克风、耳机）
 
-状态日期：2026-11-11。**尚未实机验证**：本文档记录的拓扑、DT 和 UCM 修改都在主机上编译通过，测试包已复制到手机 `~/audio-test`，但由于需要 root，安装和播放/录音测试还没有执行。
+状态日期：2026-11-12。**尚未出声**：拓扑和 UCM 已安装到手机，拓扑能被加载，但声卡仍未生成（见下方实机结果）。扬声器 DT 尚未刷入。
 
 ## 现状诊断（7.3.0-sm8450+，实机 `journalctl -k`）
 
@@ -47,6 +47,14 @@ DT 原本把 TFA9874 接在 Tertiary **TDM**。在 7.3 的 AudioReach 驱动中�
 - 麦克风映射沿用 SM8450/SM8550 HDK（AMIC1 → ADC1 内置麦克风、AMIC2 → ADC2 耳机麦克风），尚未确认一加的实际走线。
 - 耳机通过 USB-C 模拟转接（FSA4480），插拔检测和模式切换是否正常尚待测试。
 
+## 2026-11-11 实机结果（阶段 1）
+
+- 安装拓扑后不能用 unbind/bind 重新探测 `qcom-apm`：`apr_device_remove()` 会从 GPR 路由表中删除端口 1，bind 后不会重新登记，DSP 的回复随即被丢弃（`GPR: Port(1) is not registered`，命令 5 秒超时）。脚本已改为提示重启。
+- 重启后拓扑加载成功（不再出现 `-2`），声卡走到注册路由（DT 中 VA/DMIC 等 widget 缺失会报 `Failed to add route`，属于警告），但最终没有生成声卡，也没有错误日志；`devices_deferred` 为空，`sound` 设备未绑定驱动。
+- 此后手动 bind `snd-sc8280xp` 时，DSP 拒绝共享内存映射（`Error (1) Processing 0x0100100c`，`Buffer Allocation failed rc = -22`）。这与上游 2026-10 修复的问题一致：上一次失败的探测没有解除缓冲区映射，重新映射时被 DSP 拒绝，见 [ASoC: qcom: q6apm: Fix shared memory unmap](https://lore.landau.one/lkml/20261016141153.1346219-2-shengchao.guo%40oss.qualcomm.com/T/)。所以这不是根因，真正要查的是开机时第一次探测为什么静默失败。
+- 开机时 `APM_CMD_GET_SPF_STATE`（0x1001021）总是超时 5 秒；其他 SM8450 移植也有相同现象，被认为无害。
+- 第二次重启后，手机超过 30 分钟没有重新连上网络，原因未知。参照此前 A 槽因缺少启动成功标记耗尽重试次数的经历，怀疑 B 槽也是同样情况，需在手机旁确认。
+
 ## 实机测试步骤
 
 测试包已在手机 `~/audio-test`（拓扑、UCM、`vendor_boot-audio-test.img`、脚本、`SHA256SUMS`）。
@@ -58,7 +66,7 @@ cd ~/audio-test
 sudo bash negroni-audio-test.sh install
 ```
 
-脚本会安装 `alsa-utils`、拓扑和 UCM，重新绑定 APM 服务并打印声卡信息。如果没有出现声卡，重启一次后执行 `sudo bash negroni-audio-test.sh probe`。出现声卡后，接入 USB-C 耳机转接器，执行 `sudo bash negroni-audio-test.sh tone`，它会依次播放耳机和扬声器测试音并录 3 秒麦克风到 `mic-test.wav`。在当前 DT 下扬声器预计无声。
+脚本会安装 `alsa-utils`、拓扑和 UCM。安装后需要重启，然后执行 `sudo bash negroni-audio-test.sh probe`。出现声卡后，接入 USB-C 耳机转接器，执行 `sudo bash negroni-audio-test.sh tone`，它会依次播放耳机和扬声器测试音并录 3 秒麦克风到 `mic-test.wav`。在当前 DT 下扬声器预计无声。
 
 **阶段 2：扬声器 DT（写 `vendor_boot`）**
 
