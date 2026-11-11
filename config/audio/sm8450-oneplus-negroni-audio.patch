@@ -1,0 +1,119 @@
+diff --git a/arch/arm64/boot/dts/qcom/sm8450-oneplus-negroni.dts b/arch/arm64/boot/dts/qcom/sm8450-oneplus-negroni.dts
+index 43d120aa6..53987fb83 100644
+--- a/arch/arm64/boot/dts/qcom/sm8450-oneplus-negroni.dts
++++ b/arch/arm64/boot/dts/qcom/sm8450-oneplus-negroni.dts
+@@ -1435,6 +1435,18 @@ fsa4480_sbu_mux: endpoint {
+ 	};
+ };
+ 
++&q6apmbedai {
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	/* TFA9874 speaker amps: 16-bit stereo I2S on mi2s2, SoC drives BCLK/WS */
++	dai@20 {
++		reg = <TERTIARY_MI2S_RX>;
++		clocks = <&q6prmcc LPASS_CLK_ID_TER_MI2S_IBIT LPASS_CLK_ATTRIBUTE_COUPLE_NO>;
++		clock-names = "bclk";
++	};
++};
++
+ &sound {
+ 	compatible = "qcom,sm8450-sndcard";
+ 	pinctrl-names = "default", "sleep";
+@@ -1444,55 +1456,25 @@ &sound {
+ 			&tert_tdm_din_sleep &tert_tdm_dout_sleep>;
+ 	model = "OnePlus-10-Pro";
+ 
+-	audio-routing = "AMIC1", "Analog Mic1",
+-		"AMIC1", "MIC BIAS1",
+-		"AMIC2", "Analog Mic2",
+-		"AMIC2", "MIC BIAS2",
+-		"AMIC3", "Analog Mic3",
+-		"AMIC3", "MIC BIAS3",
+-		"AMIC4", "Analog Mic4",
+-		"AMIC4", "MIC BIAS3",
+-		"AMIC5", "Analog Mic5",
+-		"AMIC5", "MIC BIAS4",
+-		"VA AMIC1", "Analog Mic1",
+-		"VA AMIC1", "VA MIC BIAS1",
+-		"VA AMIC2", "Analog Mic2",
+-		"VA AMIC2", "VA MIC BIAS2",
+-		"VA AMIC3", "Analog Mic3",
+-		"VA AMIC3", "VA MIC BIAS3",
+-		"VA AMIC4", "Analog Mic4",
+-		"VA AMIC4", "VA MIC BIAS3",
+-		"VA AMIC5", "Analog Mic5",
+-		"VA AMIC5", "VA MIC BIAS4",
+-		"TX DMIC0", "Digital Mic0",
+-		"Digital Mic0", "MIC BIAS3",
+-		"TX DMIC1", "Digital Mic1",
+-		"Digital Mic1", "MIC BIAS3",
+-		"TX DMIC2", "Digital Mic2",
+-		"Digital Mic2", "MIC BIAS1",
+-		"TX DMIC3", "Digital Mic3",
+-		"Digital Mic3", "MIC BIAS1",
+-		"IN1_HPHL", "HPHL_OUT",
+-		"IN2_HPHR", "HPHR_OUT",
+-		"IN3_AUX", "AUX_OUT",
+-		"RX_TX DEC0_INP", "TX DEC0 MUX",
+-		"RX_TX DEC1_INP", "TX DEC1 MUX",
+-		"RX_TX DEC2_INP", "TX DEC2 MUX",
+-		"RX_TX DEC3_INP", "TX DEC3 MUX",
+-		"TX SWR_INPUT", "WCD_TX_OUTPUT",
+-		"VA SWR_INPUT", "VA_SWR_CLK",
+-		"VA SWR_INPUT", "WCD_TX_OUTPUT",
+-		"VA_AIF1 CAP", "VA_SWR_CLK",
+-		"VA_AIF2 CAP", "VA_SWR_CLK",
+-		"VA_AIF3 CAP", "VA_SWR_CLK",
+-		"VA DMIC0", "Digital Mic0",
+-		"VA DMIC1", "Digital Mic1",
+-		"VA DMIC2", "Digital Mic2",
+-		"VA DMIC3", "Digital Mic3",
+-		"Digital Mic0", "VA MIC BIAS3",
+-		"Digital Mic1", "VA MIC BIAS3",
+-		"Digital Mic2", "VA MIC BIAS1",
+-		"Digital Mic3", "VA MIC BIAS1";
++	audio-routing = "IN1_HPHL", "HPHL_OUT",
++			"IN2_HPHR", "HPHR_OUT",
++			"AMIC1", "MIC BIAS1",
++			"AMIC2", "MIC BIAS2",
++			"AMIC3", "MIC BIAS3",
++			"AMIC4", "MIC BIAS3",
++			"AMIC5", "MIC BIAS4",
++			"VA DMIC0", "MIC BIAS3",
++			"VA DMIC1", "MIC BIAS3",
++			"VA DMIC2", "MIC BIAS1",
++			"VA DMIC3", "MIC BIAS1",
++			"TX DMIC0", "MIC BIAS3",
++			"TX DMIC1", "MIC BIAS3",
++			"TX DMIC2", "MIC BIAS1",
++			"TX DMIC3", "MIC BIAS1",
++			"TX SWR_INPUT0", "ADC1_OUTPUT",
++			"TX SWR_INPUT1", "ADC2_OUTPUT",
++			"TX SWR_INPUT0", "ADC3_OUTPUT",
++			"TX SWR_INPUT1", "ADC4_OUTPUT";
+ 
+ 
+ 	wcd-playback-dai-link {
+@@ -1531,7 +1513,7 @@ speaker-playback-dai-link {
+ 		link-name = "Primary Spkr Playback";
+ 
+ 		cpu {
+-			sound-dai = <&q6apmbedai TERTIARY_TDM_RX_0>;
++			sound-dai = <&q6apmbedai TERTIARY_MI2S_RX>;
+ 		};
+ 
+ 		codec {
+@@ -1733,9 +1715,9 @@ camera@10 {
+ 
+ 		clocks = <&camcc CAM_CC_MCLK1_CLK>;
+ 		assigned-clocks = <&camcc CAM_CC_MCLK1_CLK>;
+-		assigned-clock-rates = <19200000>;
++		assigned-clock-rates = <24000000>;
+ 
+-		reset-gpios = <&tlmm 101 GPIO_ACTIVE_HIGH>;
++		reset-gpios = <&tlmm 24 GPIO_ACTIVE_LOW>;
+ 
+ 		pinctrl-0 = <&cam_sensor_rear_1_mclk1_active &cam_sensor_rear_1_reset_active>;
+ 		pinctrl-names = "default";

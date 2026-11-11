@@ -25,7 +25,7 @@ snd-sc8280xp sound: ASoC: failed to instantiate card -2
 | --- | --- |
 | [config/audio/topology/SM8450-OnePlus-10-Pro.m4](../config/audio/topology/SM8450-OnePlus-10-Pro.m4) | 基于 SM8450-HDK 的 AudioReach 拓扑：MM1/MM2 播放、MM3/MM4 录音；后端为 WCD RX0（耳机）、Tertiary MI2S（扬声器）、WCD TX3 与 VA TX0（麦克风） |
 | [scripts/build-audio-topology.sh](../scripts/build-audio-topology.sh) | 用上游 m4 宏和 `alsatplg` 生成 `OnePlus-10-Pro-tplg.bin`；在 audioreach-topology `d6bb205` 上两次构建结果一致 |
-| [config/audio/sm8450-oneplus-negroni-speaker-mi2s.patch](../config/audio/sm8450-oneplus-negroni-speaker-mi2s.patch) | 内核 DT：扬声器链路由 `TERTIARY_TDM_RX_0` 改为 `TERTIARY_MI2S_RX`，并添加 Tertiary MI2S 位时钟投票。目前只在 WSL 内核树中未提交，尚未进入 `linux/` 子模块 |
+| [config/audio/sm8450-oneplus-negroni-audio.patch](../config/audio/sm8450-oneplus-negroni-audio.patch) | 内核 DT：扬声器链路由 `TERTIARY_TDM_RX_0` 改为 `TERTIARY_MI2S_RX` 并添加位时钟投票；`audio-routing` 换成上游 SM8450-HDK 的有效路由。目前只在 WSL 内核树中未提交，尚未进入 `linux/` 子模块 |
 | [config/audio/ucm2/](../config/audio/ucm2/) | ALSA UCM：`conf.d/sm8450/OnePlus-10-Pro.conf`，hw:0 耳机、hw:1 扬声器、hw:2 麦克风 |
 | [config/audio/negroni-audio-test.sh](../config/audio/negroni-audio-test.sh) | 手机端测试脚本（见下） |
 
@@ -55,6 +55,12 @@ DT 原本把 TFA9874 接在 Tertiary **TDM**。在 7.3 的 AudioReach 驱动中�
 - 开机时 `APM_CMD_GET_SPF_STATE`（0x1001021）总是超时 5 秒；其他 SM8450 移植也有相同现象，被认为无害。
 - 第二次重启后，手机超过 30 分钟没有重新连上网络，原因未知。参照此前 A 槽因缺少启动成功标记耗尽重试次数的经历，怀疑 B 槽也是同样情况，需在手机旁确认。
 
+## 2026-11-12 根因：DT 路由引用不存在的 widget
+
+第三次开机（槽位 B，`qbootctl` 显示 B 为唯一可启动槽位且已标记成功，此前“重试次数耗尽”的猜测不成立）的日志显示，声卡探测停在 29 条 `ASoC: Failed to add route`，例如 `Analog Mic1 -> VA AMIC1`、`Digital Mic0 -> TX DMIC0`、`WCD_TX_OUTPUT -> TX SWR_INPUT`。这些 widget 在主线 lpass 宏/WCD938x 驱动中不存在，路由失败会使声卡放弃实例化（驱动核心对 `-ENODEV` 不打印错误，所以看起来像静默失败）。
+
+修正：`audio-routing` 换成上游 `sm8450-hdk.dts` 的路由（去掉 WSA 扬声器条目）。新的 `vendor_boot-audio-test.img`（SHA-256 `70a5c017…`）同时包含该修正和扬声器 MI2S 修改，已复制到手机 `~/audio-test`，**尚未刷入**。路由修正与拓扑同样关键：不刷这个 DTB，耳机和麦克风也不会出现。
+
 ## 实机测试步骤
 
 测试包已在手机 `~/audio-test`（拓扑、UCM、`vendor_boot-audio-test.img`、脚本、`SHA256SUMS`）。
@@ -68,7 +74,7 @@ sudo bash negroni-audio-test.sh install
 
 脚本会安装 `alsa-utils`、拓扑和 UCM。安装后需要重启，然后执行 `sudo bash negroni-audio-test.sh probe`。出现声卡后，接入 USB-C 耳机转接器，执行 `sudo bash negroni-audio-test.sh tone`，它会依次播放耳机和扬声器测试音并录 3 秒麦克风到 `mic-test.wav`。在当前 DT 下扬声器预计无声。
 
-**阶段 2：扬声器 DT（写 `vendor_boot`）**
+**阶段 2：声卡 DT（写 `vendor_boot`，耳机、麦克风、扬声器都需要）**
 
 先确认 Linux 所在槽位（2026-11-11 的记录为 `b`）：
 
