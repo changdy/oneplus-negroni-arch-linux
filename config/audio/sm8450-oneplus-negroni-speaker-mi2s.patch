@@ -1,0 +1,32 @@
+diff --git a/arch/arm64/boot/dts/qcom/sm8450-oneplus-negroni.dts b/arch/arm64/boot/dts/qcom/sm8450-oneplus-negroni.dts
+index 43d120aa6..b4dc6e709 100644
+--- a/arch/arm64/boot/dts/qcom/sm8450-oneplus-negroni.dts
++++ b/arch/arm64/boot/dts/qcom/sm8450-oneplus-negroni.dts
+@@ -1435,6 +1435,18 @@ fsa4480_sbu_mux: endpoint {
+ 	};
+ };
+ 
++&q6apmbedai {
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	/* TFA9874 speaker amps: 16-bit stereo I2S on mi2s2, SoC drives BCLK/WS */
++	dai@20 {
++		reg = <TERTIARY_MI2S_RX>;
++		clocks = <&q6prmcc LPASS_CLK_ID_TER_MI2S_IBIT LPASS_CLK_ATTRIBUTE_COUPLE_NO>;
++		clock-names = "bclk";
++	};
++};
++
+ &sound {
+ 	compatible = "qcom,sm8450-sndcard";
+ 	pinctrl-names = "default", "sleep";
+@@ -1531,7 +1543,7 @@ speaker-playback-dai-link {
+ 		link-name = "Primary Spkr Playback";
+ 
+ 		cpu {
+-			sound-dai = <&q6apmbedai TERTIARY_TDM_RX_0>;
++			sound-dai = <&q6apmbedai TERTIARY_MI2S_RX>;
+ 		};
+ 
+ 		codec {

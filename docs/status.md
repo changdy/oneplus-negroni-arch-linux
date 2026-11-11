@@ -45,7 +45,8 @@ ssh oneplus@手机IP
 | 无 SIM 卡启动 | 默认允许无卡使用，SIM 初始化打印“无卡，跳过配置”并成功退出；基带和 QMI 故障仍报告失败，见[构建集成说明](build-integration.md) |
 | 基带启动 | 已修复 QRTR 握手竞争导致的约 40 秒看门狗循环崩溃；2026-11-11 仅更新 `boot_b` 内核后实机验证基带不再崩溃，无卡时手动上线可测到 LTE 信号。插卡后的识别、注册、通话与数据尚未测试，IMEI 读取为 `unknown` 待查，见[内核修复说明](../patches/linux/README.md) |
 | 根分区定位 | 改用文件系统 UUID，实机连续 3 次重启通过；原失败启动的早期日志缺失，UFS 偶发初始化问题仍未排除。单独更新 boot 须使用手机当前根 UUID，见[刷机说明](flashing.md) |
-| 音频、相机、GPS | 尚无本机恢复可用的证据；不能由公共驱动更新推断功能已恢复 |
+| 音频 | ADSP、WCD9385、两颗 TFA9874 已探测；声卡仅因缺少 AudioReach 拓扑失败。已新增拓扑、UCM 和扬声器 DT 修改，测试包已在手机上，尚未实机验证，见[音频说明](audio.md) |
+| 相机、GPS | 尚无本机恢复可用的证据；不能由公共驱动更新推断功能已恢复 |
 | 显示、触摸、Wi-Fi、蓝牙、基带 | 仍需对当前完整镜像逐项记录，已有桌面或 SSH 使用记录不能替代完整兼容性测试 |
 
 SDDM 默认使用 Plasma Mobile、Wayland 与 Breeze；镜像语言为 `en_US.UTF-8`，时区为 `Asia/Shanghai`。配置来源见 [config/sddm/10-mobile.conf](../config/sddm/10-mobile.conf)、[SSH 配置](../config/ssh/00-negroni.conf)和[软件清单](../config/packages/common-tools.txt)。
