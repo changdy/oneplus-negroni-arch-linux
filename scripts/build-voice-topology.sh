@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Experimental NE2210 AudioReach voice topology; contains owner-supplied ACDB data.
 # Usage: build-voice-topology.sh AUDIOREACH_CHECKOUT RX_DIR TX_DIR OUTPUT_BIN [--loopback]
+# Set INCALL_MUSIC_DIR, INCALL_RECORD_DIR and INCALL_MUX_CONFIG to add the in-call
+# music (MultiMedia7) and record (MultiMedia8) front ends.
 set -euo pipefail
 project_dir=$(cd "$(dirname "$0")/.." && pwd)
 src=$(realpath -e -- "${1:?AudioReach checkout required}")
@@ -50,7 +52,14 @@ if matched != 1:
 p.write_text(s)
 PY
 python3 -I "$project_dir/config/audio/voice/voice-topology.py" "$@" "$rx" "$tx" > "$work/voice.conf"
-cat "$work/base.conf" "$work/voice.conf" > "$work/full.conf"
+# Optional in-call music/record front ends (MultiMedia7/8), see incall-topology.py.
+if [[ -n ${INCALL_MUSIC_DIR:-} ]]; then
+    python3 -I "$project_dir/config/audio/voice/incall-topology.py" "$INCALL_MUSIC_DIR" \
+        "${INCALL_RECORD_DIR:?}" "${INCALL_MUX_CONFIG:?}" > "$work/incall.conf"
+else
+    : > "$work/incall.conf"
+fi
+cat "$work/base.conf" "$work/voice.conf" "$work/incall.conf" > "$work/full.conf"
 alsatplg -c "$work/full.conf" -o "$work/voice.bin"
 test -s "$work/voice.bin"
 mkdir -p "$(dirname "$out")"
