@@ -1,0 +1,17 @@
+// Spacebar 6.3.x deletes every other bearer whenever ModemManager adds one.
+// That tears down either mobile data or the IMS bearer VoLTE needs, and a
+// delete that lands during a connect crashes ModemManager 1.24. Sending and
+// receiving SMS uses the Messaging action and is not affected.
+polkit.addRule(function(action, subject) {
+    if (action.id != "org.freedesktop.ModemManager1.Device.Control" || !subject.pid) {
+        return polkit.Result.NOT_HANDLED;
+    }
+    try {
+        var comm = polkit.spawn(["/usr/bin/cat", "/proc/" + subject.pid + "/comm"]);
+        if (comm.trim() == "spacebar-daemon") {
+            return polkit.Result.NO;
+        }
+    } catch (error) {
+    }
+    return polkit.Result.NOT_HANDLED;
+});

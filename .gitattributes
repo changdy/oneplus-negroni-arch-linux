@@ -17,3 +17,7 @@ patches/linux/*.patch whitespace=-space-before-tab
 *.bin binary
 *.m4 text eol=lf
 config/audio/*.patch whitespace=-space-before-tab
+config/volte/81voltd binary
+config/volte/*.patch whitespace=-space-before-tab
+*.rules text eol=lf
+*.source text eol=lf

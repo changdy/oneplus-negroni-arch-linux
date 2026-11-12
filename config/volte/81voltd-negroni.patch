@@ -1,0 +1,74 @@
+diff --git a/qvd-connection.c b/qvd-connection.c
+index c3d9cac..ca847e2 100644
+--- a/qvd-connection.c
++++ b/qvd-connection.c
+@@ -5,6 +5,7 @@
+ 
+ #include <libmm-glib.h>
+ #include <stdbool.h>
++#include <stdlib.h>
+ 
+ #include "qvd-connection.h"
+ 
+@@ -22,6 +23,8 @@ struct _QVDConnection {
+ 	MMBearerIpFamily ip_type;
+ 	gchar *addr;
+ 	gboolean requested;
++	gboolean connecting;
++	gboolean connected;
+ 
+ 	guint32 sub_id, conn_id;
+ 	guint8 local_id;
+@@ -137,6 +140,7 @@ static void on_connect(GObject *obj, GAsyncResult *res, gpointer data)
+ 	QVDConnection *conn = QVD_CONNECTION(data);
+ 	GError *err = NULL;
+ 
++	conn->connecting = FALSE;
+ 	mm_bearer_connect_finish(MM_BEARER(obj), res, &err);
+ 	if (err != NULL) {
+ 		g_printerr("Failed to connect: %s\n", err->message);
+@@ -151,8 +155,10 @@ void qvd_connection_connect(QVDConnection *conn)
+ 
+ 	conn->requested = TRUE;
+ 
+-	if (conn->bearer != NULL)
++	if (conn->bearer != NULL && !conn->connecting) {
++		conn->connecting = TRUE;
+ 		mm_bearer_connect(conn->bearer, NULL, on_connect, conn);
++	}
+ }
+ 
+ static void on_disconnect(GObject *obj, GAsyncResult *res, gpointer data)
+@@ -185,6 +191,22 @@ static void on_bearer_properties_changed(GDBusProxy* bearer,
+ 					 gpointer data)
+ {
+ 	QVDConnection *conn = QVD_CONNECTION(data);
++	gboolean connected;
++
++	if (g_variant_lookup(changed, "Connected", "b", &connected)) {
++		/*
++		 * The modem asks for its IMS connection only when this service
++		 * appears. If something else drops the bearer (NetworkManager
++		 * disconnects every bearer when mobile data is turned off),
++		 * exit so that the service manager restarts us and the modem
++		 * asks again.
++		 */
++		if (conn->connected && !connected && conn->requested) {
++			g_printerr("Bearer was disconnected behind our back, exiting to re-register\n");
++			exit(1);
++		}
++		conn->connected = connected;
++	}
+ 
+ 	g_assert(conn->ip_type == MM_BEARER_IP_FAMILY_IPV4
+ 	      || conn->ip_type == MM_BEARER_IP_FAMILY_IPV6);
+@@ -204,6 +226,8 @@ void qvd_connection_set_bearer(QVDConnection *conn, MMBearer *bearer)
+ 	g_signal_connect(bearer, "g-properties-changed",
+ 			 G_CALLBACK(on_bearer_properties_changed), conn);
+ 
+-	if (conn->requested)
++	if (conn->requested && !conn->connecting) {
++		conn->connecting = TRUE;
+ 		mm_bearer_connect(conn->bearer, NULL, on_connect, conn);
++	}
+ }

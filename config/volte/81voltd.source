@@ -1,0 +1,5 @@
+81voltd https://gitlab.com/flamingradian/81voltd 57a5a7f6b88e08451bc674a605e03e82f81b8abb (GPL-2.0-or-later)
+patch config/volte/81voltd-negroni.patch
+build on the phone (aarch64, gcc meson ninja pkgconf): git apply the patch; meson setup build; ninja -C build; strip -o 81voltd build/81voltd
+needs libmm-glib qrtr glib2 at run time
+sha256 61f661b8727965298ad3bd10faac209608a1a8d14efe8e9d1c8d102e44eb4a9f

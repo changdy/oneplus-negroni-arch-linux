@@ -36,6 +36,10 @@ SIM 初始化默认允许无卡使用：`configure-modem-uim.sh` 将软件包脚
 
 开机后热插 SIM 卡由 `negroni-uim-hotplug.service` 处理：软件包脚本只在开机时运行一次，而基带不会自动为后插入的卡建立 provisioning session（卡停在 `detected`，ModemManager 报 `sim-missing`）。该服务每 5 秒查询一次卡状态，发现有卡但没有 Primary GW session 时重新运行选卡脚本，并在 ModemManager 没有可用 modem 时重启它。同一个 `configure-modem-uim.sh` 负责安装并启用，封装前校验文件内容、权限和启用状态。
 
+VoLTE 由 `configure-volte.sh` 安装:电信在 LTE 上没有电路域语音,基带注册 IMS 时会向主机请求一条 `IMS` APN 的数据连接(QMI IMS 数据服务),没人应答时拨号直接返回 `InvalidArgument`。镜像带上 postmarketOS 的 81voltd 来应答,以 `negroni-81voltd.service` 随 ModemManager 启停。81voltd 是在手机上编译的预编译二进制,来源、补丁和校验和记录在 `config/volte/81voltd.source`;补丁做两件事:基带会连续请求两次,避免对同一承载并发连接(ModemManager 1.24.2 会因此段错误);承载被外部断开时退出,由 systemd 重启后让基带重新请求。另装一条 polkit 规则禁止 `spacebar-daemon` 控制承载:Spacebar 6.3.x 在每次新增承载时会删除其它所有承载,导致数据和 IMS 互相挤掉。
+
+VoLTE 已知限制:只在设备上验证过拨出电话能到达振铃/接通状态,通话音频没有接通(内核缺少语音通话的音频通路),来电和短信未测试。关闭移动数据时 NetworkManager 会断开所有承载,此后 ModemManager 1.24.2 在重新连接时大概率段错误(4 轮开关崩溃 4 次),随后自动重启并在约 20 秒内恢复数据和 IMS;根因在 ModemManager 的复用链路处理,尚未定位。
+
 Docker 内核支持已接入每次构建：`configure-docker-kernel.sh` 在基础配置上合并 `config/kernel/docker.config`，随后运行 `olddefconfig` 和必需项检查。已有 `.config` 同样会更新。正常 Kbuild 生成的 nftables 兼容、IPv4/IPv6 FIB 和 NAT 模块通过内核产物指纹进入 rootfs；打包前核对镜像内核、模块哈希、依赖索引和自动加载别名，结果写入构建报告。镜像中的 Docker 软件按需安装，见[Docker 内核支持](docker.md)。
 
 CPU 性能与调度已默认集成：固定内核 `7.3`（`1eaec99b04a54c0a6ac42f16a83a606a6d2248a4`）基于重新同步的上游直接补齐 8 核能力和功耗模型；全新 rootfs 通过 `configure-cpu-performance.sh` 安装并启用 Boost / performance 服务。已有 rootfs 通过源文件指纹触发 `update-cpu-performance-image.sh`，补装服务并重新打包。构建及封装阶段分别检查 DTB 参数、镜像文件和开机链接，构建报告记录结果。详见 [CPU 默认构建与恢复](cpu-performance.md#默认固件构建与续建)。

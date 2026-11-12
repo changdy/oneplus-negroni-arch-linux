@@ -62,6 +62,7 @@ bash "$project_dir/scripts/configure-screen-defaults.sh" "$target_dir" "$project
 bash "$project_dir/scripts/configure-wifi.sh" "$target_dir" "$project_dir/$log_dir"
 bash "$project_dir/scripts/configure-audio.sh" "$target_dir" "$project_dir/$log_dir"
 bash "$project_dir/scripts/configure-modem-uim.sh" "$target_dir" "$project_dir/$log_dir"
+bash "$project_dir/scripts/configure-volte.sh" "$target_dir" "$project_dir/$log_dir"
 bash "$project_dir/scripts/configure-runtime-fixes.sh" "$target_dir" "$project_dir/$log_dir"
 bash "$project_dir/scripts/configure-cpu-performance.sh" "$target_dir" "$project_dir/$log_dir"
 bash "$project_dir/scripts/configure-boot-success.sh" "$target_dir" "$project_dir/$log_dir"

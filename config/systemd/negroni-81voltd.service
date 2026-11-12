@@ -1,0 +1,19 @@
+[Unit]
+Description=QMI IMS data service for VoLTE on OnePlus Negroni
+# The modem asks for its IMS connection when this service appears, and the
+# bearer lives in ModemManager: follow its restarts.
+After=ModemManager.service msm-modem-uim-selection.service
+BindsTo=ModemManager.service
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+# The modem asks only once, when the service appears, and 81voltd refuses the
+# request while ModemManager has no registered modem: wait for one first.
+ExecStartPre=/bin/sh -c 'for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30; do mmcli -m any -K 2>/dev/null | grep -Eq "^modem.generic.state +: (registered|connected)" && exit 0; sleep 2; done; exit 1'
+ExecStart=/usr/local/libexec/81voltd
+Restart=always
+RestartSec=3s
+
+[Install]
+WantedBy=ModemManager.service
