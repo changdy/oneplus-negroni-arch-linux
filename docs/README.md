@@ -16,6 +16,7 @@
 | [Wi-Fi 默认设置](wifi.md) | 关闭省电、固定本地 MAC、CN 国家域与已知限制 |
 | [音频](audio.md) | 扬声器、麦克风、耳机的诊断、拓扑/UCM/DT 修改；扬声器已实机验证，内置麦克风无信号 |
 | [基带与 VoLTE](modem.md) | QRTR 看门狗崩溃修复、SIM 选卡与热插、移动数据、VoLTE 拨号与限制 |
+| [GPS / GNSS](gnss.md) | 引擎锁、AFW 客户端注册修复与卫星接收验证边界 |
 | [通话语音](call-audio.md) | VoLTE 通话下行、通话录音与向对方放音（实验）、自动开关服务、已知问题与排查方法 |
 | [蓝牙](bluetooth.md) | WCN6855 缺少 public address 的修复与验证范围 |
 | [GPU](gpu.md) | Adreno 730 3D/Vulkan 实测、runtime PM 与慢亮屏规避 |

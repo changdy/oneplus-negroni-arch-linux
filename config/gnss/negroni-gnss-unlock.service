@@ -1,0 +1,15 @@
+[Unit]
+Description=Unlock the Qualcomm GNSS engine
+After=ModemManager.service
+PartOf=ModemManager.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/qmicli -d qrtr://0 --loc-set-engine-lock=none
+RemainAfterExit=yes
+Restart=on-failure
+RestartSec=5
+TimeoutStartSec=30
+
+[Install]
+WantedBy=ModemManager.service

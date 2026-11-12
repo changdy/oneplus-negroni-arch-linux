@@ -1,0 +1,10 @@
+libqmi 1.38.0 https://github.com/linux-mobile-broadband/libqmi e3d79ed3f7fdc6a7fa8b374860b1c23a8f172812
+  library: LGPL-2.1-or-later; tools: GPL-2.0-or-later
+  patch: libqmi-afw.patch is upstream commit 532de37e84dac82936b056e28fb71ce4c7af60d6, unmodified
+ModemManager 1.24.2 https://github.com/linux-mobile-broadband/ModemManager f2b9ab1ad78d322f32134a444b5b54c6e8160e19
+  daemon: GPL-2.0-or-later; libmm-glib: LGPL-2.0-or-later
+  patch: modemmanager-afw.patch is a local change to src/mm-shared-qmi.c
+Build: scripts/build-gnss-stack.sh (native aarch64, prefix /opt/negroni-gnss)
+2026-11-12 deployed sha256:
+  ModemManager e3904776942e8a18a4dbd1ecc8f4934369d2d2c44d5a0e96423b0fafc704a149
+  libqmi-glib.so.5.12.0 408dc26901dac775e866d27c687c8029a461aa4ca5e009b5b20fc2d723d6a355

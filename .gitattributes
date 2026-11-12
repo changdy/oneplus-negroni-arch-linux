@@ -19,5 +19,8 @@ patches/linux/*.patch whitespace=-space-before-tab
 config/audio/*.patch whitespace=-space-before-tab
 config/volte/81voltd binary
 config/volte/*.patch whitespace=-space-before-tab
+# Preserve upstream unified-diff context lines, including blank context at EOF.
+config/gnss/*.patch text eol=lf whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab
+config/gnss/sources.txt text eol=lf
 *.rules text eol=lf
 *.source text eol=lf

@@ -1,0 +1,120 @@
+diff --git a/src/mm-shared-qmi.c b/src/mm-shared-qmi.c
+index 4fd92cb..c01852f 100644
+--- a/src/mm-shared-qmi.c
++++ b/src/mm-shared-qmi.c
+@@ -5591,13 +5591,14 @@ pds_gps_service_state_start_ready (QmiClientPds *client,
+     qmi_message_pds_set_auto_tracking_state_input_unref (input);
+ }
+ 
++static void loc_start_ready (QmiClientLoc *client, GAsyncResult *res, GTask *task);
++
+ static void
+ loc_register_events_ready (QmiClientLoc *client,
+                            GAsyncResult *res,
+                            GTask        *task)
+ {
+-    MMSharedQmi                       *self;
+-    Private                           *priv;
++    QmiMessageLocStartInput           *input;
+     QmiMessageLocRegisterEventsOutput *output;
+     GError                            *error = NULL;
+ 
+@@ -5619,20 +5620,15 @@ loc_register_events_ready (QmiClientLoc *client,
+ 
+     qmi_message_loc_register_events_output_unref (output);
+ 
+-    self = g_task_get_source_object (task);
+-    priv = get_private (self);
+-
+-    g_assert (!priv->loc_client);
+-    g_assert (!priv->loc_location_nmea_indication_id);
+-    priv->loc_client = QMI_CLIENT (g_object_ref (client));
+-    priv->loc_location_nmea_indication_id =
+-        g_signal_connect (client,
+-                          "nmea",
+-                          G_CALLBACK (loc_location_nmea_indication_cb),
+-                          self);
+-
+-    g_task_return_boolean (task, TRUE);
+-    g_object_unref (task);
++    /* Recent firmware requires AFW registration before accepting Start. */
++    input = qmi_message_loc_start_input_new ();
++    qmi_message_loc_start_input_set_session_id (input, DEFAULT_LOC_SESSION_ID, NULL);
++    qmi_message_loc_start_input_set_intermediate_report_state (input, QMI_LOC_INTERMEDIATE_REPORT_STATE_DISABLE, NULL);
++    qmi_message_loc_start_input_set_minimum_interval_between_position_reports (input, 1000, NULL);
++    qmi_message_loc_start_input_set_fix_recurrence_type (input, QMI_LOC_FIX_RECURRENCE_TYPE_REQUEST_PERIODIC_FIXES, NULL);
++    qmi_client_loc_start (client, input, 10, NULL,
++                          (GAsyncReadyCallback)loc_start_ready, task);
++    qmi_message_loc_start_input_unref (input);
+ }
+ 
+ static void
+@@ -5640,7 +5636,8 @@ loc_start_ready (QmiClientLoc *client,
+                  GAsyncResult *res,
+                  GTask        *task)
+ {
+-    QmiMessageLocRegisterEventsInput *input;
++    MMSharedQmi                     *self;
++    Private                         *priv;
+     QmiMessageLocStartOutput         *output;
+     GError                           *error = NULL;
+ 
+@@ -5662,16 +5659,16 @@ loc_start_ready (QmiClientLoc *client,
+ 
+     qmi_message_loc_start_output_unref (output);
+ 
+-    input = qmi_message_loc_register_events_input_new ();
+-    qmi_message_loc_register_events_input_set_event_registration_mask (
+-        input, QMI_LOC_EVENT_REGISTRATION_FLAG_NMEA, NULL);
+-    qmi_client_loc_register_events (client,
+-                                    input,
+-                                    10,
+-                                    NULL,
+-                                    (GAsyncReadyCallback) loc_register_events_ready,
+-                                    task);
+-    qmi_message_loc_register_events_input_unref (input);
++    self = g_task_get_source_object (task);
++    priv = get_private (self);
++    g_assert (!priv->loc_client);
++    g_assert (!priv->loc_location_nmea_indication_id);
++    priv->loc_client = QMI_CLIENT (g_object_ref (client));
++    priv->loc_location_nmea_indication_id =
++        g_signal_connect (client, "nmea",
++                          G_CALLBACK (loc_location_nmea_indication_cb), self);
++    g_task_return_boolean (task, TRUE);
++    g_object_unref (task);
+ }
+ 
+ static void
+@@ -5711,20 +5708,17 @@ start_gps_engine (MMSharedQmi         *self,
+                                         MM_PORT_QMI_FLAG_DEFAULT,
+                                         NULL);
+     if (client) {
+-        QmiMessageLocStartInput *input;
+-
+-        input = qmi_message_loc_start_input_new ();
+-        qmi_message_loc_start_input_set_session_id (input, DEFAULT_LOC_SESSION_ID, NULL);
+-        qmi_message_loc_start_input_set_intermediate_report_state (input, QMI_LOC_INTERMEDIATE_REPORT_STATE_DISABLE, NULL);
+-        qmi_message_loc_start_input_set_minimum_interval_between_position_reports (input, 1000, NULL);
+-        qmi_message_loc_start_input_set_fix_recurrence_type (input, QMI_LOC_FIX_RECURRENCE_TYPE_REQUEST_PERIODIC_FIXES, NULL);
+-        qmi_client_loc_start (QMI_CLIENT_LOC (client),
+-                              input,
+-                              10,
+-                              NULL,
+-                              (GAsyncReadyCallback) loc_start_ready,
+-                              task);
+-        qmi_message_loc_start_input_unref (input);
++        QmiMessageLocRegisterEventsInput *input;
++
++        input = qmi_message_loc_register_events_input_new ();
++        qmi_message_loc_register_events_input_set_event_registration_mask (
++            input, QMI_LOC_EVENT_REGISTRATION_FLAG_NMEA, NULL);
++        qmi_message_loc_register_events_input_set_client_string_id (input, "MM", NULL);
++        qmi_message_loc_register_events_input_set_client_type (input, QMI_LOC_CLIENT_TYPE_AFW, NULL);
++        qmi_message_loc_register_events_input_set_enable_positioning_request_notification (input, FALSE, NULL);
++        qmi_client_loc_register_events (QMI_CLIENT_LOC (client), input, 10, NULL,
++                                        (GAsyncReadyCallback)loc_register_events_ready, task);
++        qmi_message_loc_register_events_input_unref (input);
+         return;
+     }
+ 
