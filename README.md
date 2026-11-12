@@ -48,7 +48,7 @@ sudo systemctl disable --now negroni-charge-limit.service  # 停止限制并取�
 | 根文件系统自动扩容 | 刷入后首次启动将 5 GiB ext4 扩展到整个 userdata 分区，成功后跳过、失败下次重试，见[构建集成说明](docs/build-integration.md) |
 | 电池状态显示 | 修正 Negroni 电池电流符号，改善充放电状态判断；已通过实机拔插验证 |
 | 登录界面虚拟键盘 | 配置 SDDM / KWin 使用 Plasma Keyboard 和 layer-shell，修复触屏登录输入问题 |
-| 远程维护 | 默认启用 SSH，允许 `oneplus` 密码或公钥登录，禁止 root 和空密码登录，首次启动生成主机密钥 |
+| 远程维护 | USB3 线连接时可用 `ssh oneplus@10.55.0.1` 和 USB 串口调试（目前手动安装，见 [USB 调试通道](docs/usb-debug.md)）；默认启用 SSH，允许 `oneplus` 密码或公钥登录，禁止 root 和空密码登录，首次启动生成主机密钥 |
 | 常用工具与 USB 固件 | 预装 nano、curl、wget、htop、rsync、git、tmux、ripgrep、usbutils 与 Realtek 固件，见[安装列表](config/packages/common-tools.txt) |
 | Wi-Fi 默认设置 | 关闭省电，生成固定本地 MAC，按当前部署地点使用 CN 国家域，见 [Wi-Fi 说明](docs/wifi.md) |
 | 音频 | 自制 AudioReach 拓扑、UCM 与设备树路由修复；实机扬声器出声、内置麦克风录音正常，耳机待测，见[音频说明](docs/audio.md) |
@@ -82,13 +82,16 @@ bash scripts/init-submodules.sh
 | 从源码构建或续建 | [构建指南](docs/building.md) · [构建集成细节](docs/build-integration.md) |
 | 核对分区、刷入及首次启动 | [刷机说明](docs/flashing.md) |
 | 配置 A/B 启动成功标记 | [启动成功服务](docs/boot-success.md) |
+| **用 USB 线 SSH 调试手机（不依赖 Wi-Fi）** | **[USB 调试通道](docs/usb-debug.md)** |
 | 使用 SSH、了解已知问题 | [设备状态与使用说明](docs/status.md) |
+| 基带 / SIM / 移动数据 / VoLTE | [基带说明](docs/modem.md) |
+| 蓝牙、GPU | [蓝牙](docs/bluetooth.md) · [GPU](docs/gpu.md) |
 | 开启、配置和关闭充电限制 | [充电限制](docs/charge-limit.md) |
 | 调整屏幕和休眠的固件默认值 | [屏幕默认设置](docs/screen-defaults.md) |
 | 复现 CPU 性能与大小核调度优化 | [CPU 性能与调度指南](docs/cpu-performance.md) |
 | 安装 Docker、检查容器内核支持 | [Docker 使用与固件集成](docs/docker.md) |
 | 查找调研与历史操作记录 | [文档索引](docs/README.md) |
-| 提交问题或改动 | [贡献指南](CONTRIBUTING.md) |
+| 提交问题或改动 | [贡献指南](CONTRIBUTING.md) · AI 代理先读 [AGENTS.md](AGENTS.md) |
 | 了解代码来源与许可 | [来源与许可](docs/licensing.md) |
 
 ## 仓库结构

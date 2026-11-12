@@ -30,7 +30,7 @@ sudo env IMAGE_DIR=images/7.3 LOG_DIR=logs/7.3 bash scripts/update-runtime-fixes
 IMAGE_DIR=images/7.3 LOG_DIR=logs/7.3 bash scripts/pack-images.sh
 ```
 
-修复范围限于固件加载路径、快捷设置启动布局和桌面元数据。蓝牙缺少 public address、上游 C++ PaginateModel 清空末页时的边界缺陷仍需另行处理；不放宽 polkit 的进程保护，不修改 portal 对重复注册的身份校验，也不删除上游 Notifications 等待服务。
+蓝牙缺少 public address 的修复（`config/bluetooth/`，见[蓝牙说明](bluetooth.md)）也由同一机制安装。修复范围限于固件加载路径、蓝牙地址、快捷设置启动布局和桌面元数据；上游 C++ PaginateModel 清空末页时的边界缺陷仍需另行处理；不放宽 polkit 的进程保护，不修改 portal 对重复注册的身份校验，也不删除上游 Notifications 等待服务。
 
 SIM 初始化默认允许无卡使用：`configure-modem-uim.sh` 将软件包脚本的无卡分支改为打印“无卡，跳过配置”并成功退出，基带和 QMI 错误仍按原逻辑报错。修复覆盖全新 rootfs 和已有镜像续建，源文件指纹触发更新，封装前校验脚本内容和权限；未知脚本版本拒绝自动修改。设备上单独升级 `msm-modem-uim-selection` 软件包可能覆盖此修改，需要重新应用修复。
 

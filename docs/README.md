@@ -8,16 +8,21 @@
 | --- | --- |
 | [构建指南](building.md) | 主机依赖、子模块、rootfs 输入、凭据和续建 |
 | [刷机说明](flashing.md) | 固件限制、分区映射、校验、刷入和首次启动 |
+| **[USB 调试通道](usb-debug.md)** | **不依赖 Wi-Fi 的 USB 网络 SSH（`ssh oneplus@10.55.0.1`）与 USB 串口；调试首选** |
 | [设备状态](status.md) | 已验证功能、已知问题、SSH 和 GPU 配置 |
 | [启动成功服务](boot-success.md) | A/B 成功标记、设备确认配置及状态检查 |
 | [充电限制](charge-limit.md) | 默认行为、启停、阈值配置及验证范围 |
 | [屏幕默认设置](screen-defaults.md) | 默认关闭调暗和休眠、5 分钟熄屏及续建更新 |
 | [Wi-Fi 默认设置](wifi.md) | 关闭省电、固定本地 MAC、CN 国家域与已知限制 |
-| [音频](audio.md) | 扬声器、麦克风、耳机的诊断、拓扑/UCM/DT 修改与实机测试步骤（未验证） |
+| [音频](audio.md) | 扬声器、麦克风、耳机的诊断、拓扑/UCM/DT 修改；扬声器与内置麦克风已实机验证 |
+| [基带与 VoLTE](modem.md) | QRTR 看门狗崩溃修复、SIM 选卡与热插、移动数据、VoLTE 拨号与限制 |
+| [蓝牙](bluetooth.md) | WCN6855 缺少 public address 的修复与验证范围 |
+| [GPU](gpu.md) | Adreno 730 3D/Vulkan 实测、runtime PM 与慢亮屏规避 |
 | [CPU 性能与调度](cpu-performance.md) | Boost / performance 服务、设备树构建、部署验证与恢复 |
 | [Docker 内核支持](docker.md) | Docker 安装、网络模块配置、续建和镜像验证 |
 | [构建集成说明](build-integration.md) | 各配置如何进入 rootfs，已有镜像如何更新 |
 | [贡献指南](../CONTRIBUTING.md) | 开发检查、问题报告与 Pull Request |
+| [AI 代理指南](../AGENTS.md) | 给 AI 代理的调试入口、手机操作安全规则与构建环境说明 |
 | [来源与许可](licensing.md) | 子模块、补丁及第三方资料的许可边界 |
 
 ## 调研与历史记录

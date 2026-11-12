@@ -1,0 +1,13 @@
+[Unit]
+Description=USB debug gadget (NCM+ACM)
+After=local-fs.target
+Before=NetworkManager.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/bin/usb-gadget.sh start
+ExecStop=/usr/local/bin/usb-gadget.sh stop
+
+[Install]
+WantedBy=multi-user.target
