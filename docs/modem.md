@@ -9,7 +9,8 @@
 | 开机带卡 | 可用：开机选卡成功，ModemManager 显示 `registered` |
 | 开机后热插卡 | 已用 `negroni-uim-hotplug.service` 解决；模拟重插约 2 秒恢复，物理重插未测 |
 | 移动数据 | 可用（电信 APN `ctnet`），IPv4 + IPv6 均通 |
-| VoLTE 拨出 | 能到 `ringing-out` → `active`；2026-11-12 17:19 来电中语音子图首次运行，用户反馈听到声音，下行质量与上行未确认，见[通话音频](call-audio.md) |
+| VoLTE 拨出 | 能到 `ringing-out` → `active` |
+| 通话声音 | 下行、通话录音、向对方放音可用（实验）；对方听不到本机麦克风，见[通话语音](call-audio.md) |
 | 来电、短信 | 用户确认来电可接通；短信未测 |
 | IMEI | 读出为 `unknown`（MEID 正常），原因未查 |
 
@@ -67,7 +68,7 @@ sudo nmcli con add type gsm ifname '*' con-name ct-lte gsm.apn ctnet gsm.usernam
 
 其它要点：IMSA / IMS settings 查询即使在能打电话时也返回 `InvalidOperation`，不能用来判断 IMS 是否注册。打电话不需要把 IMS 接口拉起来。81voltd 是在手机上编译的二进制，来源、补丁和校验和见 [81voltd.source](../config/volte/81voltd.source)。安装与限制见[构建集成说明](build-integration.md)。
 
-通话音频：SM8450 使用 GPR/AudioReach/VCPM，不能直接套用旧 APR 平台的 q6voice。实机原先只有 4 个媒体 PCM，没有基带语音图。2026-11-12 已从本机 ACDB 提取语音图并安装 MM5/MM6 hostless 候选；起初 APM 接受命令但 VCPM 不放行语音子图。解码 F3 后确认原因是 RX 方向缺少后处理容器；补回后 17:19 的来电中语音子图运行，用户反馈听到声音。下行质量、上行未确认，原厂内置麦克风的 DMIC3/DMIC4 路径仍未修好，见[通话音频调试](call-audio.md)。
+通话音频不在本文展开：语音图、自动开关服务、通话录音与放音、麦克风问题和排查方法都在[通话语音](call-audio.md)。与基带相关的一点结论是：基带语音服务与 ADSP 的 VCPM 之间通信正常，通话无声的原因曾经在主机一侧的图结构，不在基带。
 
 ## 5. 相关事实
 

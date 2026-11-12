@@ -51,7 +51,7 @@ sudo systemctl disable --now negroni-charge-limit.service  # 停止限制并取�
 | 远程维护 | USB3 线连接时可用 `ssh oneplus@10.55.0.1` 和 USB 串口调试（目前手动安装，见 [USB 调试通道](docs/usb-debug.md)）；默认启用 SSH，允许 `oneplus` 密码或公钥登录，禁止 root 和空密码登录，首次启动生成主机密钥 |
 | 常用工具与 USB 固件 | 预装 nano、curl、wget、htop、rsync、git、tmux、ripgrep、usbutils 与 Realtek 固件，见[安装列表](config/packages/common-tools.txt) |
 | Wi-Fi 默认设置 | 关闭省电，生成固定本地 MAC，按当前部署地点使用 CN 国家域，见 [Wi-Fi 说明](docs/wifi.md) |
-| 音频 | 自制 AudioReach 拓扑、UCM 与设备树路由修复；实机扬声器出声、内置麦克风录音正常，耳机待测，见[音频说明](docs/audio.md) |
+| 音频 | 自制 AudioReach 拓扑、UCM 与设备树路由修复；实机扬声器出声，内置麦克风无信号，耳机待测，见[音频说明](docs/audio.md) |
 | Docker 内核支持 | 每次构建补齐 nftables 兼容与 NAT 模块，支持全新构建和续建；Docker / Compose 按需安装，详见[使用说明](docs/docker.md) |
 | 构建与校验 | 通过源码和产物指纹识别需要更新的镜像，核对内核模块及配置，检查 ext4、启动镜像、sparse 往返和 SHA-256 |
 
@@ -85,6 +85,7 @@ bash scripts/init-submodules.sh
 | **用 USB 线 SSH 调试手机（不依赖 Wi-Fi）** | **[USB 调试通道](docs/usb-debug.md)** |
 | 使用 SSH、了解已知问题 | [设备状态与使用说明](docs/status.md) |
 | 基带 / SIM / 移动数据 / VoLTE | [基带说明](docs/modem.md) |
+| 通话声音、通话录音与放音（实验） | [通话语音](docs/call-audio.md) |
 | 蓝牙、GPU | [蓝牙](docs/bluetooth.md) · [GPU](docs/gpu.md) |
 | 开启、配置和关闭充电限制 | [充电限制](docs/charge-limit.md) |
 | 调整屏幕和休眠的固件默认值 | [屏幕默认设置](docs/screen-defaults.md) |
