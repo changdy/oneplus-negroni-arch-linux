@@ -107,6 +107,8 @@ sudo reboot
 
 所有日志写入 `~/audio-test/audio-test-*.log`。
 
+> 2026-11-12 11:25 起，手机 `vendor_boot_b` 是相机会话刷入的合并镜像（内核 `ead3411b6e6` 加上未提交的 S5KJN1 相机设备树改动，SHA-256 `326eed0b…`），已确认声卡 `OnePlus-10-Pro` 与相机 `s5kjn1 6-0010` 同时存在。手机上旧的 `vendor_boot-audio-test.img` 不含相机改动，已改名为 `*.STALE-no-camera.img`，不要再刷。之后更新 `vendor_boot` 时要从包含相机改动的工作树构建，或以已提交的内核为准。
+
 ## 构建集成（2026-11-12）
 
 - 内核：音频设备树修复为 `linux` 提交 `ead3411b6e6`（只含音频改动），父仓库 gitlink 与 `patches/linux/local-7.3.bundle` 已更新，空仓库恢复测试通过。补丁副本见 [sm8450-oneplus-negroni-audio.patch](../config/audio/sm8450-oneplus-negroni-audio.patch)。
