@@ -1,6 +1,6 @@
 # 音频（扬声器、麦克风、耳机）
 
-状态日期：2026-11-12。**声卡已经可用**：刷入路由修正后的 `vendor_boot_b`，开机即生成 `OnePlus-10-Pro` 声卡，PipeWire 识别出扬声器、耳机、内置麦克风和耳机麦克风。内置麦克风已录到真实信号；扬声器和耳机是否真正出声尚待人耳确认。
+状态日期：2026-11-12。**声卡已经可用**：刷入路由修正后的 `vendor_boot_b`，开机即生成 `OnePlus-10-Pro` 声卡，PipeWire 识别出扬声器、耳机、内置麦克风和耳机麦克风。用户已确认扬声器正常出声，内置麦克风已录到真实信号；耳机出声和插拔检测尚未测试。
 
 ## 现状诊断（7.3.0-sm8450+，实机 `journalctl -k`）
 
@@ -69,7 +69,7 @@ DT 原本把 TFA9874 接在 Tertiary **TDM**。在 7.3 的 AudioReach 驱动中�
 | --- | --- |
 | 声卡 | `card 0: OnePlus10Pro [OnePlus-10-Pro]`，播放 hw:0,0 / hw:0,1，录音 hw:0,2 / hw:0,3 |
 | 耳机播放 hw:0,0 | `speaker-test` 正常运行无错误；未插耳机，未人耳确认 |
-| 扬声器播放 hw:0,1 | `speaker-test` 正常运行；两颗 TFA9874 的 `SYS_CTRL0` 由 `0x0011` 变为 `0x0018`（上电、功放使能），`STATUS0` 的 NOCLK 位清零，说明 Tertiary MI2S 时钟已送达功放；未人耳确认 |
+| 扬声器播放 hw:0,1 | `speaker-test` 正常运行；两颗 TFA9874 的 `SYS_CTRL0` 由 `0x0011` 变为 `0x0018`（上电、功放使能），`STATUS0` 的 NOCLK 位清零，说明 Tertiary MI2S 时钟已送达功放；**用户确认扬声器出声** |
 | 内置麦克风 | hw:0,2 只接受双声道，ADC1 信号在声道 0：去直流 RMS 约 1290，峰值 16001；通过 PipeWire 录音去直流 RMS 645 |
 | PipeWire / UCM | 配置组合 `HiFi (Headphones, Mic1, Speaker)`；输出为扬声器（默认）和耳机，输入为内置麦克风（默认）和耳机麦克风 |
 
