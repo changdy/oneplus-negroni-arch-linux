@@ -92,6 +92,8 @@ sudo systemctl enable --now sshd
 
 完成后将清单写入 `logs/7.3/common-tools.list`；它与配置清单一致时续建跳过该阶段，清单改变时重新安装、验证并打包。从清单删除条目不会自动卸载软件。脚本使用现有仓库数据库执行 `pacman -S --needed`，不执行整套系统升级。构建环境和最终镜像均使用 [config/pacman/mirrorlist](../config/pacman/mirrorlist)，优先选择 `de3.mirror.archlinuxarm.org`，加拿大镜像站为备用，保留 TLS 和包签名校验。
 
+2026-11-12 将 `noto-fonts-cjk` 加入同一清单，补齐中文等 CJK 字形；普通 `noto-fonts` 不包含这部分。全新构建会安装，已有镜像续建会因清单变化重新运行安装阶段。本机已通过 USB SSH 补装并验证 Qt/Pango 中文渲染，新完整镜像未构建，详见 [字体说明](fonts.md)。
+
 已有镜像可手动更新：
 
 ```sh

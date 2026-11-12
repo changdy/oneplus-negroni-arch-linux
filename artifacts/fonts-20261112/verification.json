@@ -1,0 +1,36 @@
+{
+  "date": "2026-11-12",
+  "device": "OnePlus 10 Pro NE2210",
+  "kernel": "7.3.0-sm8450+",
+  "connection": "USB SSH",
+  "locale": "en_US.UTF-8",
+  "before": {
+    "noto_fonts_cjk_installed": false,
+    "fc_list_lang_zh_empty": true
+  },
+  "after": {
+    "package": "noto-fonts-cjk 20240730-1",
+    "package_files": 21,
+    "altered_files": 0,
+    "user_font_cache_refreshed": true,
+    "zh_cn_matches": {
+      "sans-serif": "Noto Sans CJK KR",
+      "serif": "Noto Serif CJK KR",
+      "monospace": "Noto Sans Mono CJK KR"
+    },
+    "pango": {
+      "unknown_glyphs": 0,
+      "image": "pango.png",
+      "visually_verified": true
+    },
+    "qt_quick": {
+      "platform": "offscreen",
+      "backend": "software",
+      "families": ["sans-serif", "serif", "monospace"],
+      "image": "qt-fonts.png",
+      "visually_verified": true
+    }
+  },
+  "coverage": ["simplified Chinese", "traditional Chinese", "mixed Chinese and Latin", "punctuation"],
+  "not_tested": ["existing desktop applications after reopening", "physical screen", "new full image installation"]
+}

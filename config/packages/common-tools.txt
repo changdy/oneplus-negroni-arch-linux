@@ -23,3 +23,4 @@ vulkan-freedreno
 linux-firmware-realtek
 iw
 wireless-regdb
+noto-fonts-cjk
