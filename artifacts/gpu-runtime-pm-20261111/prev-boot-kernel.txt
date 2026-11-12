@@ -1,0 +1,66 @@
+ -2 947714c100234f019348562ae5fb3240 Mon 2026-10-19 00:25:30 CST Wed 2026-11-11 22:44:49 CST
+ -1 c072808f2e40442991a7a360cede7104 Mon 2026-10-19 00:25:30 CST Wed 2026-11-11 23:51:41 CST
+  0 20135f6197564119a0323459eb1a029e Mon 2026-10-19 00:25:30 CST Wed 2026-11-11 23:52:29 CST
+total 0
+drwxr-x---  2 root root 0 Oct 19 00:25 .
+drwxr-xr-x 10 root root 0 Jan  1  1970 ..
+[   15.892569] oneplus-negroni kernel: snd-sc8280xp sound: ASoC: failed to instantiate card -2
+[   15.892703] oneplus-negroni kernel: snd-sc8280xp sound: probe with driver snd-sc8280xp failed with error -2
+[   26.084014] oneplus-negroni kernel: gcc-sm8450 100000.clock-controller: sync_state() pending due to 3d6a000.gmu
+[   26.084251] oneplus-negroni kernel: sm8450-gpucc 3d90000.clock-controller: sync_state() pending due to 3d6a000.gmu
+[   26.084386] oneplus-negroni kernel: qnoc-sm8450 interconnect-1: sync_state() pending due to 1dfa000.crypto
+[   26.084490] oneplus-negroni kernel: qnoc-sm8450 1700000.interconnect: sync_state() pending due to 1dfa000.crypto
+[   26.084585] oneplus-negroni kernel: camcc-sm8450 ade0000.clock-controller: sync_state() pending due to 6-0010
+[   55.288024] oneplus-negroni kernel: DSI: pic_width 1440 has to be multiple of slice 540
+[   55.288154] oneplus-negroni kernel: DSI: pic_width 1440 has to be multiple of slice 540
+[   55.288206] oneplus-negroni kernel: DSI: pic_width 1440 has to be multiple of slice 540
+[ 3167.876656] oneplus-negroni kernel: !!!!!cid detect || no detect
+[ 3167.912415] oneplus-negroni kernel: !!!!!cid detect || no detect
+[ 3167.912646] oneplus-negroni kernel: !!!!!typec_state_change_work
+[ 3167.912713] oneplus-negroni kernel: !!!!!BC_ADSP_NOTIFY_AP_CP_MOS_DISABLE
+[ 3167.924410] oneplus-negroni kernel: !!!!!oplus_plugin_irq_work
+[ 3167.924665] oneplus-negroni kernel: [OPLUS_CHG][oplus_plugin_irq_work]!!!prop[0], usb_online[0]
+[ 3167.924724] oneplus-negroni kernel: [OPLUS_CHG][oplus_plugin_irq_work]!!!usb_pre_plugin_status[1], usb_plugin_status[0]
+[ 3167.924784] oneplus-negroni kernel: !!! oplus_plugin_irq_work: the hvdcp_detach_time:3167912, detect time 0 
+[ 3167.924864] oneplus-negroni kernel: !!!pd_svooc[0]
+[ 3167.928458] oneplus-negroni kernel: [OPLUS_CHG][oplus_adsp_voocphy_enable]set enable adsp voocphy success, ret=0
+[ 3167.928622] oneplus-negroni kernel: [OPLUS_CHG][battery_chg_update_usb_type_work]usb_adap_type: 0
+[ 3168.000048] oneplus-negroni kernel: [OPLUS_CHG][oplus_adsp_voocphy_enable]set enable adsp voocphy success, ret=0
+[ 3168.000198] oneplus-negroni kernel: [OPLUS_CHG][battery_chg_update_usb_type_work]usb_adap_type: 0
+[ 3337.016679] oneplus-negroni kernel: DSI: pic_width 1440 has to be multiple of slice 540
+[ 3337.016708] oneplus-negroni kernel: DSI: pic_width 1440 has to be multiple of slice 540
+[ 3337.016723] oneplus-negroni kernel: DSI: pic_width 1440 has to be multiple of slice 540
+[ 3339.176487] oneplus-negroni kernel: qcom,apr 3000000.remoteproc:glink-edge.adsp_apps.-1.-1: GPR: Port(1) is not registered
+[ 3344.352134] oneplus-negroni kernel: qcom-apm gprsvc:service:2:1: CMD timeout for [1001021] opcode
+[ 3344.352930] oneplus-negroni kernel: platform 3000000.remoteproc:glink-edge:gpr:service@1:dais: Adding to iommu group 31
+[ 3344.400036] oneplus-negroni kernel: snd-sc8280xp sound: ASoC: Parent card not yet available, widget card binding deferred
+[ 3344.404081] oneplus-negroni kernel: qcom,apr 3000000.remoteproc:glink-edge.adsp_apps.-1.-1: GPR: Port(1) is not registered
+[ 3349.472386] oneplus-negroni kernel: qcom-apm gprsvc:service:2:1: CMD timeout for [100100c] opcode
+[ 3349.473354] oneplus-negroni kernel: q6apm-dai 3000000.remoteproc:glink-edge:gpr:service@1:dais: Audio Start: Buffer Allocation failed rc = -110
+[ 3349.473550] oneplus-negroni kernel: q6apm-dai 3000000.remoteproc:glink-edge:gpr:service@1:dais: ASoC error (-110): at snd_soc_pcm_component_new() on 3000000.remoteproc:glink-edge:gpr:service@1:dais
+[ 3349.473725] oneplus-negroni kernel: snd-sc8280xp sound: ASoC: can't create pcm MultiMedia1 Playback :-110
+[ 3349.492037] oneplus-negroni kernel: snd-sc8280xp sound: probe with driver snd-sc8280xp failed with error -110
+[ 3541.088040] oneplus-negroni kernel: wlp1s0: deauthenticating from e0:b6:68:ac:c1:d4 by local choice (Reason: 3=DEAUTH_LEAVING)
+[ 3543.972352] oneplus-negroni kernel: wlp1s0: authenticate with e0:b6:68:ac:c1:d4 (local address=66:de:96:76:1f:2d)
+[ 3543.972489] oneplus-negroni kernel: wlp1s0: send auth to e0:b6:68:ac:c1:d4 (try 1/3)
+[ 3543.976031] oneplus-negroni kernel: wlp1s0: authenticated
+[ 3543.976064] oneplus-negroni kernel: wlp1s0: associate with e0:b6:68:ac:c1:d4 (try 1/3)
+[ 3543.988323] oneplus-negroni kernel: wlp1s0: RX AssocResp from e0:b6:68:ac:c1:d4 (capab=0x1c31 status=0 aid=11)
+[ 3544.008036] oneplus-negroni kernel: wlp1s0: associated
+[ 3544.072017] oneplus-negroni kernel: wlp1s0: Limiting TX power to 30 (30 - 0) dBm as advertised by e0:b6:68:ac:c1:d4
+[ 3658.852017] oneplus-negroni kernel: wlp1s0: disconnect from AP e0:b6:68:ac:c1:d4 for new auth to c0:49:43:5e:28:53
+[ 3658.996022] oneplus-negroni kernel: wlp1s0: authenticate with c0:49:43:5e:28:53 (local address=66:de:96:76:1f:2d)
+[ 3658.996114] oneplus-negroni kernel: wlp1s0: send auth to c0:49:43:5e:28:53 (try 1/3)
+[ 3659.000035] oneplus-negroni kernel: wlp1s0: authenticated
+[ 3659.004032] oneplus-negroni kernel: wlp1s0: associate with c0:49:43:5e:28:53 (try 1/3)
+[ 3659.016038] oneplus-negroni kernel: wlp1s0: RX ReassocResp from c0:49:43:5e:28:53 (capab=0x1c31 status=0 aid=12)
+[ 3659.036287] oneplus-negroni kernel: wlp1s0: associated
+[ 3659.036659] oneplus-negroni kernel: wlp1s0: Limiting TX power to 30 (30 - 0) dBm as advertised by c0:49:43:5e:28:53
+[ 3992.300038] oneplus-negroni kernel: Bluetooth: MGMT ver 1.23
+[ 4003.896214] oneplus-negroni kernel: wlp1s0: deauthenticating from c0:49:43:5e:28:53 by local choice (Reason: 3=DEAUTH_LEAVING)
+[ 4004.544049] oneplus-negroni kernel: ipa 3f40000.ipa: received modem stopping event
+[ 4005.652717] oneplus-negroni kernel: ipa 3f40000.ipa: received modem offline event
+[ 4005.672568] oneplus-negroni kernel: remoteproc remoteproc3: stopped remote processor modem
+[ 4005.824020] oneplus-negroni kernel: EXT4-fs (sda2): unmounting filesystem e02b6af9-783f-42ce-b96a-1e2e2ad02318.
+[ 4005.955836] oneplus-negroni systemd-shutdown[1]: Syncing filesystems and block devices.
+[ 4005.971819] oneplus-negroni systemd-shutdown[1]: Sending SIGTERM to remaining processes...

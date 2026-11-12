@@ -1,0 +1,10 @@
+policy=auto autosuspend_ms=66 kernel=7.3.0-sm8450+
+cycle 1 before-on: gpu=active gmu=active dpms=On gpu_suspended_ms=24855
+cycle 1: kscreen=0.158s panel_on=0.162s first_gl=0.034s after: gpu=active gmu=active dpms=On
+cycle 2 before-on: gpu=suspended gmu=suspended dpms=Off gpu_suspended_ms=59964
+cycle 2: kscreen=0.195s panel_on=2.434s first_gl=0.035s after: gpu=suspended gmu=suspended dpms=Off
+cycle 3 before-on: gpu=suspended gmu=suspended dpms=Off gpu_suspended_ms=97667
+cycle 3: kscreen=0.146s panel_on=2.312s first_gl=0.017s after: gpu=suspended gmu=suspended dpms=Off
+cycle 4 before-on: gpu=suspended gmu=suspended dpms=Off gpu_suspended_ms=135146
+cycle 4: kscreen=0.119s panel_on=2.302s first_gl=0.019s after: gpu=suspended gmu=suspended dpms=Off
+Connection to 192.168.5.14 closed by remote host.
