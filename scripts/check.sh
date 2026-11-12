@@ -28,6 +28,7 @@ from pathlib import Path
 paths = sorted(Path("scripts").glob("*.py")) + sorted(Path("tests").glob("*.py"))
 paths.append(Path("config/charge-limit/negroni-charge-limit"))
 paths.append(Path("config/cpu-performance/negroni-cpu-performance"))
+paths.extend(sorted(Path("config/audio/voice").glob("*.py")))
 for path in paths:
     compile(path.read_bytes(), str(path), "exec")
 print(f"{len(paths)} Python files passed")
@@ -35,6 +36,10 @@ PY
 
 printf 'Checking audio topology and UCM sources...\n'
 python3 -B scripts/verify-audio-image.py --sources-only
+
+printf 'Running experimental voice test cleanup checks...\n'
+python3 -B tests/test-voice-test.py
+python3 -B tests/test-call-audio.py
 
 printf 'Running charge-limit service tests...\n'
 python3 -B tests/test-charge-limit-service.py

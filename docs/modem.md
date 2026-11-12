@@ -9,8 +9,8 @@
 | 开机带卡 | 可用：开机选卡成功，ModemManager 显示 `registered` |
 | 开机后热插卡 | 已用 `negroni-uim-hotplug.service` 解决；模拟重插约 2 秒恢复，物理重插未测 |
 | 移动数据 | 可用（电信 APN `ctnet`），IPv4 + IPv6 均通 |
-| VoLTE 拨出 | 能到 `ringing-out` → `active`；**通话没有声音**（内核缺少语音通路） |
-| 来电、短信 | 未测 |
+| VoLTE 拨出 | 能到 `ringing-out` → `active`；2026-11-12 17:19 来电中语音子图首次运行，用户反馈听到声音，下行质量与上行未确认，见[通话音频](call-audio.md) |
+| 来电、短信 | 用户确认来电可接通；短信未测 |
 | IMEI | 读出为 `unknown`（MEID 正常），原因未查 |
 
 ## 1. 看门狗循环崩溃（已修复）
@@ -63,9 +63,11 @@ sudo nmcli con add type gsm ifname '*' con-name ct-lte gsm.apn ctnet gsm.usernam
 - `spacebar-daemon` 6.3.4 每新增一个承载，就对其它所有承载调用 `DeleteBearer`。已用 polkit 规则 `49-negroni-spacebar-bearers.rules` 禁止，实测返回 Unauthorized 且不崩溃。
 - NetworkManager 关闭移动数据时用 `Simple.Disconnect` 断开**所有**承载。之后 ModemManager 1.24.2 在下次连接时大概率段错误（4 轮开关崩 4 次），约 20 秒后自动恢复。根因未找到：没有调试符号，仓库里也没有更新的包。
 
+2026-11-12 16:21 重启后出现一次 IMS 承载未建立：81voltd 首次 `Connect()` 返回 `call-already-present`，之后进程保持运行但不重试，IMS 承载一直未连接，拨号返回 `InvalidArgument` 或在 `dialing` 约 19 秒后终止。手动 `systemctl restart negroni-81voltd` 后恢复（期间又触发一次 ModemManager 段错误并自恢复）。17:00 重启后再次出现；这次只重启 81voltd 仍报同样错误，`systemctl restart ModemManager` 后 IMS 承载才连接。两次重启两次出现，连接失败后不退出、不重试的问题尚未修复。
+
 其它要点：IMSA / IMS settings 查询即使在能打电话时也返回 `InvalidOperation`，不能用来判断 IMS 是否注册。打电话不需要把 IMS 接口拉起来。81voltd 是在手机上编译的二进制，来源、补丁和校验和见 [81voltd.source](../config/volte/81voltd.source)。安装与限制见[构建集成说明](build-integration.md)。
 
-通话音频：SM8450 用 AudioReach，当前内核没有 q6voice，只有 4 个 MultiMedia PCM，也没有语音 UCM，所以接通后没有声音。这是下一步要做的工作。
+通话音频：SM8450 使用 GPR/AudioReach/VCPM，不能直接套用旧 APR 平台的 q6voice。实机原先只有 4 个媒体 PCM，没有基带语音图。2026-11-12 已从本机 ACDB 提取语音图并安装 MM5/MM6 hostless 候选；起初 APM 接受命令但 VCPM 不放行语音子图。解码 F3 后确认原因是 RX 方向缺少后处理容器；补回后 17:19 的来电中语音子图运行，用户反馈听到声音。下行质量、上行未确认，原厂内置麦克风的 DMIC3/DMIC4 路径仍未修好，见[通话音频调试](call-audio.md)。
 
 ## 5. 相关事实
 

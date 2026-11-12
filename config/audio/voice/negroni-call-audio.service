@@ -1,0 +1,13 @@
+[Unit]
+Description=Experimental call audio (AudioReach voice graphs) for OnePlus Negroni
+After=ModemManager.service sound.target
+Wants=ModemManager.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 -u /usr/local/libexec/negroni-voice/negroni-call-audio.py
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
