@@ -33,6 +33,9 @@ for path in paths:
 print(f"{len(paths)} Python files passed")
 PY
 
+printf 'Checking audio topology and UCM sources...\n'
+python3 -B scripts/verify-audio-image.py --sources-only
+
 printf 'Running charge-limit service tests...\n'
 python3 -B tests/test-charge-limit-service.py
 

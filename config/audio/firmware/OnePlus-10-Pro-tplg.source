@@ -1,0 +1,4 @@
+audioreach-topology d6bb205aca5f4b8fa6b2f44cf8b5f6a081cbf037
+source config/audio/topology/SM8450-OnePlus-10-Pro.m4
+build bash scripts/build-audio-topology.sh AUDIOREACH_TOPOLOGY_CHECKOUT OUTPUT_DIRECTORY
+sha256 c31dd1f420c99a4222cc739c5f8f3f7b5ede1121ea41253d8d7303824d418faa

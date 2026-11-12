@@ -107,7 +107,23 @@ sudo reboot
 
 所有日志写入 `~/audio-test/audio-test-*.log`。
 
+## 构建集成（2026-11-12）
+
+- 内核：音频设备树修复为 `linux` 提交 `ead3411b6e6`（只含音频改动），父仓库 gitlink 与 `patches/linux/local-7.3.bundle` 已更新，空仓库恢复测试通过。补丁副本见 [sm8450-oneplus-negroni-audio.patch](../config/audio/sm8450-oneplus-negroni-audio.patch)。
+- rootfs：`configure-audio.sh`（新建）、`update-audio-image.sh`（续建）、`verify-audio-image.py`（封装前校验），已接入 `finalize-rootfs.sh`、`build.sh`、`pack-images.sh` 和 `check.sh`。在已有 `root.img` 的副本上实测安装、重复运行与篡改检测均符合预期。
+- 拓扑二进制 `config/audio/firmware/OnePlus-10-Pro-tplg.bin` 随仓库提供，来源与哈希见同目录 `.source`。
+
 ## 尚未完成
+
+- 耳机出声与 USB-C 耳机插拔检测。
+- 全新完整镜像的构建与刷入验证（目前只在已有镜像副本与手机现有系统上验证）。
+- 扬声器保护（TFA9874 无 I/V 反馈与校准）。
+- 开机时 `APM_CMD_GET_SPF_STATE` 5 秒超时。
+- 可选：将拓扑与 UCM 提交到上游 audioreach-topology / alsa-ucm-conf。
+
+<!-- superseded list below kept for history -->
+### 旧待办（2026-11-11）
+
 
 - 以上所有实机测试。
 - 把 DT 补丁提交到 `linux/` 子模块并更新 bundle。

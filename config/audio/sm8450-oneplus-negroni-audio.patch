@@ -1,5 +1,29 @@
+From ead3411b6e6f62525077342db179e0d29f354555 Mon Sep 17 00:00:00 2001
+From: changdy <changdy@163.com>
+Date: Thu, 12 Nov 2026 08:21:08 +0800
+Subject: [PATCH] arm64: dts: qcom: sm8450-oneplus-negroni: fix sound card
+ routing and speaker link
+
+The sound card never instantiated. audio-routing referenced widgets
+that the mainline LPASS macro and WCD938x drivers do not provide
+("VA AMIC1", "Digital Mic0", "WCD_TX_OUTPUT", ...), and a failed route
+makes ASoC abandon the card, logged only at debug level. Use the
+routing of sm8450-hdk minus its WSA speaker entries.
+
+The TFA9874 speaker link pointed at TERTIARY_TDM_RX_0. On 7.3 the q6apm
+TDM ports need the AUDIO_IF module that SM8450's ADSP does not have, so
+drive the amplifiers as 16-bit stereo I2S on Tertiary MI2S (same mi2s2
+pins) and vote the Tertiary MI2S bit clock.
+
+Tested on NE2210 with an AudioReach topology for this board: the card
+probes, PipeWire lists speakers, headphones and both mics, the
+speakers play audibly and the internal microphone records.
+---
+ .../boot/dts/qcom/sm8450-oneplus-negroni.dts  | 82 ++++++++-----------
+ 1 file changed, 32 insertions(+), 50 deletions(-)
+
 diff --git a/arch/arm64/boot/dts/qcom/sm8450-oneplus-negroni.dts b/arch/arm64/boot/dts/qcom/sm8450-oneplus-negroni.dts
-index 43d120aa6..53987fb83 100644
+index 43d120aa6b..7b65969760 100644
 --- a/arch/arm64/boot/dts/qcom/sm8450-oneplus-negroni.dts
 +++ b/arch/arm64/boot/dts/qcom/sm8450-oneplus-negroni.dts
 @@ -1435,6 +1435,18 @@ fsa4480_sbu_mux: endpoint {
@@ -105,15 +129,3 @@ index 43d120aa6..53987fb83 100644
  		};
  
  		codec {
-@@ -1733,9 +1715,9 @@ camera@10 {
- 
- 		clocks = <&camcc CAM_CC_MCLK1_CLK>;
- 		assigned-clocks = <&camcc CAM_CC_MCLK1_CLK>;
--		assigned-clock-rates = <19200000>;
-+		assigned-clock-rates = <24000000>;
- 
--		reset-gpios = <&tlmm 101 GPIO_ACTIVE_HIGH>;
-+		reset-gpios = <&tlmm 24 GPIO_ACTIVE_LOW>;
- 
- 		pinctrl-0 = <&cam_sensor_rear_1_mclk1_active &cam_sensor_rear_1_reset_active>;
- 		pinctrl-names = "default";

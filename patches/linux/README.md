@@ -1,6 +1,6 @@
 # 7.3 设备修复与源码恢复
 
-当前 `linux` 子模块固定到 `7.3` 修复提交 `984f1b07caa0385a05fa96b6bdb22d4713a4b0ba`。修复从重新同步的上游 `476a4a8984395a77b6b6508f849dfb7b786d86b3` 直接修改，新增提交均只有一个父提交；没有 merge 或 cherry-pick `7.3-rc2`。之前的本地合并版本不再作为固定内核。
+当前 `linux` 子模块固定到 `7.3` 修复提交 `ead3411b6e6f62525077342db179e0d29f354555`。修复从重新同步的上游 `476a4a8984395a77b6b6508f849dfb7b786d86b3` 直接修改，新增提交均只有一个父提交；没有 merge 或 cherry-pick `7.3-rc2`。之前的本地合并版本不再作为固定内核。
 
 新增提交为 `835c18d2739`（电池驱动及限充）、`3ca85b51d20`（CPU 参数）和 `1eaec99b04a`（补齐触觉驱动 trace 头文件）。
 
@@ -15,6 +15,8 @@ USB 失电恢复修复 `23a6b6d834e` 在完整关闭 DWC3 时通知 xHCI 重建�
 触摸 I²C 修复 `6732cbb2b0b` 在 RX 完成时回收对应的 linked TX GO 描述符与环槽位，仅由 RX 通知客户端一次完成，并按实际 TX TRE 数量检查容量。原实现只有 RX 完成通知，TX 环逐渐耗尽；实机相同 256 次读取由 8 次 EIO 降为零错误。源码恢复 bundle 已包含该提交。
 
 QRTR 握手修复 `984f1b07caa` 解决基带启动约 40 秒后 `DOG detects stalled initialization` 的循环崩溃。上游 `544d85de4dc2` 之后，内核自己的 HELLO 发出前会以 `-EAGAIN` 拒绝其他包；基带的 HELLO 先到时，名称服务回复的 NEW_SERVER 通告被拒且不再重发，基带因此找不到 rmtfs。修复记录远端已发过 HELLO，待本端 HELLO 发出后把它重新交给名称服务再通告一次，并在通告失败时打印目标与错误码。2026-11-11 实机验证：启动时基带（节点 0）与 WCN6855（节点 7）仍会触发该竞争，重放后均恢复，基带不再崩溃；日志中的 `failed to announce new service ... -11` 属预期。该实现按上游未合入补丁的思路自行编写，上游合入正式修复后应替换。源码恢复 bundle 已包含该提交。
+
+音频设备树修复 `ead3411b6e6` 修正声卡始终不生成的问题：`audio-routing` 引用了主线 LPASS 宏与 WCD938x 驱动中不存在的 widget（如 `VA AMIC1`、`Digital Mic0`、`WCD_TX_OUTPUT`），路由失败会使 ASoC 放弃整张卡且只在 debug 级别记录，现改用 `sm8450-hdk` 的路由（去掉 WSA 扬声器项）。TFA9874 扬声器链路由 `TERTIARY_TDM_RX_0` 改为 `TERTIARY_MI2S_RX`（同一组 mi2s2 引脚，16 bit 立体声 I²S）并投票 Tertiary MI2S 位时钟，因为 7.3 的 q6apm TDM 端口需要 SM8450 ADSP 不具备的 AUDIO_IF 模块。还需配套的 AudioReach 拓扑与 UCM，见[音频说明](../../docs/audio.md)。2026-11-12 实机验证：扬声器出声、内置麦克风录音正常。源码恢复 bundle 已包含该提交。
 
 ## 重做范围
 

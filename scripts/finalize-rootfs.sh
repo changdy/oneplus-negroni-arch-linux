@@ -60,6 +60,7 @@ bash "$project_dir/scripts/configure-gpu-runtime-active.sh" "$target_dir" "$proj
 bash "$project_dir/scripts/configure-charge-limit.sh" "$target_dir" "$project_dir/$log_dir"
 bash "$project_dir/scripts/configure-screen-defaults.sh" "$target_dir" "$project_dir/$log_dir"
 bash "$project_dir/scripts/configure-wifi.sh" "$target_dir" "$project_dir/$log_dir"
+bash "$project_dir/scripts/configure-audio.sh" "$target_dir" "$project_dir/$log_dir"
 bash "$project_dir/scripts/configure-modem-uim.sh" "$target_dir" "$project_dir/$log_dir"
 bash "$project_dir/scripts/configure-runtime-fixes.sh" "$target_dir" "$project_dir/$log_dir"
 bash "$project_dir/scripts/configure-cpu-performance.sh" "$target_dir" "$project_dir/$log_dir"

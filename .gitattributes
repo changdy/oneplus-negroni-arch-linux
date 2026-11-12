@@ -14,3 +14,6 @@
 
 # Unified diff context lines prefix the original tab indentation with a space.
 patches/linux/*.patch whitespace=-space-before-tab
+*.bin binary
+*.m4 text eol=lf
+config/audio/*.patch whitespace=-space-before-tab
