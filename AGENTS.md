@@ -47,6 +47,13 @@ ssh -o BatchMode=yes -o ConnectTimeout=6 oneplus@10.55.0.1 'uname -r; uptime'
 
 ## 检查与提交
 
+### 分支与提交规范（当前阶段）
+
+- **暂不新建分支。所有功能、修复和文档都直接在 `main` 上进行**，不要创建 `feat/*`、`fix/*` 等本地分支或 worktree 分支。
+- **一个功能对应一个提交**：同一功能的代码、配置、测试和文档放进同一个提交，不同功能分开提交；不要把无关改动混进去，也不要把一个功能拆成多个零碎提交。
+- 只 `git add` 本功能涉及的文件，不要用 `git add -A`。
+- 推送到远端前先征得用户同意。
+
 ```sh
 bash scripts/check.sh
 git diff --check
