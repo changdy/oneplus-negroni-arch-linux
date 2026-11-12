@@ -18,6 +18,8 @@ lsof
 strace
 which
 usbutils
+bluez-utils
+vulkan-freedreno
 linux-firmware-realtek
 iw
 wireless-regdb

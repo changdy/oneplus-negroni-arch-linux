@@ -1,0 +1,7 @@
+[Unit]
+Description=Assign OnePlus Negroni Bluetooth address for %i
+Before=bluetooth.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/libexec/negroni-bt-address %i

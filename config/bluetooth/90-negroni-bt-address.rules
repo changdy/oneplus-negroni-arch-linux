@@ -1,0 +1,2 @@
+# Configure the WCN6855 public address as soon as its HCI index appears.
+ACTION=="add", SUBSYSTEM=="bluetooth", ENV{DEVTYPE}=="host", TAG+="systemd", ENV{SYSTEMD_WANTS}+="negroni-bt-address@%k.service"

@@ -11,7 +11,7 @@ from runtime_fixes import AUTOSTART, BAD_MODEM, FILES, MANIFEST, PROJECT, QMLDIR
 
 DEPENDENCIES = ('/usr/lib/modem-daemon', '/usr/bin/systemctl', '/usr/lib/kde-telephony-daemon',
                 '/usr/lib/kactivitymanagerd', '/usr/bin/xembedsniproxy',
-                '/usr/bin/gmenudbusmenuproxy', '/usr/lib/org_kde_powerdevil')
+                '/usr/bin/gmenudbusmenuproxy', '/usr/lib/org_kde_powerdevil', '/usr/bin/btmgmt')
 
 
 def verify(image_dir, log_dir):

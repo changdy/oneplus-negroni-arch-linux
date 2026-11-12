@@ -1,0 +1,36 @@
+#!/bin/sh
+# The WCN6855 UART controller has no factory BD address that Linux can read, so
+# the kernel registers it as an unconfigured controller and bluetoothd ignores
+# it. Assign a stable, locally administered address derived from the SoC serial.
+set -eu
+hci=${1:?Usage: negroni-bt-address hciN}
+index=${hci#hci}
+
+serial=$(cat /sys/devices/soc0/serial_number 2>/dev/null || true)
+case $serial in
+    ''|*[!0-9]*)
+        # Fall back to the machine ID so the address is still stable per install.
+        hex=$(sha256sum /etc/machine-id | cut -c1-8)
+        serial=$((0x$hex)) ;;
+esac
+address=$(printf '02:4E:%02X:%02X:%02X:%02X' \
+    $((serial >> 24 & 255)) $((serial >> 16 & 255)) $((serial >> 8 & 255)) $((serial & 255)))
+
+# The index can appear before the QCA setup finishes; wait for its config state.
+tries=0
+while [ "$tries" -lt 20 ]; do
+    state=$(btmgmt --index "$index" config 2>&1 || true)
+    case $state in
+        *'missing options: public-address'*)
+            btmgmt --index "$index" public-addr "$address"
+            echo "$hci: assigned public address $address"
+            exit 0 ;;
+        *'Configuration options'*)
+            echo "$hci: already configured"
+            exit 0 ;;
+    esac
+    tries=$((tries + 1))
+    sleep 0.5
+done
+echo "$hci: controller configuration state unavailable" >&2
+exit 1

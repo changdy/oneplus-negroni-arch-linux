@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Version-checked firmware loader, Quick Settings and desktop packaging fixes."""
+"""Version-checked firmware loader, Quick Settings, Bluetooth address and desktop packaging fixes."""
 import hashlib
 import json
 import os
@@ -20,6 +20,10 @@ FILES = {
     QUICK_SETTINGS: ('config/quicksettings/QuickSettings.qml', 0o644),
     LOADER: ('config/firmware-loader/msm-firmware-loader.sh', 0o755),
     '/usr/lib/systemd/user/negroni-modem-daemon.service': ('config/systemd/negroni-modem-daemon.service', 0o644),
+    # WCN6855 Bluetooth stays unconfigured without a public address.
+    '/usr/local/libexec/negroni-bt-address': ('config/bluetooth/negroni-bt-address', 0o755),
+    '/etc/systemd/system/negroni-bt-address@.service': ('config/bluetooth/negroni-bt-address@.service', 0o644),
+    '/etc/udev/rules.d/90-negroni-bt-address.rules': ('config/bluetooth/90-negroni-bt-address.rules', 0o644),
 }
 for interface in ('DeviceUtils', 'UssdUtils', 'CallUtils'):
     filename = f'org.kde.telephony.{interface}.service'
@@ -91,7 +95,7 @@ def plan(root):
     changes[AUTOSTART] = (autostart_fixed(auto.read_bytes()), 0o644)
     for executable in ('/usr/lib/modem-daemon', '/usr/bin/systemctl', '/usr/lib/kde-telephony-daemon',
                        '/usr/lib/kactivitymanagerd', '/usr/bin/xembedsniproxy',
-                       '/usr/bin/gmenudbusmenuproxy', '/usr/lib/org_kde_powerdevil'):
+                       '/usr/bin/gmenudbusmenuproxy', '/usr/lib/org_kde_powerdevil', '/usr/bin/btmgmt'):
         if (not (root/executable.lstrip('/')).is_file()
                 or not (root/executable.lstrip('/')).stat().st_mode & 0o111):
             raise RuntimeError('Missing dependency: '+executable)
