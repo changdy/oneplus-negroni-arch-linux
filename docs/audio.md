@@ -1,6 +1,6 @@
 # 音频（扬声器、麦克风、耳机）
 
-状态日期：2026-11-12。**尚未出声**：拓扑和 UCM 已安装到手机，拓扑能被加载，但声卡仍未生成（见下方实机结果）。扬声器 DT 尚未刷入。
+状态日期：2026-11-12。**声卡已经可用**：刷入路由修正后的 `vendor_boot_b`，开机即生成 `OnePlus-10-Pro` 声卡，PipeWire 识别出扬声器、耳机、内置麦克风和耳机麦克风。内置麦克风已录到真实信号；扬声器和耳机是否真正出声尚待人耳确认。
 
 ## 现状诊断（7.3.0-sm8450+，实机 `journalctl -k`）
 
@@ -60,6 +60,26 @@ DT 原本把 TFA9874 接在 Tertiary **TDM**。在 7.3 的 AudioReach 驱动中�
 第三次开机（槽位 B，`qbootctl` 显示 B 为唯一可启动槽位且已标记成功，此前“重试次数耗尽”的猜测不成立）的日志显示，声卡探测停在 29 条 `ASoC: Failed to add route`，例如 `Analog Mic1 -> VA AMIC1`、`Digital Mic0 -> TX DMIC0`、`WCD_TX_OUTPUT -> TX SWR_INPUT`。这些 widget 在主线 lpass 宏/WCD938x 驱动中不存在，路由失败会使声卡放弃实例化（驱动核心对 `-ENODEV` 不打印错误，所以看起来像静默失败）。
 
 修正：`audio-routing` 换成上游 `sm8450-hdk.dts` 的路由（去掉 WSA 扬声器条目）。新的 `vendor_boot-audio-test.img`（SHA-256 `70a5c017…`）同时包含该修正和扬声器 MI2S 修改，已复制到手机 `~/audio-test`，**尚未刷入**。路由修正与拓扑同样关键：不刷这个 DTB，耳机和麦克风也不会出现。
+
+## 2026-11-12 刷入后的实机结果
+
+`vendor_boot_b` 已写入（原分区备份 SHA-256 `0b873148…`，在手机 `~/audio-test/vendor_boot-backup-sde54.img` 和本地 `logs/audio-20261111/backup/`），重启正常。
+
+| 项目 | 结果 |
+| --- | --- |
+| 声卡 | `card 0: OnePlus10Pro [OnePlus-10-Pro]`，播放 hw:0,0 / hw:0,1，录音 hw:0,2 / hw:0,3 |
+| 耳机播放 hw:0,0 | `speaker-test` 正常运行无错误；未插耳机，未人耳确认 |
+| 扬声器播放 hw:0,1 | `speaker-test` 正常运行；两颗 TFA9874 的 `SYS_CTRL0` 由 `0x0011` 变为 `0x0018`（上电、功放使能），`STATUS0` 的 NOCLK 位清零，说明 Tertiary MI2S 时钟已送达功放；未人耳确认 |
+| 内置麦克风 | hw:0,2 只接受双声道，ADC1 信号在声道 0：去直流 RMS 约 1290，峰值 16001；通过 PipeWire 录音去直流 RMS 645 |
+| PipeWire / UCM | 配置组合 `HiFi (Headphones, Mic1, Speaker)`；输出为扬声器（默认）和耳机，输入为内置麦克风（默认）和耳机麦克风 |
+
+UCM 修正：麦克风设为 `CaptureChannels 2`（单声道会使 PipeWire 丢弃 Mic1）；耳机音量控件改为 `HP`（`HP Digital` 不存在）。
+
+已知遗留：
+- 开机时 `APM_CMD_GET_SPF_STATE` 仍超时 5 秒，不影响使用。
+- `MultiMedia4 Capture` 没有路由（未在 UCM 中使用）。
+- 扬声器无保护：PipeWire 重载后音量可能被重置为 100%，建议保持在 40% 左右。
+- 耳机插拔检测（FSA4480 + MBHC）尚未测试。
 
 ## 实机测试步骤
 
