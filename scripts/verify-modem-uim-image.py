@@ -9,6 +9,13 @@ import sys
 
 from modem_uim import NEW_BRANCH, SCRIPT_PATH, patched_script
 
+HOTPLUG_UNIT = "negroni-uim-hotplug.service"
+HOTPLUG_SCRIPT = "/usr/local/libexec/negroni-uim-hotplug"
+HOTPLUG_FILES = {
+    HOTPLUG_SCRIPT: "config/modem-uim/negroni-uim-hotplug",
+    f"/etc/systemd/system/{HOTPLUG_UNIT}": f"config/systemd/{HOTPLUG_UNIT}",
+}
+
 
 def verify(image_dir, log_dir):
     image = image_dir / "root.img"
@@ -32,10 +39,23 @@ def verify(image_dir, log_dir):
     if (not re.search(r"Type:\s+regular\s+Mode:\s+0755", metadata)
             or not re.search(r"User:\s+0\s+Group:\s+0", metadata)):
         raise RuntimeError(f"{SCRIPT_PATH} must be root-owned, regular, mode 0755")
+    # The hot-insert watcher must match the repository and be enabled.
+    project = Path(__file__).resolve().parents[1]
+    for target, origin in HOTPLUG_FILES.items():
+        if debugfs(f"cat {target}") != (project / origin).read_bytes():
+            raise RuntimeError(f"image/source mismatch: {target}")
+    metadata = debugfs(f"stat {HOTPLUG_SCRIPT}").decode()
+    if (not re.search(r"Type:\s+regular\s+Mode:\s+0755", metadata)
+            or not re.search(r"User:\s+0\s+Group:\s+0", metadata)):
+        raise RuntimeError(f"{HOTPLUG_SCRIPT} must be root-owned, regular, mode 0755")
+    wants = debugfs("ls -p /etc/systemd/system/multi-user.target.wants").decode()
+    if f"/{HOTPLUG_UNIT}/" not in wants:
+        raise RuntimeError(f"{HOTPLUG_UNIT} is not enabled")
     verification = {
         "image": str(image), "script": SCRIPT_PATH,
         "no_sim_exit_status": 0, "no_sim_message": "无卡，跳过配置",
         "script_sha256": hashlib.sha256(source).hexdigest(),
+        "hotplug_service": HOTPLUG_UNIT, "hotplug_enabled": True,
         "hardware_tested": False,
     }
     report.write_text(json.dumps(verification, indent=2, ensure_ascii=False) + "\n")

@@ -1,0 +1,66 @@
+#!/bin/sh
+# Select the SIM when a card appears after boot (hot insert or card swap).
+#
+# msm-modem-uim-selection.sh runs once at boot and skips when no card is
+# present. This modem does not provision a card on its own, so a card inserted
+# later stays "detected" and ModemManager fails with sim-missing.
+set -u
+
+INTERVAL="${UIM_HOTPLUG_INTERVAL:-5}"
+READY_WAIT="${UIM_HOTPLUG_READY_WAIT:-15}"
+SELECT="${UIM_HOTPLUG_SELECT:-/usr/bin/msm-modem-uim-selection.sh}"
+NO_SESSION="Primary GW:   session doesn't exist"
+
+card_status() {
+	qmicli --silent -pd qrtr://0 --uim-get-card-status 2>/dev/null
+}
+
+needs_selection() {
+	printf '%s' "$1" | grep -Fq "Card state: 'present'" &&
+		printf '%s' "$1" | grep -Fq "$NO_SESSION"
+}
+
+# ModemManager only needs a restart when it has no usable modem object: it
+# gives up with sim-missing and does not look at the card again.
+modem_manager_usable() {
+	state=$(mmcli -m any -K 2>/dev/null | sed -n 's/^modem\.generic\.state *: *//p')
+	[ -n "$state" ] && [ "$state" != failed ]
+}
+
+while sleep "$INTERVAL"
+do
+	cards=$(card_status) || continue
+	needs_selection "$cards" || continue
+
+	echo 'SIM present without a provisioning session, selecting it.'
+	# The applications may not be listed yet right after insertion; the
+	# selection then fails and the next round retries. The helper's exit
+	# status is not usable here: its systemd-notify exit trap fails outside
+	# a notify service, so the session check below decides.
+	SIM_WAIT_TIME=0 env -u NOTIFY_SOCKET sh "$SELECT" || true
+
+	count=0
+	while [ "$count" -lt "$READY_WAIT" ]
+	do
+		cards=$(card_status) || cards=
+		if [ -n "$cards" ] && ! printf '%s' "$cards" | grep -Fq "$NO_SESSION"
+		then
+			break
+		fi
+		sleep 1
+		count=$((count+1))
+	done
+	if [ "$count" -ge "$READY_WAIT" ]
+	then
+		echo 'Provisioning session did not appear, retrying later.'
+		continue
+	fi
+
+	if modem_manager_usable
+	then
+		echo 'SIM selected; ModemManager already has a usable modem.'
+	else
+		echo 'SIM selected; restarting ModemManager to pick it up.'
+		systemctl try-restart ModemManager.service
+	fi
+done

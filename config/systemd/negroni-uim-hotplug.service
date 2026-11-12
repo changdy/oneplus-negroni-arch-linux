@@ -1,0 +1,12 @@
+[Unit]
+Description=Select a SIM inserted after boot on OnePlus Negroni
+After=msm-modem-uim-selection.service ModemManager.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/libexec/negroni-uim-hotplug
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

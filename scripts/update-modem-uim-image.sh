@@ -20,7 +20,7 @@ cleanup() {
 trap cleanup EXIT
 mount -o loop "$image_dir/root.img" "$target_dir"
 bash "$project_dir/scripts/configure-modem-uim.sh" "$target_dir" "$log_dir"
-sync -f "$target_dir/usr/bin/msm-modem-uim-selection.sh"
+sync -f "$target_dir"
 umount "$target_dir"
 python3 scripts/verify-modem-uim-image.py "$image_dir" "$log_dir"
 chown "${SUDO_UID:-1000}:${SUDO_GID:-1000}" "$log_dir/modem-uim-install.log" \
