@@ -11,7 +11,8 @@
 
 # Downloaded inputs, rootfs, images and build/diagnostic output
 /alarm
-/downloads/
+/downloads/*
+!/downloads/stock-drivers-20261113/
 /images/
 /logs/
 /backups/
@@ -21,6 +22,7 @@
 __pycache__/
 *.py[cod]
 *.ko
+!/downloads/stock-drivers-20261113/vendor_dlkm_b/lib/modules/*.ko
 *.img
 *.img.*
 

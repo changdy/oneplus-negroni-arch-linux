@@ -45,6 +45,14 @@ ssh -o BatchMode=yes -o ConnectTimeout=6 oneplus@10.55.0.1 'uname -r; uptime'
 - Windows 上用 Python 的 `write_text` 会写出 CRLF。复制到手机的 shell 脚本必须是 LF。
 - 工作区里 `artifacts/**/oplus_battery_sm8450.[ch]` 显示为已修改，只是 CRLF/LF 差异，不要提交它们。
 
+## 原厂驱动模块参考归档
+
+- 用户已于 2026-11-13 明确授权将本机原厂模块纳入 Git 并推送；固定目录为 [`downloads/stock-drivers-20261113/`](downloads/stock-drivers-20261113/README.md)。此目录是下载产物忽略规则的精确例外，不要扩大到其他 `downloads/` 内容。
+- 模块位于 `vendor_dlkm_b/lib/modules/`：**373 个 `.ko`**，连同原厂加载清单、依赖和分区元数据共 **382 个原厂文件、160,304,370 字节**。来源为本机 `super` 的 slot 1 `vendor_dlkm_b`，同槽 `my_manifest_b` 记录 `NE2210_15.0.0.401(CN01)`。
+- `README.md` 记录来源和适用边界；`inventory.csv`、`inventory.json` 与 `SHA256SUMS` 记录全部路径、大小和哈希。更改或补充归档时必须核对来源、更新清单，并在归档目录执行 `sha256sum -c SHA256SUMS`。
+- 原厂模块面向 Android **5.10**，仅用于离线符号、反汇编和驱动逻辑对照；**不要直接加载到当前主线 7.3 内核，也不要将其接入镜像模块安装流程**。移植需对照板级版本、接口、时钟、电源与初始化顺序，再按子系统验证。
+- 保留模块内嵌的 license / scmversion、原厂 NOTICE 和配套文件，不根据整机版本推断所有文件精确匹配同一公开源码提交。归档没有改变分区备份、镜像、固件、校准负载、凭据及原始日志不纳入 Git 的规则。
+
 ## 检查与提交
 
 ### 分支与提交规范（当前阶段）

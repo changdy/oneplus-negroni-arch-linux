@@ -25,3 +25,6 @@ artifacts/usb2-gadget-20261113/*.patch text eol=lf whitespace=-blank-at-eol,-bla
 config/gnss/sources.txt text eol=lf
 *.rules text eol=lf
 *.source text eol=lf
+
+# Keep the verified stock module archive byte-identical to its SHA256SUMS.
+/downloads/stock-drivers-20261113/vendor_dlkm_b/** binary

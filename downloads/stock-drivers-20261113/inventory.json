@@ -1,0 +1,1923 @@
+{
+  "date": "2026-11-13",
+  "device": "OnePlus 10 Pro NE2210",
+  "stock_manifest_version": "NE2210_15.0.0.401(CN01)",
+  "source_partition": "super metadata slot 1: vendor_dlkm_b",
+  "source_image_sha256": "7102fd102ac39c470335896185e2d7443e9e2d4bb508887f7f7057bb15abaedb",
+  "file_count": 382,
+  "module_count": 373,
+  "total_bytes": 160304370,
+  "verified_against_phone": true,
+  "files": [
+    {
+      "path": "vendor_dlkm_b/etc/NOTICE.xml.gz",
+      "sha256": "5b3ff7e5f6de19871485b44f883e3fc3a90f630d63492cb5ee354a970c95af72",
+      "size": 75
+    },
+    {
+      "path": "vendor_dlkm_b/etc/build.prop",
+      "sha256": "adab5f323ea66e57218549170d2d659ea74a722f141630273749e3175394fd3e",
+      "size": 907
+    },
+    {
+      "path": "vendor_dlkm_b/etc/fs_config_dirs",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "vendor_dlkm_b/etc/fs_config_files",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/adsp_loader_dlkm.ko",
+      "sha256": "245533ab0a0f70a495a114db8ac5dd2edfa1b7d35fe180b9494ffdffabe6b6ef",
+      "size": 25080
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/adsp_sleepmon.ko",
+      "sha256": "eb24c76030828a7fa55bee83f17b7668e4dae123f899670aa793665765d4ffe4",
+      "size": 49840
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/altmode-glink.ko",
+      "sha256": "320f7987245db7b8a8ce245d51d334e4026a0b11e6554ad1f81bdd4d86f478d6",
+      "size": 34032
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/audio_extend_dlkm.ko",
+      "sha256": "3052cd5ac5d12ac01363b9419ba7caff984951fa20e8f98b9acca09ccbf0c2e3",
+      "size": 22952
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/audio_pkt_dlkm.ko",
+      "sha256": "b0663a05d9c79edeff4071f973eec2bfbe356d20d1051a659eb53ee4ef14c30a",
+      "size": 49032
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/audio_prm_dlkm.ko",
+      "sha256": "5976d8cda9f93c76cb546a97127357abb8d93093b78fd1233984ab6e708a1691",
+      "size": 28384
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/audpkt_ion_dlkm.ko",
+      "sha256": "1c7660de89b44ff745410052fe6fd51a9d6afc7a12db3d1087373f2d9a243a11",
+      "size": 36216
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/aw8697.ko",
+      "sha256": "f2c2a654af5d2e7a2b611eb22f9223617f8fb451f3b14985d83d25079862b811",
+      "size": 422968
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/bam_dma.ko",
+      "sha256": "9b01a0e2da0d3048f5817c3d22c1aefef56cdc308b13c0121ed2a3e8241ba8e0",
+      "size": 57856
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/bcl_soc.ko",
+      "sha256": "46eb6c1cd3fa9333815f1dcb20f08e5f3f5e50820c430eed3327cfe141fc01ca",
+      "size": 19144
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/boot_stats.ko",
+      "sha256": "0c0f683624035bcb912764b0ce264b1c4a7eb6144f900e5ea078360be87cd438",
+      "size": 16464
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/bt_fm_slim.ko",
+      "sha256": "8eb96a3e2a11641cf46c458fca2f441611d5cb003d7dd690d872d503b2cbe35d",
+      "size": 48464
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/btpower.ko",
+      "sha256": "7e5118d79286a28517c7678844375f824ff3be636b44d439825d9652c2fe4e3d",
+      "size": 59424
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/camcc-diwali.ko",
+      "sha256": "f7081cc287c308f3f31a21fc8eb4d8e8c4b1303a1330f3258e1ebe5400d99791",
+      "size": 144296
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/camcc-waipio.ko",
+      "sha256": "47448b81fc1374603925d1445c56cabd93e1051593d476c7ec69e61c7a991697",
+      "size": 184256
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/camera.ko",
+      "sha256": "1962012bfe4cd6d45e3a6b467c8d20ea2e32afab057acf11d41538f2f098d46e",
+      "size": 12220576
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/cdsp-loader.ko",
+      "sha256": "eb928f9c0c07b06c72659de80e2a9c85c02a94fdf4485b1e46a6f1110899ea92",
+      "size": 18840
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/cdsprm.ko",
+      "sha256": "0f4006645cca37e47b33f2a4329a4782bfb9b1a5ff785692f489504ea75698fc",
+      "size": 61872
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/charger-ulog-glink.ko",
+      "sha256": "270afc99abae7da9b82aa6d9c6aaeb4af8d735d0982c92f65cfbe2176797bf77",
+      "size": 30688
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/cnss2.ko",
+      "sha256": "a8da40b204b992df040face769b963204e2acae63bb538154463e037fcd1e384",
+      "size": 1031552
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/cnss_nl.ko",
+      "sha256": "67b07f2f3d73ac82c6e5f6a8fabd80dd497110b216918e3d94589dc45a02e741",
+      "size": 16600
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/cnss_plat_ipc_qmi_svc.ko",
+      "sha256": "484f6fd7620223fec06465679ea9c00365078a8d56c266e7afa54e5b2b8a9529",
+      "size": 61728
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/cnss_prealloc.ko",
+      "sha256": "40616abbd00263d9e8514c6b52027badba82db0ca704b1cc5483c64793af2b18",
+      "size": 19280
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/cnss_utils.ko",
+      "sha256": "15592d06ef7c8b5e2ddf04509d4607a8473f72f7df9322050c6e51c62c572fc6",
+      "size": 34568
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/combkey_monitor.ko",
+      "sha256": "9dcc6191dac46a76208043698ad40d0c1fcd26942420bbd7ef14cedd35ecd4c2",
+      "size": 30160
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/core_hang_detect.ko",
+      "sha256": "7d969a5308e581fb0c56321c58d5711c64c59c39f68ade2d595bf87dfc8290f4",
+      "size": 26368
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/coresight-csr.ko",
+      "sha256": "0220b91e881c0a611fd49629ff3fff826757c29c70315746f8b6eaf615d01317",
+      "size": 48840
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/coresight-cti.ko",
+      "sha256": "b064b8cdc64888534f476c41400bc46fa8b0c87d1b59b5eb7b522e2ed2853c72",
+      "size": 130416
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/coresight-dummy.ko",
+      "sha256": "c0ebb863a8e5d378066c082545860d143d718ae85d29208c1c6d9d4d0dede867",
+      "size": 16832
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/coresight-funnel.ko",
+      "sha256": "309ccb5f4035bd05b7aeabfd1b0b6b45577c1a2fa50b2f5a34e48dcea2aed779",
+      "size": 33160
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/coresight-hwevent.ko",
+      "sha256": "b538a019edec9b195760f02346446bd32597542c4c32eb632ffd3ef17f670bb5",
+      "size": 20544
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/coresight-remote-etm.ko",
+      "sha256": "3d00eed133ef52a669eda18352a71b957665d800a1135e49324672896c998d98",
+      "size": 21664
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/coresight-replicator.ko",
+      "sha256": "69d037d058660dd8ff47304977b064bde6c8be5d206c5a5fd226165f5aff1efb",
+      "size": 35624
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/coresight-stm.ko",
+      "sha256": "f76d03d31920b4f290480f39db5476df83f7d8b5734129754a350fb845b50a7b",
+      "size": 50128
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/coresight-tgu.ko",
+      "sha256": "8ba12ba52fb45f1ac0ddd4b9fc0edd2996948e836d9a3c7b8abd92fb860bf181",
+      "size": 24816
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/coresight-tmc.ko",
+      "sha256": "5753453eef040008bd504f04eaf5323bee2adc1ebd042b0117a882fea1d9a07b",
+      "size": 175960
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/coresight-tpda.ko",
+      "sha256": "3ad27d412968c5ea22fdb0dd4db3ea0647a6865292b0f4b3bcfa023c7eedf76a",
+      "size": 41752
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/coresight-tpdm.ko",
+      "sha256": "e47b2bc39d959adb47d5b1cac26c749951ff723bb5154bd9dc2adcfaf0fe3de5",
+      "size": 181272
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/coresight.ko",
+      "sha256": "12ca568cc97af5e8ca9fed8c1ad7f10c77f27ccdbde1a7ce8aa7305e3634be25",
+      "size": 108672
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/cpu_voltage_cooling.ko",
+      "sha256": "b38ec4fb5503b074969a5fe7ca7bdf66eb234dff367a0785735281e6f560aa66",
+      "size": 22960
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/crypto_zstdn.ko",
+      "sha256": "d52e1431a9596254215198cc99208801d4fa25a10aeb39b5f4d7c447dc01af2c",
+      "size": 489560
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/cs_press_f71.ko",
+      "sha256": "b2fbd7a5407f96cd99e25d9a5def4e893edbea38372d52611da5fbf234875f83",
+      "size": 157984
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/dcc_v2.ko",
+      "sha256": "b284ea7d8df7185467cdf2d4107bffc159421100450119b256dd62cb02372108",
+      "size": 78224
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/ddr_cdev.ko",
+      "sha256": "21e2890204b9131b0c63ea5e972d1932889be1c74c6b102f80c15da5a13bbde9",
+      "size": 16360
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/debugcc-diwali.ko",
+      "sha256": "09c548d121c0367cf2237101d5dec761aa3e7a53b21be6bcdd74216d76c793e8",
+      "size": 99640
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/debugcc-waipio.ko",
+      "sha256": "9f083e72baa58e38af13fb111983fc5016ec7a69a0d9b61df69b0e11a73393ca",
+      "size": 46016
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/dump_device_info.ko",
+      "sha256": "3792f6f5c38d4027209bcd28e06de8c0690a0cfac467c5a45499d406fedb58b1",
+      "size": 23656
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/dump_reason.ko",
+      "sha256": "3999a018b09f0fd4cc1a642fc4cfbe748d4df5f7d22390c21979c46fba69eae1",
+      "size": 15680
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/dwc3-msm.ko",
+      "sha256": "e98c01b8351e76c1f5fa17d5c05850056986734f3a84416a38f4ff716bc3da4b",
+      "size": 288624
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/ehset.ko",
+      "sha256": "49bad8c755b2577d2efbaf86e7e763451c2f7f6d4c36459da79e2e254d5081aa",
+      "size": 14232
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/ep_pcie_drv.ko",
+      "sha256": "0a0bfcd9b0e08ceee8489df6c4c0b0fb4cd5bb33189e69aa4097a68abe94632c",
+      "size": 373088
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/eud.ko",
+      "sha256": "51f1238b946757a8ab5e8ed7d26b8713493765b8ef175e0737221bc3a0b7da35",
+      "size": 46048
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/explorer.ko",
+      "sha256": "84e2dfa8288873844de9abd03fb3b3f7f9767d48c9221a6595ecb05328807435",
+      "size": 634152
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/f_fs_ipc_log.ko",
+      "sha256": "320cb3f02132d64abd16bfe192813645551292ef26c8d704c73c9d2362f45ac5",
+      "size": 63360
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/frpc-adsprpc.ko",
+      "sha256": "52c93558d3881f05b0ac1c629ccb06ba62f35c7e855353393e36a658bd6b3fa6",
+      "size": 827632
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/fsa4480-i2c.ko",
+      "sha256": "1134fcbcc51801b98e0674801ad8dc0563db5de9b6854aaa5491273bcd8eb773",
+      "size": 41968
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/game_opt.ko",
+      "sha256": "f616bbbd11b75c0e14645711ca6cfc79136ed0d041c5e35eaf28bdf27032a684",
+      "size": 72112
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/gf_qcom.ko",
+      "sha256": "d375b72c373d09bff332723fa3ff629829349dfb46632ebb0e8df44d77b26536",
+      "size": 70072
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/gh_irq_lend.ko",
+      "sha256": "09432f8ce3c93198c9588e3060324fb4c7be42a852b84f57c5f93ff375c4cd84",
+      "size": 26648
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/gh_mem_notifier.ko",
+      "sha256": "7de3c62a34b82a7a7d52e981a6ea0ac1203b44942ffcf7f40823c93b4f954cf5",
+      "size": 14648
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/gh_virtio_backend.ko",
+      "sha256": "aeb351c61c4750b91963a0717d75ff7380aef137b144279886159773b663f555",
+      "size": 98544
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/glink_pkt.ko",
+      "sha256": "a77525d27d9c42455ebe016a6163abd29140c16909e5a2c19d2d0a39db10f94e",
+      "size": 64456
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/glink_probe.ko",
+      "sha256": "7e3c3fbc276b1903069ba40ff03e8b99a14ea9b134cb9155dc3430b0a84bc368",
+      "size": 24416
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/gpi.ko",
+      "sha256": "5103896233973eaffa218d0f25f39ab5adadd9d81572799798edc7bc7587faf7",
+      "size": 115248
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/gplaf_scmi.ko",
+      "sha256": "2dd7a3aa1729bf5c18d5f83899e6b16a1694579b647ddaa4eb23466e168afcbb",
+      "size": 11528
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/gplaf_vendor.ko",
+      "sha256": "a5f1137a543b7e54036d549b08ce51d66392050cae8004973711ae4700467449",
+      "size": 14352
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/gpr_dlkm.ko",
+      "sha256": "35dde75c130ca00271444476fcf3b0c6c5ae06722d0a3d85072342f0984b19d0",
+      "size": 48592
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/gpucc-diwali.ko",
+      "sha256": "57f42f478f33ad259ec58421499d94a2bba0f6df5f017ae94eb127500fa0bc3d",
+      "size": 44760
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/gpucc-waipio.ko",
+      "sha256": "c72a76701518dba5ca88699005edbdc35b0f7f8c7d236f181cd4f43fb15cda13",
+      "size": 55624
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/gsim.ko",
+      "sha256": "2ff80e045272dae5a88d48024f8f72285d3019fc6357265ccdef887876fa90bb",
+      "size": 540888
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/guestvm_loader.ko",
+      "sha256": "8df80a919e2cff0a1cb28542973c782b31b4a970a16a275ef9be7adbd58de49c",
+      "size": 31472
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/haptic.ko",
+      "sha256": "d3f88eb62dca55e3110c7f7c0444d5827537f5409df128650cfc71375286a487",
+      "size": 481112
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/haptic_feedback.ko",
+      "sha256": "ac9e660667149c039da3f307ef5561268c70af5f858d27b056844ece039164b4",
+      "size": 39472
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/hdcp_qseecom.ko",
+      "sha256": "36cbe869f1f1bfedae3557c3ed7f5fc98ac3d2fc3100452da2200418f81251c9",
+      "size": 52216
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/hdmi_dlkm.ko",
+      "sha256": "c6ff6a19af8acb22d9b03b071ac95c04c51fe476a244ed65a156f8e49e583ef5",
+      "size": 38296
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/heap_mem_ext_v01.ko",
+      "sha256": "8ce5c012ca09a30bc5b92281d473e46e4120c3fe49face2901e53b9e46bfd3cb",
+      "size": 12840
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/horae_shell_temp.ko",
+      "sha256": "44644c2619bd99b4ae98d018d09e745c9a3ae81c5cb6904ceadac9e7b50c4d5d",
+      "size": 25360
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/hung_task_enh.ko",
+      "sha256": "d90f273d5c59ee20c61b80a85707fd4ff88a8792545e17ac38055e44a40fb4d9",
+      "size": 18680
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/hung_task_enhance.ko",
+      "sha256": "585acd63ebf1130f934e0fd301f85a428789d7cdb4081cc7b47b141ce8ff29bb",
+      "size": 23872
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/hvc_gunyah.ko",
+      "sha256": "82bf5b043bd1f318b861599d7b5adb29e41674ba7a64ebe4b1b74a3d43749807",
+      "size": 21448
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/hwmon.ko",
+      "sha256": "b1a0eae508391c18654d6305c7d675f99ec8f6b7e35cd201eaf575b9a06c7798",
+      "size": 60976
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/hyp_core_ctl.ko",
+      "sha256": "c6bf8f69c076cd3d0cb05eaf3ba74da1b604606a2212a3ec7ec211a4ed74db09",
+      "size": 87376
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/i2c-msm-geni.ko",
+      "sha256": "9569a04e86746e9db46e2d1473c6fc5068e18a7db64e27e49b3a137cacc8cbb4",
+      "size": 100784
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/i3c-master-msm-geni.ko",
+      "sha256": "3c54e7cd512ac4cff82e17cc878d57f933955eaa89b7386249a648766d52562e",
+      "size": 84224
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/icc-test.ko",
+      "sha256": "d61abf3bf5be226d7c2db00d234101bc57ef611c6829787305dc355e6354db86",
+      "size": 16088
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/icnss2.ko",
+      "sha256": "fc201350d6a15755593376e86f5e2ade8d92b1408555f23f61a14a8582775c46",
+      "size": 430944
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/init_watchdog.ko",
+      "sha256": "504f7aef80647b8abfab1123a1445770eba9d21d47bbb33785dcbc22a46acc2a",
+      "size": 31384
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/ipa_clientsm.ko",
+      "sha256": "c6a93486c9e387410580b27ae5eb6e2345f4b00e0e1b3b59c68c270ff7d69b4d",
+      "size": 732640
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/ipa_fmwk.ko",
+      "sha256": "e1edd013d386c0dc0da54da20bfb021ac28663ab87c7720556c9146db7415a73",
+      "size": 224632
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/ipam.ko",
+      "sha256": "306939bc8e6c3b7c9ee8e2be25119a16652fc082fa779dea1ef4aebeca14cb16",
+      "size": 5564920
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/ipanetm.ko",
+      "sha256": "2a73a06c48e5351f0e3139a42e48c1436df51a47bcde9f5f651c3667e8b8770d",
+      "size": 11920
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/keyevent_handler.ko",
+      "sha256": "63642e3b637639c3f9d9d7e45b5ae04296a0febe677b746a6d8fa8967a6d0068",
+      "size": 22952
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/last_boot_reason.ko",
+      "sha256": "a46af15d4bbab8a75c7219a99830f0867d91e60f7026d66c0dcd4902021fd5eb",
+      "size": 27592
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/leds-qpnp-vibrator-ldo.ko",
+      "sha256": "c5578e2421c5cf42309c783f646275c50211af39eddcf90f3601719aeaf2af01",
+      "size": 26432
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/leds-qti-flash.ko",
+      "sha256": "9abb38e08e45e7393e09e5b1a971fc29aba9ad3083d08afaa09db503e6b08340",
+      "size": 58432
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/leds-qti-tri-led.ko",
+      "sha256": "994cd404ba0e66aaf94f47052263911d7ef1417e60ca54a7cbbcb8deb149b7d5",
+      "size": 25448
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/leds_aw210xx.ko",
+      "sha256": "54f94d07a2faa08835ad4e9267441951b89a55c81a221162f2db1fa5f77c4ded",
+      "size": 74216
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/llcc_perfmon.ko",
+      "sha256": "aa1eba88aed4f9119b134f19f74ce91040564e26bcc3af42550a613c06878b3c",
+      "size": 51440
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/lpass_cdc_dlkm.ko",
+      "sha256": "4a9ae7d81cc1f02914951da83fd9430283c4b7c115c38cc08ec6a1b4caa06213",
+      "size": 122280
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/lpass_cdc_rx_macro_dlkm.ko",
+      "sha256": "36eb70252051715f8c6fd0e9adab56cab04282ade9464d688788265ae006add8",
+      "size": 229736
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/lpass_cdc_tx_macro_dlkm.ko",
+      "sha256": "aafe9b9ab47a9d70235148803be9487f67ed8bd4f323205f4c4a15a3ee59a307",
+      "size": 148288
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/lpass_cdc_va_macro_dlkm.ko",
+      "sha256": "99ce09475a1043452313f79875fc3dcf10b69a356dc1ca17fb29abd5bf2b75e1",
+      "size": 123984
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/lpass_cdc_wsa2_macro_dlkm.ko",
+      "sha256": "d13e57be2aa6fc367a19b5318e5f97592505cba755109ff9cc898f01b5c8ef69",
+      "size": 140000
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/lpass_cdc_wsa_macro_dlkm.ko",
+      "sha256": "26e6e8001e7aaf922aa196d913e58cee154761f3d64acf236a594ccd50efb439",
+      "size": 139688
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/lt9611uxc.ko",
+      "sha256": "f543fb53695da2aafee4748e044cfe19e1f89a19ce9acccf871337b138336719",
+      "size": 83160
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/lvstest.ko",
+      "sha256": "7a73fd99870797cf9be400705b839ae4434bc3ff36ab8a668617cad32696ffd8",
+      "size": 26328
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/lzo-rle.ko",
+      "sha256": "3f8a8db805de40fa599898a4899e5891ba66044accb944802b05d92172a3a210",
+      "size": 16104
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/lzo.ko",
+      "sha256": "d830e3eded8171c752fc4145a3ab0b385b965efb53b0046729b79095414dcbba",
+      "size": 16048
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/machine_dlkm.ko",
+      "sha256": "e201800ab1814b4e021c340eccd7705291bede5f917d939249a7344958499de9",
+      "size": 162632
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/mbhc_dlkm.ko",
+      "sha256": "e68a0b70bac9f3e1bb547bc66a75e9695cdb8a1658bf9beba99530ace8a20b36",
+      "size": 149160
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/mdt_loader.ko",
+      "sha256": "a0871ca60b2df3992d8c14ddc2b6631a0c32590669a2be29d2f9a0c76c8ba0e3",
+      "size": 20136
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/memlat.ko",
+      "sha256": "38f9844c484e4e6e04d72c042dc3b412aa4c8cd75f18a2a99e46ea890720665a",
+      "size": 83280
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/mhi.ko",
+      "sha256": "e8106410867139098cb5969817c6515c1c1531751565f35fb2486ce9a8c0f349",
+      "size": 261008
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/mhi_cntrl_qcom.ko",
+      "sha256": "1fe65eb224b728a8c4c3ef67433ba5a13514dfde6079e1374a253b1ff1eb2a86",
+      "size": 81624
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/mhi_dev_drv.ko",
+      "sha256": "ae933d5fbfd42633ce03477524adbc565b97a11b15730fd01cf429b3b322f40c",
+      "size": 573288
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/mhi_dev_dtr.ko",
+      "sha256": "e98e6bb21eabaa67e5b8320a24a47d6effc942f1f065a9764101f94b6b437673",
+      "size": 23480
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/mhi_dev_net.ko",
+      "sha256": "7d9f991ccba578b4148a78cde94675d5d07e91e9cdfbd022c4e83872c93af4a0",
+      "size": 42040
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/mhi_dev_netdev.ko",
+      "sha256": "d5711e9f4635cf2d40b9b5cfbe65ee67299a2c0e2e2eec44e855a7e02392e530",
+      "size": 57776
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/mhi_dev_uci.ko",
+      "sha256": "8d5a579a90a97eef216b723bc5a0e1f332e3ba9d272944845eb60f6e77e570d7",
+      "size": 49760
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/microdump_collector.ko",
+      "sha256": "4eeb99d382b9b2a0db90023afcf96f063c6ef144ccda372f429041131f0307df",
+      "size": 17224
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/mmrm_test_module.ko",
+      "sha256": "ec5bca4f35af0ebcac8ced934344acf29cdd0e503681f2c76d85c47b01f7349a",
+      "size": 132760
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/modules.alias",
+      "sha256": "1a49b33ad0e494a0c3b0f0c62dcb324f4ca5c6f8a0c8063785e7560e91cbec04",
+      "size": 35773
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/modules.blocklist",
+      "sha256": "1fd4e3e5e5a13920c2fa75f0cdb7149869ceef6c194f2516ce977c0e492cb706",
+      "size": 1371
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/modules.dep",
+      "sha256": "0b23784619d29b6540f51223bb502164ee42d82955666df5a908dbf62b8dd388",
+      "size": 55552
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/modules.load",
+      "sha256": "94907cf0cc6185aef6938b5b5ae35b660ad58f0862d63c661456456f5818b88e",
+      "size": 6685
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/modules.softdep",
+      "sha256": "d48ab52be0ec78051b48a4820f52187923257f80860488d772b53c7518b34738",
+      "size": 911
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/msm-cvp.ko",
+      "sha256": "a6689587a57bbeddba7e77634bdb09310929fc6b7ff7af3a665b6b6b06f9d92e",
+      "size": 835104
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/msm-eva.ko",
+      "sha256": "8c80bc7a4b722c212785a9f0e9ef312c6e51dd67f28a0b921b9a8eac84cf1713",
+      "size": 909312
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/msm-mmrm.ko",
+      "sha256": "2aaa7c7f412168444ba9c62e870974348c9342ae236dbaa0e167abae1db86392",
+      "size": 101016
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/msm_drm.ko",
+      "sha256": "201c72411ee09917e9ec04dd65330ce4b6cba218daf29ab6d0bfaacf7ca38b64",
+      "size": 8080760
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/msm_ext_display.ko",
+      "sha256": "a7c857f693091410544546c81411d8265d7bb5c2af5847674283723999ba74e7",
+      "size": 27848
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/msm_kgsl.ko",
+      "sha256": "809722f24e0fef34bcb8114ee99d42f76094806df862485c51e3108317bfbaf3",
+      "size": 3044864
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/msm_lmh_dcvs.ko",
+      "sha256": "8e1e654228a3cb4bdd12f125a662d838acfe655c56f0eb6167c25fcfad887b94",
+      "size": 27240
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/msm_memshare.ko",
+      "sha256": "30d1ddeba8dd5bc141d5ae47a3dcd9d6d39e662e56acdd339afbbf282e0df43d",
+      "size": 37912
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/msm_performance.ko",
+      "sha256": "a3b59f62fe9b1b69eb50a49f7887b07a30aea4b8d4b8679c6720e384e5a5aeb3",
+      "size": 85192
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/msm_rng.ko",
+      "sha256": "621adb2ce15c0f612493385f64398b70f048aad9463414fa98ed0c37093fbacb",
+      "size": 30080
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/msm_sharedmem.ko",
+      "sha256": "c36eb12ac39cd965f25cbfb3c06b59dfe0a62f5d4a7e553f9166bb354e2aa99f",
+      "size": 17456
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/msm_show_epoch.ko",
+      "sha256": "fd6edd2835d98c7d0e41bc483514cba53bdf5a5e937e6d53fead1198ad1aad6f",
+      "size": 10952
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/msm_show_resume_irq.ko",
+      "sha256": "2f2631f3be9f9f934b22d2b074314b03b15461e5c2219b470a3f4d45e19b337f",
+      "size": 17624
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/msm_sysstats.ko",
+      "sha256": "e7927040fce1092ed1527824c0beb288cac04b220e3519b025506fe7a27f2486",
+      "size": 41664
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/msm_video.ko",
+      "sha256": "90376f0354c67b2a2bc3504f62112b7a64dba08b9a352caa2d943414e9a9797f",
+      "size": 1433112
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/nvmem_qfprom.ko",
+      "sha256": "eea1171a09685212c42ab2b07c12abf1a1ba34104b39b1582c5121c639d98472",
+      "size": 27320
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oem_qmi_client.ko",
+      "sha256": "220b90ab051d8426a1d34ed782428ce9722048454ab81f1cd74159ab385a0cf9",
+      "size": 32704
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/olc.ko",
+      "sha256": "debd705f27f84e87cd944083faeedc8210db6dede5bea172dc7176ca2ad841a8",
+      "size": 31400
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_app_monitor.ko",
+      "sha256": "766616fc1c8fb2b4fbc20763b670a83178cce62f3101d87647366f8f83a1de30",
+      "size": 61016
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_binder_strategy.ko",
+      "sha256": "de6057d94935b2f0107287609de13c5de1ec208948c7c67dfe0fba8c7c91c492",
+      "size": 263168
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_abort_mm_opt.ko",
+      "sha256": "6fbae880a9c7fcacf64dd0857cae0e91647e3f458a5491b7922d5b4db20b3591",
+      "size": 12344
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_atd.ko",
+      "sha256": "ec77171bf9023f3755d2ef828f76581ad6eddbc4c9eb5f2a27f5163fa9b677ef",
+      "size": 35216
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_dfr_ubt.ko",
+      "sha256": "dd3d7f87c35bf8ddec2dc733fa6e2c24d0c795646ed5d756631cd3afb008bcbf",
+      "size": 21536
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_dump_tasks_mm.ko",
+      "sha256": "9cdaa08dec86bf503b67488ce33d4104f239a5fa82eadbe8567f8ad13925c9e9",
+      "size": 24120
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_dynamic_readahead.ko",
+      "sha256": "e90f4c0879fb4d3770a520b516edd0e4d86147ff3ded1f3a764b082d63dc061b",
+      "size": 16088
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_fw_update.ko",
+      "sha256": "98f796be5e84dfa822111a2edee71cbbe28d96a8f047b54294872b5298164139",
+      "size": 15928
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_gloom.ko",
+      "sha256": "343bad553bac5b9abfa44a887655dbbe2eaba617a151af3e541f6732c4c61379",
+      "size": 53960
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_hybridswap_zram.ko",
+      "sha256": "670affe2c1733450b5333c8e35c140a2e75e7ec8c0efe131e6c1cc3d63cbda25",
+      "size": 699168
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_ir_core.ko",
+      "sha256": "5ce3fefa290081eaea735fb3009d45f4f0e3c5ca48ce9fbd01569f3fdbef3f66",
+      "size": 31792
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_ist_down.ko",
+      "sha256": "41ea909ae12a678dcfbe9e661d1184356b4fcdc452d6499e62e15d61b3b5b447",
+      "size": 54920
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_ist_up.ko",
+      "sha256": "2ad9ab9acd816e183d745979167c59b1234cef2dc7da3c595045fb320e51e919",
+      "size": 54840
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_kookong_ir_spi.ko",
+      "sha256": "0ad4bca63e632ea7d79c4ac1f12c71ea49ba73a728bfc3fe301cebd2e5fa64bb",
+      "size": 18712
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_kshrink_lruvecd.ko",
+      "sha256": "4b609cfd52bb7503ff4ea65bde0d2622a7887036e2569cf1802b54316a07deb1",
+      "size": 30352
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_kswapd_opt.ko",
+      "sha256": "b6289250e81bd020aec73ff6e42e1b82826e185b05b4f99e2a2c0c0849c086b2",
+      "size": 34936
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_mapped_protect.ko",
+      "sha256": "3a907dd6d330687a3127687b509f2177e26e856730390fb94cfa48b9ba130b5d",
+      "size": 35704
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_memleak_detect.ko",
+      "sha256": "b91498661ee0430061aaf92353f7744a2bc90311dbc874bffa35afa582aff0b4",
+      "size": 129016
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_mxm_down.ko",
+      "sha256": "390926de6178e619adbd267be1aa70ba5f638741563ad3d2f38a69e5560c9034",
+      "size": 50616
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_mxm_up.ko",
+      "sha256": "4f7e58e554062286c6cfe27d96b42003116770acf9b6ef00cc101cca522abcda",
+      "size": 50600
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_pcppages_opt.ko",
+      "sha256": "2a102c335aa5553a420d21c374d141361a5a775ded02a504c0b82b0520e7115d",
+      "size": 11248
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_proactive_compact.ko",
+      "sha256": "7cad0012b6ca514e0b970b51ad56b8e968ae4ae8d7f18c2b82b126d8d2edd270",
+      "size": 24256
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_rfcablemonitor.ko",
+      "sha256": "54a7fe37e6e10e3450edf18eb818df8fbc99d78226b0efc3d896ff95e70a32cf",
+      "size": 32840
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_sensor_feedback.ko",
+      "sha256": "4cf3fc63fc499fd045f14465db5b4a0252cb849f95eac3a1ac10cf0071219463",
+      "size": 58528
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_sigkill_diagnosis.ko",
+      "sha256": "79fc2fdc2f492228dca42afd49bbb5a6e45355e837875018d6af119a0361150d",
+      "size": 16896
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_task_cpustats.ko",
+      "sha256": "7a85d17fbf58dcbb466bdc91586273ea016020ce496a7889e6e4b2b99a5b9157",
+      "size": 29144
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_task_load.ko",
+      "sha256": "e3c0e06d95053bcf73eed3277401a595e48ffabe538f366c6859da8b7fb3801a",
+      "size": 33856
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_tp_comon.ko",
+      "sha256": "9e24883ccbffc20e9876e9d0598293953cdf2026e2d391d6f0ab6372660c4ec3",
+      "size": 710920
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_tp_custom.ko",
+      "sha256": "2322c0e8f7fa68f6ef73f819a9c07c5d1fd436e61eae3a4f894e7170e9e7fd4e",
+      "size": 21968
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_tp_focal_common.ko",
+      "sha256": "6d46519694ffbbdda293926d3973ec05cc89a398d67a271e0cc062a562e8a75f",
+      "size": 59656
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_tp_ft3658u.ko",
+      "sha256": "b819fe708d7e22852e7907eaa36a61c1f004dce25774f599ece054bfccbf2b64",
+      "size": 163432
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_tp_goodix_comnon.ko",
+      "sha256": "3be5a762512a4a88578d58f36f9a1a9d5b69032fa1da89534fbf0be70f0d0dbc",
+      "size": 42288
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_tp_gt9966.ko",
+      "sha256": "6177e0f78e8196700e10b4800eee96d2747b1e2507906773fb0fbf9cba9afe22",
+      "size": 222208
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_tp_notify.ko",
+      "sha256": "ea787741a21c7136c04fe6a234afe9d1a5158b4457c093068a0a21bcb3cbdec8",
+      "size": 12728
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_tp_syna_comnon.ko",
+      "sha256": "2b72eac943dc70a46bb202eac719945000bb1f4ab92a6fbd74b7bc6406301c3e",
+      "size": 62952
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_tp_tcm_S3910.ko",
+      "sha256": "6a9c6e5f1945e86bcb612f612e0f09dc0d88b4d1b08a01c982060feba35f70f0",
+      "size": 261864
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_tp_tcm_oncell.ko",
+      "sha256": "6164381e39bf3c5d24795579fa8601bef1ded0c58cac706772f15920832b0abb",
+      "size": 233416
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_tri_key.ko",
+      "sha256": "0e0cac4ac62dda095856c92e775df7161e463d9b12c137cfca3ad01e29722baa",
+      "size": 77888
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_uxmem_opt.ko",
+      "sha256": "cfdf468da3db41518df0480717b0c99b5eecfad91a84b00d5cafe14bb92a0ecd",
+      "size": 46856
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_zram_opt.ko",
+      "sha256": "8d6c3e0320d3e17c4e3f1353cee0f47d028f10c8c69b3b68e7ad312eff952b48",
+      "size": 38968
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_bsp_zsmalloc.ko",
+      "sha256": "1f9fc55e84a3fd9de368450da371bc9347bf6f0688c2a33b31ef1ae996db5667",
+      "size": 125912
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_chg.ko",
+      "sha256": "eb11d4e381c61809db241620424e8ae000bfd7996310b084044ee40787b1ce35",
+      "size": 6824064
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_chg_symbol.ko",
+      "sha256": "aef1f774d7dc768e0316a5076874252a76256221ac4e7f759ddedbb21df6e5ae",
+      "size": 13016
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_chg_v2.ko",
+      "sha256": "7466f3994617664bab9c8602b21ed89bb3df0035854674a6c36d2ec139b008a7",
+      "size": 6543776
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_connectivity_routerboost.ko",
+      "sha256": "0f28cd68d68a968544e9155c703cc170db0f06e9a4bc4d0c0cbdd35d2942f689",
+      "size": 22320
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_connectivity_sla.ko",
+      "sha256": "63b70fd2285ef3c0df5b309f581b4ffd46f55dfb15e2c9664e3f1867f54e8996",
+      "size": 34096
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_data_module.ko",
+      "sha256": "2f8fa562ac661a39ecd78cffa5605a549d5ab36997d6685db4d98dba3d332245",
+      "size": 454304
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_dns_hook.ko",
+      "sha256": "f49e36f8b786ae867a048c002a1537ef8419fe60dd70b0ab63a5b685364564b7",
+      "size": 32032
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_fdleak_check.ko",
+      "sha256": "93bcecd137548f198eb0938209a5b6e2def1ea09646d96e90c6aed50fb0794f3",
+      "size": 31656
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_fp_common.ko",
+      "sha256": "e5364aded2194d2cd364e8da8823160ce97f4effae61e8e1fd23553c9026b187",
+      "size": 35936
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_game_first.ko",
+      "sha256": "c74b96bcdac6d7fee6f82871a3f4f5ee67f656658744fe025e081fb4636f8e5a",
+      "size": 24320
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_gpio.ko",
+      "sha256": "f123f262122e88c45213f36fa00533832db4e8d8e15e2184812a6fffb95d1179",
+      "size": 40432
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_hans.ko",
+      "sha256": "35ad28165c458cdf74e94635cf2cd19280fd77180548e0ac829d8ad245fc0119",
+      "size": 48584
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_ipa_thermal.ko",
+      "sha256": "3df630c70a3de8ee5336e82a0d4609d98bda28bd6a80174bddfef6495ddbabb4",
+      "size": 67728
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_locking_strategy.ko",
+      "sha256": "6b578ecb90dab1b4f4d6249b474aef164f3259c8f70f990444cd8ebddc9d5690",
+      "size": 121128
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_mm_kevent.ko",
+      "sha256": "50ead8941b85f33b8ad63f7f15c5b9553e96582975b56b03595db649d16a7425",
+      "size": 24256
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_mm_kevent_fb.ko",
+      "sha256": "87853bd1d5c46b90bea70c96236a22bda6eb4b842b283c005282c7eb0317e498",
+      "size": 41256
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_network_linkpower_module.ko",
+      "sha256": "7ecaa2bdb825904e6eb5b1d2e5ed0643fcc0d161c957c3565754f2f7c724aa5a",
+      "size": 73544
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_networks_tuning.ko",
+      "sha256": "b71450e7696c2aec9d684478933370d446d478e5192c4fbf1b138b3963c869f5",
+      "size": 62480
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_nfc.ko",
+      "sha256": "a2f3bafb328580e8ea229c29e54833acf7a05a3966239f98e29f4ce838611ac2",
+      "size": 20768
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_qr_scan.ko",
+      "sha256": "c634655761f039ba229b9d7c7f94de1bf0d1c556fa56faed2e5daef2272cc1a5",
+      "size": 29312
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_schedinfo.ko",
+      "sha256": "c9256a26547ff4fbe15f848c876d5a29924763ddbc10b499b222a0558ba71a84",
+      "size": 292656
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_score.ko",
+      "sha256": "9b69f1827c1b355bdd8eb98922191f6a4b421c54201c56656776e676c869b220",
+      "size": 69272
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_secure_common.ko",
+      "sha256": "24fb8ebff77543709ae0eea38c1d50523664e903d572f80e89fe7144f1e19038",
+      "size": 41536
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_secure_harden.ko",
+      "sha256": "a06386e8ac9625f5b5eae14007b89fef8c4416960dadfd63761c28ed9a1604bb",
+      "size": 31032
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_security_guard.ko",
+      "sha256": "910e574cd62904b12aabef6e265fcefe564cc24d83bf199a9798757eff194594",
+      "size": 31872
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_security_keventupload.ko",
+      "sha256": "8fcea4b10c20903743ce9aed063bbe91df4ca17f9ffbe4ea40e5803ab671f87a",
+      "size": 16080
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_sensor.ko",
+      "sha256": "26c1e6dc301f958b117d04ac858cb6b0250dcd1f0888aa9de4610cf7d8da9288",
+      "size": 97992
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_stability_helper.ko",
+      "sha256": "b5e58b9e3466c3e7af9c3e6f6cc321948b137b151a6669027b80ea55663f8295",
+      "size": 14320
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_stats_calc.ko",
+      "sha256": "5c5d7cf654edea08c14b02fd7c5dbac0bf03fa1d36f0e430769a6cd04fc3e0eb",
+      "size": 24312
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_theia.ko",
+      "sha256": "57ba20464b4401d395a15d7c9f589dd5748542f01742c99c224308e94fba6e85",
+      "size": 121312
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_wificapcenter.ko",
+      "sha256": "88a0684bf237333cb5d60f1509f578950b73e388f543aafb22bc556e7b213060",
+      "size": 30592
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/oplus_wifismartantenna.ko",
+      "sha256": "3fee1c36c045db0aca9f1ad90ee8abdf817f7fc00a792bce9b635cbf4988c5b3",
+      "size": 24784
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/panel_event_notifier.ko",
+      "sha256": "2fbf90ae08063fd918af7c1d48549ce7eeb476ca9e572a3c876959aff9cf29fc",
+      "size": 15832
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/pci-edma.ko",
+      "sha256": "03b33c88bec8dcd0fb4cbab38cd1df3b0c79b4bbfa51319587569ac604751a01",
+      "size": 54152
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/pci-msm-drv.ko",
+      "sha256": "8a83bd2ff10f20ebb420d949f87a1b0e25fa9368065792b2f52319fbd4b03008",
+      "size": 512664
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/pdr_interface.ko",
+      "sha256": "6e3ac6a8558656a3a03739b3903ec3903911e55c45cccd72c04a9767c4bac883",
+      "size": 32120
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/phy-msm-snps-eusb2.ko",
+      "sha256": "d768b224a74cd362f10bb1a037a2619ada82cde036c6f899d6f7c8ae3fd989c1",
+      "size": 47512
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/phy-msm-snps-hs.ko",
+      "sha256": "013350353e7211d2e787c3c0809b08fabaed5f63254f9937b21832654b450d53",
+      "size": 60072
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/phy-msm-ssusb-qmp.ko",
+      "sha256": "1ef32dacefe9beb879157efbd1a2632d5460b33ebd6d68c48f82c40da8ad1b32",
+      "size": 47184
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/phy-qcom-emu.ko",
+      "sha256": "9ae8cc9acbfd333b3c9905e8bf385a366f52b8e7e1ef1713f4fda71aba0b5ff4",
+      "size": 17184
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/phy-qcom-ufs-qmp-14nm.ko",
+      "sha256": "9204f944044293d7d38ad05133b2c4339edd630f6c64e97560a53e7edc21f4e5",
+      "size": 21496
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/phy-qcom-ufs-qmp-v3.ko",
+      "sha256": "6a095ae7431ae6fafa28029618f06c38c0a7b01a85aeae49d4ab8cfa127fece6",
+      "size": 26112
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/phy-qcom-ufs-qmp-v4-anarok.ko",
+      "sha256": "3edf4f80fe3b71da73941eb10189d9d917c640c8f628d4905604893c83af670f",
+      "size": 30320
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/phy-qcom-ufs-qmp-v4-lahaina.ko",
+      "sha256": "520b858171184174a8c79ecc45df4c0c1dc061fa4ce4883b0838365c2410a1de",
+      "size": 30320
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/phy-qcom-ufs-qmp-v4-parrot.ko",
+      "sha256": "5ad418fe7ac681a499a141e71d981404fe14d752254b228a122d0ad5e532503f",
+      "size": 30320
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/pinctrl-spmi-gpio.ko",
+      "sha256": "15015bf71869171d6d4a38c7c9a85d2416e50cecb1aea9288fb5fc10ce6c4792",
+      "size": 55440
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/pinctrl-spmi-mpp.ko",
+      "sha256": "52e6f0c5a5be34ebc194e13cf3b0195463473a05b8bf58ca8354e3a430b1f6a5",
+      "size": 36648
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/pinctrl_lpi_dlkm.ko",
+      "sha256": "cd84aeeed45d549df9b24f9449d488f735e7eb062a422d48f667a14ab37a4d30",
+      "size": 47480
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/plh_scmi.ko",
+      "sha256": "0288f751813a7add56147f98f201e493bfc0cfdab3e98b906258fe6797a64543",
+      "size": 11512
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/plh_vendor.ko",
+      "sha256": "ce1a0f81667a26387b5ca083a77f3eda7340cb0be22ec7b62f0bbddfd2ad4e3a",
+      "size": 14536
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/pm8941-pwrkey.ko",
+      "sha256": "c506f0477b71f7a9611c118c3b894bf338a760b753bf8e5d0ca8ee8974da7291",
+      "size": 23696
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/pmic-pon-log.ko",
+      "sha256": "bce7f1a936b84711af7a773a689ffd2fcab85977e100ba086e435b2903201870",
+      "size": 28944
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/pmic_glink.ko",
+      "sha256": "78be986825cffb17fb024e71859f967f5c19d5b57eb575b9574ceb06be806402",
+      "size": 41880
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/pmic_monitor.ko",
+      "sha256": "eecbdf7ab80aad2a671e3ef939d1b07855bdf831cfe19e853ce350e9e4123a86",
+      "size": 49072
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/policy_engine.ko",
+      "sha256": "150713fa983c66cac6d5c2328438520bd5a3257c6b28f4abb113c2ac2985afcd",
+      "size": 19800
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/pwm-qti-lpg.ko",
+      "sha256": "6f47ca50ab09153f614a213c81f49088ec0315e6dceec01ff5d79dc638e96e70",
+      "size": 55992
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/q6_dlkm.ko",
+      "sha256": "efec298a131d19b2291f9827a7ed527b7ed499cb9cb85a62c2d00f200336fc54",
+      "size": 16336
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/q6_notifier_dlkm.ko",
+      "sha256": "db3248ff42778487be5b7d5c556bc702f9dc6e63a4d6d7b3beb5c0df032e98a1",
+      "size": 34888
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/q6_pdr_dlkm.ko",
+      "sha256": "ef795c5f6c66dc7b5d53197300beb54a44d1c9681eb846e73c4180f7673c174b",
+      "size": 12896
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qbt_handler.ko",
+      "sha256": "0aad8195f522363627aeb6dc71501c1c7f5fca3c4b34b901e76fb9b71787cdf6",
+      "size": 63456
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qca_cld3_kiwi.ko",
+      "sha256": "0c72bdce23471e54eb96df6e192891c3394e7228f6406585036d927f23a11f63",
+      "size": 27630112
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qca_cld3_qca6490.ko",
+      "sha256": "2ca94319c614f30d4453edb14ba0a2c3c686ef22c7334d41f14c75301f2203bd",
+      "size": 27012344
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qca_cld3_qca6750.ko",
+      "sha256": "54bd7c35944f54c47a585b448f3655fbffb2033552a32685a139439757c6c71e",
+      "size": 26843056
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qce50.ko",
+      "sha256": "475cd644031b26d5010a953e5769f4cd1ccc6e80473ba4a44e09dd8cfa778f4f",
+      "size": 178736
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qcedev-mod.ko",
+      "sha256": "73b4f2784a0582a185ecd631451a584465921c2ce9211059c854221655928221",
+      "size": 523872
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qcom-cpufreq-hw-debug.ko",
+      "sha256": "ab8f38989f26d28076f20d82dd48555c07893dfced051065ed3e57376aefbcaf",
+      "size": 22080
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qcom-hv-haptics.ko",
+      "sha256": "6ab80018d965f92102720a4f8729298a924b8395cbfecde70bff7380b4310894",
+      "size": 174480
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qcom-i2c-pmic.ko",
+      "sha256": "099992f3670b49a8621f841fecfdefe8bd31501fae2f7a27c773722fcb81f4dd",
+      "size": 35936
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qcom-pon.ko",
+      "sha256": "cdad3987df9fc0303f233df96ea43bfb27ad7b4efaa125993485a82a16c6bb4b",
+      "size": 14496
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qcom-spmi-adc5.ko",
+      "sha256": "7d104fb170745192415e54a0266249243e3cda30221904eeee543089caff1d82",
+      "size": 52056
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qcom-spmi-temp-alarm.ko",
+      "sha256": "b695d5d2d608f665c1406f6b4383f90b027a7b7554f73b8c6555dd60d67121b4",
+      "size": 29104
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qcom-vadc-common.ko",
+      "sha256": "fbe4290e93fe4194962c3fc2c6b101d161de92099c7574ac441ad17684495668",
+      "size": 29048
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qcom_cpuss_sleep_stats.ko",
+      "sha256": "39d8918681d6795a2ee9bc4325ebb84dd84ea921f3ef140526f75d9fee331464",
+      "size": 28392
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qcom_edac.ko",
+      "sha256": "d1ac231114eefeb602afc82d2016a7ae5f5d93aaf7f28a359a25bdfd20bc7ef0",
+      "size": 20376
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qcom_esoc.ko",
+      "sha256": "1560313dd2cc1b27fe5ca546e5a0c7b76158010d6933fcb21805768b785361ac",
+      "size": 181472
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qcom_glink.ko",
+      "sha256": "85fc46abff589617ca7abc0fe13e6575c4758da8a0a64f5692e8c532ce4109dc",
+      "size": 87536
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qcom_glink_smem.ko",
+      "sha256": "659d32e2f71d6aad074f195003e91cbce8f5c80bf06e25f0c4679e706a175fe3",
+      "size": 20088
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qcom_glink_spss.ko",
+      "sha256": "c23c073ca9b21cf9490d53e023b1123a9002fb7cb5a81dfd3298223043f95e9a",
+      "size": 20328
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qcom_iommu_debug.ko",
+      "sha256": "65fe40bf1dcb642c23b264335f08c0977b4a674e748c0e20957bde4c8de5d7ed",
+      "size": 97048
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qcom_ipc_lite.ko",
+      "sha256": "475146515c059e6d4289a0b1ac7e7f5cd8641d04c32988e1b677e36b81ecb814",
+      "size": 15712
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qcom_logbuf_vendor_hooks.ko",
+      "sha256": "b185d1ba8590fb37d972269a0ae5047e83ceb57700b0c9b9a2d0730a6382ca71",
+      "size": 22576
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qcom_lpm.ko",
+      "sha256": "baf6950b4f48b0094196c8ab731c7e82e5644fef5c59bbf9d3013fa51e953cbd",
+      "size": 100520
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qcom_pil_info.ko",
+      "sha256": "da49f6d24f60a73f47398ba66986eda393833e46adffa9d706e37687ca7d4b2e",
+      "size": 18744
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qcom_pm8008-regulator.ko",
+      "sha256": "0168290d2325991d03e3f00255ef6b29558acb9d8876f9abad5fb633884c0627",
+      "size": 47048
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qcom_q6v5.ko",
+      "sha256": "3e8098ddd33bf06e6fb9db9d5cedee8c56d376f275bf53ae034da0caf9246a1e",
+      "size": 43224
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qcom_q6v5_pas.ko",
+      "sha256": "e55c4200a3d4345f9f9454e00604ccd2a3addce0d1105b873390b27524684f7b",
+      "size": 89600
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qcom_ramdump.ko",
+      "sha256": "cfd9516b13f33bd01391e318b37e7c80866e76b9432bc0136c51585a7e0d5f68",
+      "size": 24976
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qcom_smd.ko",
+      "sha256": "155f108ac55e95c08e3e0f155ad99314ee84e24c8c33e5d1463ecfdc878d7ee6",
+      "size": 43576
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qcom_soc_wdt.ko",
+      "sha256": "384fe4daba3ff810d59bf4e7b3b6fd02db01bfaf60fda667c15d8e83e8ad411f",
+      "size": 20264
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qcom_spss.ko",
+      "sha256": "bb0cbaa652f85e1434c9a28b6a20ad26d0c5fcf173c325cb8ed7aaa72497160a",
+      "size": 41904
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qcom_sync_file.ko",
+      "sha256": "dad079d4b98f94126e5ddc0dcb13db3ba9ecafa48cf77227bbfc48710d4d5960",
+      "size": 37160
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qcom_sysmon.ko",
+      "sha256": "0686ed56b14e622171bcbeb8ba3c9b220270f7face6159a04f722a810ac39c65",
+      "size": 46120
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qdss_bridge.ko",
+      "sha256": "d7276b8d925efc4af76de5a4d6739ef0a904df1cdcef42278f90f06cc24823cc",
+      "size": 45120
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qfprom-sys.ko",
+      "sha256": "7ce075bc8f9f3a652b81e62fdd67c4b6331136f718773aaca18815dc55d93c9f",
+      "size": 15264
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qmi_helpers.ko",
+      "sha256": "f3759daf5f449df1f040ab7ac9262c59e06db9692d38172f98f213eca5fee3fa",
+      "size": 40944
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qnoc-parrot.ko",
+      "sha256": "39b12e55db4cf1be777a4ec88fe109c9e12710569ecf10e1735f8cc0c7a16547",
+      "size": 201072
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qpnp-amoled-regulator.ko",
+      "sha256": "3810b57713a50fb25129725359be4037f0d660182587efe938ea3d54e456a050",
+      "size": 27304
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qpnp-pbs.ko",
+      "sha256": "eff44685ef0c44531de2f4652570ab02e0fafd12e6bba8e560c217cf0384d451",
+      "size": 23488
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qrtr-gunyah.ko",
+      "sha256": "f606739e77f932c1bd9d4ee4a370a99a40022749fd20989e33d5ba3ae4d6dcc6",
+      "size": 29616
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qrtr-mhi.ko",
+      "sha256": "1de0de2397e7c8fb12dfdaf85fc74f60b7417aae8ec1dea4f9a42272458f1653",
+      "size": 18816
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qrtr-smd.ko",
+      "sha256": "e520c20308c35d793fb61242f0d56ccc9325e298967384f6ae312ea7f257a035",
+      "size": 16936
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qsee_ipc_irq_bridge.ko",
+      "sha256": "2412a3350efcaf392204086bb957f266adcddc68d8c2e4edd863cd4937e5e2eb",
+      "size": 38664
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qseecom-mod.ko",
+      "sha256": "bfbcb27e49f511f7cad2fb4a8c667c45e323aa4e354c921645f19c06ac9772c3",
+      "size": 735144
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qti-adc-tm.ko",
+      "sha256": "16535ca5f50ea0e7274a033aa4548b6500aa2bece308b4bfd1385432cce13fa5",
+      "size": 74720
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qti_amoled_ecm.ko",
+      "sha256": "05282c205b53ffc3187388dd8c90ab45a513ab6267a03e97e9cf22dde069735e",
+      "size": 37656
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qti_battery_debug.ko",
+      "sha256": "3d4d70134a7331ff153f2adfa4d7e4292089f1e81be6cc1986e7099d33de2012",
+      "size": 38256
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qti_cpufreq_cdev.ko",
+      "sha256": "7c0dcab9d8a8df73a3c46ad0d51ce0afe9c26c4f35ace5380472d3a779d8c9ca",
+      "size": 20752
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qti_devfreq_cdev.ko",
+      "sha256": "f721da8c8d6fe22e89811015351ba1b1a5dbb76a004077b7317de92a957a5f0c",
+      "size": 18272
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qti_qmi_cdev.ko",
+      "sha256": "80cff62b2a78eec83d883e301bc23938bfd64018c98c8318e4ed19e7fb0f7e56",
+      "size": 40936
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qti_qmi_sensor_v2.ko",
+      "sha256": "3423adc6d572a85655ae15f94dee5f71961b5ea76fed2af3d33ab4bc8bd0bc3a",
+      "size": 36456
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/qti_userspace_cdev.ko",
+      "sha256": "bd7e6c5665e2b6a1f7b7075556f705c1ccbfda38f5247288967e41adbb42035d",
+      "size": 15928
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/radio-i2c-rtc6226-qca.ko",
+      "sha256": "bbbedb8ecff4dbae41beedb36e0f0c824bccd25ce8e67eabfb7b8a6093c4e04b",
+      "size": 96616
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/rdbg.ko",
+      "sha256": "bb089bd1defd48458ef0a8f5fb139458667aa2f6f66a6ea80e3ac52d8edc01a1",
+      "size": 37728
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/repeater-i2c-eusb2.ko",
+      "sha256": "ef6297ed82640bd997980d8cf29a91fbfdb1aff011aa310c10cf6f14396c9d6d",
+      "size": 23272
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/repeater.ko",
+      "sha256": "c81ff53ae361b0345f44753d9d15b9f82a88d6d39c09bccdb81fc264ac28cbb9",
+      "size": 16592
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/rimps_log.ko",
+      "sha256": "cfd4c640e32ab273c0b24ef792ba8db8db5adade2870ee4fdbfd4ff4d037ec61",
+      "size": 19280
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/rmnet_aps.ko",
+      "sha256": "45c95ba6eaf94e947d676b5863e32e71791c5ba07f9ca663fb19dd75aac0c8ce",
+      "size": 27992
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/rmnet_core.ko",
+      "sha256": "9006fb9a593c186711e11d5a1c15408321db93b6bb4a2ab12817846085f8096f",
+      "size": 553880
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/rmnet_ctl.ko",
+      "sha256": "3d7e56e8a81028550f240f9cc7ef46b1089899c25bfd716332c52ccc466900db",
+      "size": 27720
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/rmnet_offload.ko",
+      "sha256": "160750655d02e1bff9a6324d26dd22bc145489910b32328c2550b2633d39838b",
+      "size": 43584
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/rmnet_perf.ko",
+      "sha256": "571beeaeb1324d35421b2390eae3395480ab3250ef468e1afd7f116ba72b7479",
+      "size": 15880
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/rmnet_perf_tether.ko",
+      "sha256": "4e8922d8e1c981f71293c0c50601399195a651691988cc2a06a1ee40c8d776db",
+      "size": 25984
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/rmnet_sch.ko",
+      "sha256": "ecca9d10bc230bbd5558df1b55ef2ea24d26f54fdd7854141b72f71e734a948f",
+      "size": 18496
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/rmnet_shs.ko",
+      "sha256": "b8429101975e593991e3c8dceaafdb8db31b218e6bcc2c218818c405e43dd911",
+      "size": 335968
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/rmnet_wlan.ko",
+      "sha256": "37dd310b3cb045be2092f789feb82259d55b909dfe2271225a89033bc560b5e4",
+      "size": 92400
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/rndisipam.ko",
+      "sha256": "bc74442b8e352dc73738cfb9a98cea7a2aae6a60ff5328ac9f6cdc6713468adf",
+      "size": 132912
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/rproc_qcom_common.ko",
+      "sha256": "dd6aa68a649a016fd3ea08fc00f6d9cd126008215d713d80520669818f3cf855",
+      "size": 73400
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/rq_stats.ko",
+      "sha256": "ae91decd05b0d80fc8ed57b8d14c13bd07786cbbbac307af7e811190a69de05c",
+      "size": 16224
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/rt-regmap.ko",
+      "sha256": "daa391e7db2cea2d690a09d180b888fa09507cb930f768a99d263a4939b1dd67",
+      "size": 70752
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/sdhci-msm.ko",
+      "sha256": "e8d6102a6e1af8830d1a917029e71328f7e1efdc320007b605c401e05654f5ee",
+      "size": 202888
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/sdpm_clk.ko",
+      "sha256": "23f4076cfb28dfbaf211d8343248c5b938c7c97993c5b3115e1fcfb8bb35ca96",
+      "size": 23112
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/sensors_ssc.ko",
+      "sha256": "92ac33ce7346944524ef20b4ad12a49a1e2355d65875f4fb4482d09dd5a6ed60",
+      "size": 29936
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/sg.ko",
+      "sha256": "cbce542a54fb9bb691ebc95cd22e93cb747f606e30a47f20fc406c06de22c3c6",
+      "size": 154992
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/shared_rail_scmi.ko",
+      "sha256": "96372bbcc798e4ad3c7c984a8c7979931dd2e27db90a7a6ec8496485b4102c9c",
+      "size": 11640
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/shared_rail_vendor.ko",
+      "sha256": "b42166c11f843914493feda12dfebc3b61a46cf33f728ca6b8baabfb827c849d",
+      "size": 12776
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/sia9175_dlkm.ko",
+      "sha256": "bbcd8e0f03b2338731448980cf8244a33e22e4eaa1901c094ef7f9c75fabf823",
+      "size": 195352
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/sim_detect.ko",
+      "sha256": "4015550890b41097b0e0bab608d651c81231b9611f789cd3cf3928ff8e5386f7",
+      "size": 16840
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/slim-qcom-ngd-ctrl.ko",
+      "sha256": "820873bcf059954087ac7c602cb92b8a355604174a7df40ff20f741b4ea1c73c",
+      "size": 121880
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/slimbus.ko",
+      "sha256": "c1eb6858fdf64323d5867ad062b36652b443262153c77964d0b8a16df0455f56",
+      "size": 58552
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/smcinvoke_mod.ko",
+      "sha256": "26dc8ee544ebacc788c586db014f44a8ed8c21d22a08ab8a3d2cc3be0bf6b100",
+      "size": 276704
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/smp2p.ko",
+      "sha256": "2c08c668a467483d3b440c015117e386c91dc3fc77836a67e47fd2b3c308dccd",
+      "size": 36128
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/smp2p_sleepstate.ko",
+      "sha256": "25daf19411945469a83670dfce3164c688cc8077c1dae712a437d815129c3ada",
+      "size": 15136
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/snd-usb-audio-qmi.ko",
+      "sha256": "c93db4ea9fd9d7a1934ddabae40de7b74fe87bbbbec51b11d7390d28b14be408",
+      "size": 82448
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/snd_event_dlkm.ko",
+      "sha256": "57c9e276b3b83c8bd9dbeb41296593a4470eae557b802b7833b4125f825c6977",
+      "size": 22560
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/soc_sleep_stats.ko",
+      "sha256": "f4b797c937e5e84e40076b83d718ef0bfde5c56a2d2fc59fdc582938811b5d52",
+      "size": 53664
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/spcom.ko",
+      "sha256": "f94fa222fd1c1f8b6f0bbbc38059afb3ecd556468c0039b4103f90b29a039371",
+      "size": 183984
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/spf_core_dlkm.ko",
+      "sha256": "d1416535ab498f6078ac73d81a8ee0b6aa891db3241ae403aa8f942cae3be6ff",
+      "size": 35512
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/spi-msm-geni.ko",
+      "sha256": "f572ef19a7f95f02579e0e69e71066861e8c16bb431ceb9c41233d056e673674",
+      "size": 91848
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/spmi-glink-debug.ko",
+      "sha256": "d73b36edc9789fab12d96dfa06a8e8ddd2a21aac9d0548f923330ed24cfc8040",
+      "size": 19760
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/spmi-pmic-arb-debug.ko",
+      "sha256": "2a1c129fa8e5df056dcd14689105b14fc3e9c35d444d260b725f519be139d2af",
+      "size": 24552
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/sps_drv.ko",
+      "sha256": "daa6703375687202f00a728c163fbf97ae479a67a48ba98bf078e3b4258cc6fe",
+      "size": 493448
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/spss_utils.ko",
+      "sha256": "2caedc7feda70afa8f6106e97c9272e43ef058b26069777cf68164ca144cecad",
+      "size": 66376
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/ssc_interact.ko",
+      "sha256": "2e0c33dec76d8368eb94fa035df18cd4836488939135607ca810e45e22a12f2b",
+      "size": 42568
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/ssusb-redriver-nb7vpq904m.ko",
+      "sha256": "08b30bdbc7b30ff751a1a79ef6f4401d862e1df46da6170be264fede154003f2",
+      "size": 49808
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/stm_console.ko",
+      "sha256": "22737dbdb40a5352a3168cf52c487c511d5038ef5ad4095e7beb9365da522fe9",
+      "size": 11768
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/stm_core.ko",
+      "sha256": "7996cd3d5b082debfe272f4029bcb1e0b0d238e8dbe6e4675f83f04e16566d42",
+      "size": 69648
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/stm_ftrace.ko",
+      "sha256": "b6480c1b143863ccb896240eb5faf55fb902d038c480c03e4fea1d8c73f8bbac",
+      "size": 13000
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/stm_p_basic.ko",
+      "sha256": "b0144fabd0e06514751bc8c9e64e6faaec99e0f68dae5c36eb76e975c39356d2",
+      "size": 11384
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/stm_p_ost.ko",
+      "sha256": "2556854e203e3b21445cb724fa289d7f761119908c8fd6b17a551b5d705ec117",
+      "size": 11840
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/stub_dlkm.ko",
+      "sha256": "59733997f58380444239efee810d4544e9bb9a61ff1ce4246863ca6553dd4b5c",
+      "size": 13240
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/subsystem_sleep_stats.ko",
+      "sha256": "f9e7dc711c1556f85e27f62084e99561f09aa1dcdbcc2e288aa48dface4fefd6",
+      "size": 35408
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/swr_ctrl_dlkm.ko",
+      "sha256": "a907cf199c15288ed1cee4fb7acfe98f3ad30ac27cd2478e68dd120a80432ca5",
+      "size": 140832
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/swr_dlkm.ko",
+      "sha256": "0fed840f9376cdac4cca106f2bcb4460a014b0614df663ddb844a0db0c70a1a8",
+      "size": 56776
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/swr_dmic_dlkm.ko",
+      "sha256": "551d5fa19f4219cc03aec15557a894324e93ad0286c8c05ded41857880d2fc86",
+      "size": 39136
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/swr_haptics_dlkm.ko",
+      "sha256": "2aa034b6de2065ced847a5317b59d5a115acf2ad1a89afaeabbcadfcf1f5e9ee",
+      "size": 34832
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/synaptics_tcm2.ko",
+      "sha256": "cb25004477a98a509a44392c8b720a3e8ebec8355cf76f2782650e3d72f4841c",
+      "size": 626920
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/synx-driver.ko",
+      "sha256": "9c795f553540841cf8e1a1a018a4978e602902e4b6ce39a2dc23dcddfdc3bdac",
+      "size": 142760
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/sys_pm_vx.ko",
+      "sha256": "2b767e659ad30ce8a70717c60e63df0923655424897d24f5ceada6a04cd273a9",
+      "size": 37568
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/sysmon_subsystem_stats.ko",
+      "sha256": "dc2d2f232964feb84e7599a173ce8449411d9b1aa3fbd703c78fc00aab0c3cc7",
+      "size": 40912
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/tcpc_class.ko",
+      "sha256": "9761c0946663acf579f3c8412f1d7520661f2c2f5707614e9394ab7decbfdccb",
+      "size": 634192
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/test-kit.ko",
+      "sha256": "a5f03806cbaffb7363450cade5dce07b9c966fa03b9097e2e041fdc4cd857656",
+      "size": 52376
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/tfa98xx-v6_dlkm.ko",
+      "sha256": "75034e149b19f515e09a5244679a7ded73ea603758a269a711698651ab39715d",
+      "size": 466792
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/tms_device_modules.ko",
+      "sha256": "80648b01599d111f94bf472a21e523f53d084a8b5f85797f21c181be09e986e7",
+      "size": 105464
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/tz_log.ko",
+      "sha256": "41d042ab85828c529a9b880a395d7c7245a871524906fec6af270d59f6a50db8",
+      "size": 48904
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/ucsi_glink.ko",
+      "sha256": "965510e3101fa2134e51129620d58d7a953378196e07d9656b9a6b936f19d140",
+      "size": 35808
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/ufcs_class.ko",
+      "sha256": "95594d941ea66ad90110eb28786fac8c240896f0ad9844177850fab413eb9d4f",
+      "size": 283384
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/uff_fp_driver.ko",
+      "sha256": "73fa5dce3a6878e68c1c5b89a7f7951448ca788b7f9d87737426ad1aa2d10084",
+      "size": 116288
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/usb_bam.ko",
+      "sha256": "1e5c63418415b869231a84d0190afe5ecda15052f54c64328abbad5c935ce632",
+      "size": 86552
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/usb_f_ccid.ko",
+      "sha256": "1268f27785a699dfe719ca6013b490c37d45360d189dfa5453a1a214be856bcd",
+      "size": 55304
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/usb_f_cdev.ko",
+      "sha256": "7c2af09cea72343953e06fed3d579a36b72ffbdd7f5cb7f3c06baaade91d8c4e",
+      "size": 75760
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/usb_f_diag.ko",
+      "sha256": "05d66b9a16b0c2861b393aa00ad8b5bc4fdf261588c4f63508ec6d64121641fa",
+      "size": 47872
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/usb_f_gsi.ko",
+      "sha256": "176f4415725c1119bd0e4174b98bfdf0d4b2bc1f34fa685f5c74cdf63329b2f5",
+      "size": 164752
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/usb_f_qdss.ko",
+      "sha256": "cbecab16bed335ffcf647f93f320eeb9ea79402e737542e31926b7d346a06340",
+      "size": 58368
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/videocc-diwali.ko",
+      "sha256": "fa8e7709b615e83dd63afe4a8bf56e041db7d5b3105e4f6f8cf5a53355a25e8f",
+      "size": 39120
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/videocc-waipio.ko",
+      "sha256": "e89fc84c299d62a2aa7ae278102d4e21665dd939e4f51b4b66413a8eabf336c0",
+      "size": 41312
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/wcd937x_dlkm.ko",
+      "sha256": "9371c0b9c02a7e9a72db016bf3f10f44114ec2519cd591aae8021ef408222b23",
+      "size": 249520
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/wcd937x_slave_dlkm.ko",
+      "sha256": "8c6615d7b0996da15f3cc54cfd1488ed6c32831fca7ffb9f25a9ae052e0a51fa",
+      "size": 15064
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/wcd938x_dlkm.ko",
+      "sha256": "f222435a2b4507ff85008dbb430970eb28ec1ce425fc6a1911fbda449a1d66cc",
+      "size": 313696
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/wcd938x_slave_dlkm.ko",
+      "sha256": "1b7ff18af8c1242dbd8c69e02dfa94f7ff9810e374548079aee16c67386c268f",
+      "size": 28808
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/wcd9xxx_dlkm.ko",
+      "sha256": "c3b0a16fd33b095666833ba158b63c75b6c8d13a44edcc18e398b6e5c578fdf8",
+      "size": 59136
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/wcd_core_dlkm.ko",
+      "sha256": "5b1761a8e7b02681d9de57cdb1c20726067804ed9b8dd980bded997ff5d32160",
+      "size": 64248
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/wlan_firmware_service.ko",
+      "sha256": "aaf676f4ee305bfaca445c99d822cae412d2967937d22f223563a3f37fdc37af",
+      "size": 84576
+    },
+    {
+      "path": "vendor_dlkm_b/lib/modules/wsa883x_dlkm.ko",
+      "sha256": "7bc5e3038d499c02c76a8a6836421d1abb0b3bc3fd3a809d803f73f551638076",
+      "size": 100912
+    }
+  ]
+}

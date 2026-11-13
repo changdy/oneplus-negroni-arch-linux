@@ -11,6 +11,7 @@
 | AVB 工具 | [AVB 子模块](../tools/avb)中的 `LICENSE` 和各组件许可声明 |
 | 固件加载工具 | [msm-firmware-loader 子模块](../tools/msm-firmware-loader)中的 `LICENSE` |
 | 调研目录中的上游源码快照 | 各源文件许可头，以及对应报告和 `sources.json` 的来源记录 |
+| [NE2210 原厂模块归档](../downloads/stock-drivers-20261113/README.md) | 从本机 `vendor_dlkm_b` 提取，保留各模块内嵌 license / scmversion、原厂 NOTICE 和逐文件 SHA-256；不另行赋予统一许可证，不包含分区镜像或校准负载 |
 | 实验通话图生成器、PCM 测试顺序 | [diting-ubuntu 固定提交](https://github.com/royka1/diting-ubuntu/tree/c68ff47db94792fb5fd608e98d1ae489c2e592b1) 的 GPL-2.0 代码；改动文件保留 SPDX 与来源。原厂 ACDB、提取校准与生成拓扑仅本地使用，不纳入 Git，见[通话语音](call-audio.md) |
 | 镜像中的 Arch/XEC 软件与设备固件 | 各软件包自己的许可证和分发条款；不因本仓库的说明而改变 |
 | GNSS 用户空间补丁 | libqmi 上游补丁原样保留作者与来源；ModemManager 补丁作用于 GPL-2.0-or-later 的 daemon。版本与分组件许可见 [sources.txt](../config/gnss/sources.txt)，不包含原厂固件 |
