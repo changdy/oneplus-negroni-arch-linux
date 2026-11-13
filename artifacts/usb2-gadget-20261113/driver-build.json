@@ -1,0 +1,24 @@
+{
+  "date": "2026-11-13",
+  "status": "deployed boot_b; reboot, USB2 reconnects and USB3 transition verified",
+  "slot": "b",
+  "target_partition": "boot_b",
+  "base_kernel_sha256": "f3956e693543254ea62d395138d794235a3840d98df6f1b3023f0ab82c7a2b3d",
+  "kernel_release": "7.3.0-sm8450+",
+  "boot_header": "v4; all header bytes preserved except kernel size",
+  "ramdisk": "byte-identical to phone boot_b",
+  "vendor_boot": "unchanged; backup verified",
+  "partition_backups": "full partition; SHA-256 verified on phone and host",
+  "module_install_required": false,
+  "source_notes": "Existing audio and camera kernel changes retained; only USB2 PHY/glue objects and embedded config/build metadata relinked. Camera source/module changes were not deployed by this task.",
+  "sha256": {
+    "boot_b-before.img": "c2f0ef6aeb5df3077c708fe2866d985d16d09bae210534fafa70e0062d8ae210",
+    "vendor_boot_b-before.img": "b6186469f626c4d732f8f6960d727d84a7e54883df8759407a9fa6a3aaa8d67f",
+    "boot-usb2.img": "c7596a70b8a0f9ffc467d556f459dc44833c0d7cc1450771d56b14df206b399b",
+    "Image-usb2.gz": "67822b449ffadfc02d13cba2ed9d92a2d71082406de8f476b8c14f632d01d473",
+    "System.map-usb2": "0cd2de714a59d5114cdc75f4f50ffd611608c5113a625698e40e26e93227a2e7",
+    "usb2-datapath-candidate.patch": "a70bc30ff2c3199bae233f5b8a47816e920cf4ba00af5618c57a5cf95f568a77"
+  },
+  "image_bytes": 29253632,
+  "kernel_commit": "f8350cc1e221ce4cb22beec8a9eeae7a5ad77a2d"
+}

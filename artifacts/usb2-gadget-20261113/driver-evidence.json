@@ -1,0 +1,83 @@
+{
+  "date": "2026-11-13",
+  "kernel_commit": "f8350cc1e221ce4cb22beec8a9eeae7a5ad77a2d",
+  "kernel_version": "7.3.0-sm8450+ #4 SMP PREEMPT Fri Nov 13 21:54:31 CST 2026",
+  "boot_partition": "boot_b",
+  "reboot_with_usb2_connected": "configured / high-speed; USB SSH reachable",
+  "same_usb2_port_reconnects": 3,
+  "usb3_transition": "USB2 -> super-speed on USB3 -> high-speed on USB2",
+  "configured_transitions": [
+    {
+      "elapsed_seconds": 0.0017294879999951718,
+      "monotonic_seconds": 70.745651219,
+      "speed": "high-speed"
+    },
+    {
+      "elapsed_seconds": 79.618016816,
+      "monotonic_seconds": 150.361938547,
+      "speed": "high-speed"
+    },
+    {
+      "elapsed_seconds": 91.03115999799999,
+      "monotonic_seconds": 161.775081729,
+      "speed": "high-speed"
+    },
+    {
+      "elapsed_seconds": 102.18219467899999,
+      "monotonic_seconds": 172.92611641,
+      "speed": "high-speed"
+    },
+    {
+      "elapsed_seconds": 152.809427612,
+      "monotonic_seconds": 223.553349343,
+      "speed": "super-speed"
+    },
+    {
+      "elapsed_seconds": 168.120601164,
+      "monotonic_seconds": 238.864522895,
+      "speed": "high-speed"
+    }
+  ],
+  "manual_or_userspace_recovery_used": false,
+  "transfer": {
+    "bytes": 67108864,
+    "upload_seconds": 3.5707698999976856,
+    "download_seconds": 15.765347900000052,
+    "host_sha256": "0d349f1ca99b76f126be81ac6e01fd2b209611e5275bbdb317bb779f8d79a159",
+    "phone_sha256": "0d349f1ca99b76f126be81ac6e01fd2b209611e5275bbdb317bb779f8d79a159",
+    "download_sha256": "0d349f1ca99b76f126be81ac6e01fd2b209611e5275bbdb317bb779f8d79a159",
+    "all_equal": true,
+    "kernel": "#4, USB2 driver candidate",
+    "recovery_script_used": false
+  },
+  "slot_b": {
+    "Active": 1,
+    "Successful": 1,
+    "Bootable": 1
+  },
+  "failed_units": 0,
+  "limitations": [
+    "LPM disable experimental DT property remains enabled; removal not tested.",
+    "Complete power-off start not tested.",
+    "OTG host, powered PD hub and system suspend not newly tested.",
+    "A pre-reboot 192 MiB backup SCP over USB was interrupted while gadget stayed configured; backups were fully copied and verified via Wi-Fi. Post-reboot 64 MiB transfers in both directions passed."
+  ],
+  "final_observation": {
+    "time": "2026-11-13T22:14:57+08:00",
+    "uptime_minutes": 16,
+    "udc_state": "configured",
+    "speed": "high-speed",
+    "serial_getty": "active",
+    "windows_acm": "COM3 present, status OK; interactive serial communication not tested"
+  },
+  "capture_finished": true,
+  "capture_samples": 29808,
+  "checks": {
+    "host_suite": "bash scripts/check.sh --with-kernel: passed",
+    "host_environment": "WSL; copied text scripts/config fragments normalized to LF, kernel symlinked to /opt/negroni-build/linux",
+    "kernel_build": "ARM64 Image.gz and boot v4 repack/readback checks passed",
+    "kernel_style": "checkpatch.pl --strict: 0 errors, 0 warnings, 0 checks",
+    "bundle": "verified; pack includes new commit and both extracted driver files match tested sources",
+    "whitespace": "git diff --check and git diff --cached --check passed"
+  }
+}

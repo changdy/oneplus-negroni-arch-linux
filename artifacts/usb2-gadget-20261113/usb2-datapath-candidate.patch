@@ -1,0 +1,83 @@
+diff --git a/drivers/phy/qualcomm/phy-qcom-snps-femto-v2.c b/drivers/phy/qualcomm/phy-qcom-snps-femto-v2.c
+index 0469d83213..a5de9757a1 100644
+--- a/drivers/phy/qualcomm/phy-qcom-snps-femto-v2.c
++++ b/drivers/phy/qualcomm/phy-qcom-snps-femto-v2.c
+@@ -187,6 +187,18 @@ static inline void qcom_snps_hsphy_write_mask(void __iomem *base, u32 offset,
+ 	readl_relaxed(base + offset);
+ }
+ 
++static void qcom_snps_hsphy_release_datapath(struct qcom_snps_hsphy *hsphy)
++{
++	u32 cfg = readl_relaxed(hsphy->base + USB2_PHY_USB_PHY_CFG0);
++
++	if (!(cfg & UTMI_PHY_DATAPATH_CTRL_OVERRIDE_EN))
++		return;
++
++	qcom_snps_hsphy_write_mask(hsphy->base, USB2_PHY_USB_PHY_CFG0,
++				   UTMI_PHY_DATAPATH_CTRL_OVERRIDE_EN, 0);
++	dev_info(hsphy->dev, "released USB2 charger-detection override (cfg=%#x)\n", cfg);
++}
++
+ static int qcom_snps_hsphy_suspend(struct qcom_snps_hsphy *hsphy)
+ {
+ 	dev_dbg(&hsphy->phy->dev, "Suspend QCOM SNPS PHY\n");
+@@ -461,6 +473,8 @@ static int qcom_snps_hsphy_init(struct phy *phy)
+ 
+ 	qcom_snps_hsphy_write_mask(hsphy->base, USB2_PHY_USB_PHY_CFG0,
+ 					UTMI_PHY_CMN_CTRL_OVERRIDE_EN, 0);
++	/* Charger detection may leave the UTMI datapath forced to high-Z. */
++	qcom_snps_hsphy_release_datapath(hsphy);
+ 
+ 	hsphy->phy_initialized = true;
+ 
+@@ -499,6 +513,11 @@ static int qcom_snps_hsphy_set_mode(struct phy *phy, enum phy_mode mode,
+ 		qcom_snps_hsphy_exit(phy);
+ 		return qcom_snps_hsphy_init(phy);
+ 	}
++
++	if (hsphy->phy_initialized &&
++	    (mode == PHY_MODE_USB_DEVICE || mode == PHY_MODE_USB_HOST))
++		qcom_snps_hsphy_release_datapath(hsphy);
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
+index 4b7221cf81..9a41bf19dc 100644
+--- a/drivers/usb/dwc3/dwc3-qcom.c
++++ b/drivers/usb/dwc3/dwc3-qcom.c
+@@ -561,8 +561,9 @@ static int dwc3_qcom_setup_irq(struct dwc3_qcom *qcom, struct platform_device *p
+ static void dwc3_qcom_set_role_notifier(struct dwc3 *dwc, enum usb_role next_role)
+ {
+ 	struct dwc3_qcom *qcom = to_dwc3_qcom(dwc);
++	int ret;
+ 
+-	if (qcom->current_role == next_role)
++	if (qcom->current_role == next_role && next_role != USB_ROLE_DEVICE)
+ 		return;
+ 
+ 	if (pm_runtime_resume_and_get(qcom->dev)) {
+@@ -570,6 +571,23 @@ static void dwc3_qcom_set_role_notifier(struct dwc3 *dwc, enum usb_role next_rol
+ 		return;
+ 	}
+ 
++	/*
++	 * PMIC charger detection can override the USB2 datapath while the
++	 * controller remains in device mode. Reapply the PHY mode when UCSI
++	 * reports the next device connection, including repeated DEVICE requests.
++	 * Serialize with the asynchronous DWC3 role worker.
++	 */
++	if (next_role == USB_ROLE_DEVICE) {
++		mutex_lock(&dwc->mutex);
++		if (dwc->current_dr_role == DWC3_GCTL_PRTCAP_DEVICE) {
++			ret = phy_set_mode(dwc->usb2_generic_phy[0],
++					   PHY_MODE_USB_DEVICE);
++			if (ret)
++				dev_err(qcom->dev, "failed to restore USB2 PHY: %d\n", ret);
++		}
++		mutex_unlock(&dwc->mutex);
++	}
++
+ 	/* NONE can occur between two HOST requests when a cable is unplugged. */
+ 	dwc3_qcom_vbus_override_enable(qcom, next_role == USB_ROLE_DEVICE);
+ 

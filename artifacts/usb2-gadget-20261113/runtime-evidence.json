@@ -1,0 +1,56 @@
+{
+  "date": "2026-11-13",
+  "device": "OnePlus 10 Pro NE2210",
+  "kernel": "7.3.0-sm8450+",
+  "failed_state": {
+    "role": "device",
+    "udc_binding": "a600000.usb",
+    "udc_state": "not attached",
+    "link_state": "Suspend",
+    "gpio57": "low",
+    "gpio64": "low",
+    "phy_cfg0_low_byte": "0x01",
+    "utmi_ctrl0_low_byte": "0x09",
+    "ref_gate": "0x80000000"
+  },
+  "recovery": {
+    "register": "0x088e3094",
+    "mask": "0x00000001",
+    "operation": "clear",
+    "ref_gate_changed": false,
+    "final_state": "configured",
+    "final_speed": "high-speed",
+    "hardware_script_verified_at": "21:45:33+08:00"
+  },
+  "replug_recovery_timing": {
+    "datapath_write_monotonic": 17969.971808,
+    "configured_monotonic": 17970.199404376,
+    "later_clock_write_monotonic": 17992.111448,
+    "configured_before_clock_write": true
+  },
+  "usb3_to_usb2_capture": {
+    "sample_interval_seconds": 0.02,
+    "samples": 8969,
+    "role": "device throughout recorded snapshots",
+    "otg_enable_or_xhci_events": 0
+  },
+  "transfer_after_datapath_only_recovery": {
+    "bytes": 33554432,
+    "upload_seconds": 2.094455200000084,
+    "download_seconds": 1.2161494999963907,
+    "local_sha256": "0f117f5a859c869bb6aa09dcff1245098dc758707c1cde5175e73a382a0db64f",
+    "phone_sha256": "0f117f5a859c869bb6aa09dcff1245098dc758707c1cde5175e73a382a0db64f",
+    "download_sha256": "0f117f5a859c869bb6aa09dcff1245098dc758707c1cde5175e73a382a0db64f",
+    "all_equal": true,
+    "refgate_changed": false,
+    "recovery": "PHY_CFG0 bit0 only"
+  },
+  "limits": [
+    "Sequential snapshots are not atomic; sub-20 ms events can be missed.",
+    "Replug reasserts datapath override; runtime recovery must be repeated.",
+    "Writer of the override has not been directly traced.",
+    "Kernel candidate is object-compiled only; not deployed, not reboot-tested.",
+    "No new validation of OTG host, powered hub, or deep suspend."
+  ],
+  "phase": "21:27-21:49 before driver deployment; superseded by driver-evidence.json"
+}

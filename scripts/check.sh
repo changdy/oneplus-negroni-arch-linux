@@ -48,6 +48,9 @@ python3 -B tests/test-charge-limit-service.py
 printf 'Running GNSS assistance protocol checks...\n'
 python3 -B tests/test-gnss-assist.py
 
+printf 'Running experimental USB2 recovery guard checks...\n'
+python3 -B tests/test-usb2-recover.py
+
 printf 'Running IMS bearer recovery tests...\n'
 python3 -B tests/test-ims-recovery.py
 
@@ -67,6 +70,8 @@ if [[ $with_kernel == true ]]; then
     cc -std=c11 -Wall -Wextra -Werror tests/charge-limit-policy.c -o "$check_dir/charge-limit-policy"
     "$check_dir/charge-limit-policy"
     python3 -B tests/test-charge-limit-driver.py
+    printf 'Running USB2 PHY and role recovery driver checks...\n'
+    python3 -B tests/test-usb2-driver.py
     printf 'Checking Docker configuration in fresh and existing kernel outputs...\n'
     python3 -B tests/test-docker-config.py
 fi
