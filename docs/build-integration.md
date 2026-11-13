@@ -38,6 +38,8 @@ SIM 初始化默认允许无卡使用：`configure-modem-uim.sh` 将软件包脚
 
 VoLTE 由 `configure-volte.sh` 安装:电信在 LTE 上没有电路域语音,基带注册 IMS 时会向主机请求一条 `IMS` APN 的数据连接(QMI IMS 数据服务),没人应答时拨号直接返回 `InvalidArgument`。镜像带上 postmarketOS 的 81voltd 来应答,以 `negroni-81voltd.service` 随 ModemManager 启停。81voltd 是在手机上编译的预编译二进制,来源、补丁和校验和记录在 `config/volte/81voltd.source`;补丁做两件事:基带会连续请求两次,避免对同一承载并发连接(ModemManager 1.24.2 会因此段错误);承载被外部断开时退出,由 systemd 重启后让基带重新请求。另装一条 polkit 规则禁止 `spacebar-daemon` 控制承载:Spacebar 6.3.x 在每次新增承载时会删除其它所有承载,导致数据和 IMS 互相挤掉。
 
+IMS 承载自动恢复由同一个脚本安装:`config/volte/negroni-ims-recovery.py` 到 `/usr/local/libexec/`、配置到 `/etc/negroni-ims-recovery.conf`、`negroni-ims-recovery.service` 到 systemd 并随 ModemManager 启用。该服务只查询 ModemManager 的承载状态,不改 81voltd 二进制;连续丢失 IMS 承载时先重启 81voltd,仍失败且数据承载在线时才有上限地重启 ModemManager,细节与限制见[基带说明](modem.md#ims-承载自动恢复2026-11-13)。源文件指纹与上述文件一起记录,`verify-volte-image.py` 封装前核对内容、权限和两个启用链接。全新 rootfs 由 `finalize-rootfs.sh` 调用 `configure-volte.sh` 安装;`build.sh` 以 `volte-sources.sha256` 指纹在已有镜像续建时触发 `update-volte-image.sh`,之后重新封装。恢复服务已在手机上部署,两级动作、开机自愈与拨号均完成实机验证(见[基带说明](modem.md#ims-承载自动恢复2026-11-13));全新完整镜像仍未重建。
+
 VoLTE 已知限制:只在设备上验证过拨出电话能到达振铃/接通状态,通话音频没有接通(内核缺少语音通话的音频通路),来电和短信未测试。关闭移动数据时 NetworkManager 会断开所有承载,此后 ModemManager 1.24.2 在重新连接时大概率段错误(4 轮开关崩溃 4 次),随后自动重启并在约 20 秒内恢复数据和 IMS;根因在 ModemManager 的复用链路处理,尚未定位。
 
 Docker 内核支持已接入每次构建：`configure-docker-kernel.sh` 在基础配置上合并 `config/kernel/docker.config`，随后运行 `olddefconfig` 和必需项检查。已有 `.config` 同样会更新。正常 Kbuild 生成的 nftables 兼容、IPv4/IPv6 FIB 和 NAT 模块通过内核产物指纹进入 rootfs；打包前核对镜像内核、模块哈希、依赖索引和自动加载别名，结果写入构建报告。镜像中的 Docker 软件按需安装，见[Docker 内核支持](docker.md)。

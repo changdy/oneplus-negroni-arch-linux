@@ -64,7 +64,36 @@ sudo nmcli con add type gsm ifname '*' con-name ct-lte gsm.apn ctnet gsm.usernam
 - `spacebar-daemon` 6.3.4 每新增一个承载，就对其它所有承载调用 `DeleteBearer`。已用 polkit 规则 `49-negroni-spacebar-bearers.rules` 禁止，实测返回 Unauthorized 且不崩溃。
 - NetworkManager 关闭移动数据时用 `Simple.Disconnect` 断开**所有**承载。之后 ModemManager 1.24.2 在下次连接时大概率段错误（4 轮开关崩 4 次），约 20 秒后自动恢复。根因未找到：没有调试符号，仓库里也没有更新的包。
 
-2026-11-12 16:21 重启后出现一次 IMS 承载未建立：81voltd 首次 `Connect()` 返回 `call-already-present`，之后进程保持运行但不重试，IMS 承载一直未连接，拨号返回 `InvalidArgument` 或在 `dialing` 约 19 秒后终止。手动 `systemctl restart negroni-81voltd` 后恢复（期间又触发一次 ModemManager 段错误并自恢复）。17:00 重启后再次出现；这次只重启 81voltd 仍报同样错误，`systemctl restart ModemManager` 后 IMS 承载才连接。两次重启两次出现，连接失败后不退出、不重试的问题尚未修复。
+2026-11-12 16:21 重启后出现一次 IMS 承载未建立：81voltd 首次 `Connect()` 返回 `call-already-present`，之后进程保持运行但不重试，IMS 承载一直未连接，拨号返回 `InvalidArgument` 或在 `dialing` 约 19 秒后终止。手动 `systemctl restart negroni-81voltd` 后恢复（期间又触发一次 ModemManager 段错误并自恢复）。17:00 重启后再次出现；这次只重启 81voltd 仍报同样错误，`systemctl restart ModemManager` 后 IMS 承载才连接。两次重启两次出现。81voltd 本身仍不重试，改由下面的恢复服务在外部检测结果并分级恢复。
+
+### IMS 承载自动恢复（2026-11-13）
+
+不改预编译的 81voltd：它在 `Connect()` 失败后仍保持运行，而基带只在 QMI 服务出现时请求一次 IMS 连接，所以首次失败后不会自己恢复。`negroni-ims-recovery.service` 直接查询 ModemManager 里 `IMS` APN 的承载是否 `connected=yes`，按结果分级处理：
+
+1. 连续 2 次检查（默认每 15 秒）没有 IMS 承载 → 重启 `negroni-81voltd.service`，让基带重新请求；两次重拉间隔至少 30 秒。
+2. 连续 6 次仍没有、且有其它数据承载在线 → 重启 `ModemManager.service`，清掉导致 `call-already-present` 的残留呼叫状态；默认每次启动最多 2 次、间隔至少 5 分钟。IMS 承载恢复后计数清零。
+
+配置在 `/etc/negroni-ims-recovery.conf`。重启 ModemManager 会重连移动数据并可能打断通话，设 `ALLOW_MODEMMANAGER_RESTART=0` 可完全禁用第二级；用户关闭移动数据（没有任何已连接承载）时也不会触发第二级。服务随 ModemManager 启动，**不使用 `BindsTo`**，否则它自己重启 ModemManager 时会被一起停掉。
+
+只读检查（不修改任何东西）：
+
+```sh
+sudo python3 /usr/local/libexec/negroni-ims-recovery.py --check
+```
+
+输出 modem 状态、承载数和 IMS 承载 up/down。
+
+来源与安装：`config/volte/negroni-ims-recovery.py`、同名 `.conf`、`config/systemd/negroni-ims-recovery.service`，由 `configure-volte.sh` 安装并启用，`verify-volte-image.py` 在封装前核对内容、权限和两个启用链接。
+
+2026-11-13 实机核查与验证（USB SSH；用户已同意重启相关服务）：
+
+- 只读核查：本次开机 81voltd 仍打印一次 `Failed to connect: ... call-already-present`，`NRestarts=0`，但 `IMS` 承载（IPv6、`qmapmux0.1`）最终为 `connected=yes`（`attempts=3`、`failed-attempts=1`）——说明基带重发请求有时能自愈，但不保证。
+- 部署：三个文件已装到手机并启用 `negroni-ims-recovery.service`；`--check` 正确报告 `IMS bearer: up`；`systemd-analyze verify` 通过。
+- **真实故障注入（第一级）**：先停 81voltd 再删除 IMS 承载，服务在 15:42:57 检出缺失、15:43:12 连续第 2 次后执行 `restart negroni-81voltd.service`，15:43:42 报告 `IMS bearer recovered`。期间 ModemManager 1.24.2 仍自行崩溃重启一次并重建承载。另一次直接删承载的注入由既有链路（81voltd 检测到承载被外部断开后退出重启）自愈，服务只记录 `probe failed ... couldn't find modem`，没有动作。
+- **受控注入（第二级）**：停掉后台服务后向同一状态机连续注入 6 次"IMS 承载缺失"，第 2 次真实重拉 81voltd、第 6 次真实重启 `ModemManager.service`（1/2），约 21 秒后 IMS 承载恢复；随后恢复后台服务，三个服务均 active。这是注入模拟探测结果、真实执行动作，**不等于真实故障自然走到第二级**。
+- **开机自愈（重启手机，用户已同意）**：16:01 重启后 `call-already-present` 再次复现，恢复服务在 16:01:52 / 16:02:07 连续两轮检出 IMS 承载缺失并重拉 81voltd，约 27 秒后 IMS 承载建立；四个服务均 active，`qbootctl` 显示 b 槽仍 `Active=1 / Successful=1 / Bootable=1`。开机时另留下一条未连接的 IMS bearer，不影响判断。
+- **拨号 / 通话**：拨 10000（电信自动服务号）走通 `dialing → ringing-out → active`，`negroni-call-audio` 语音图打开，8 秒通话录音下行声道 RMS 2816、峰值 19804；上行声道全 0（已知内置麦克风无信号，非本次回归）。通话已正常挂断并删除 call 对象。
+- 仍未测：全新完整镜像未构建（本机 WSL 被安全策略禁止、Windows 无 `debugfs`）；构建链已静态核查并补齐续建触发，实际构建与封装校验待在 WSL 执行。
 
 其它要点：IMSA / IMS settings 查询即使在能打电话时也返回 `InvalidOperation`，不能用来判断 IMS 是否注册。打电话不需要把 IMS 接口拉起来。81voltd 是在手机上编译的二进制，来源、补丁和校验和见 [81voltd.source](../config/volte/81voltd.source)。安装与限制见[构建集成说明](build-integration.md)。
 

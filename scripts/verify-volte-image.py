@@ -9,11 +9,17 @@ import sys
 
 PROJECT = Path(__file__).resolve().parents[1]
 UNIT = "negroni-81voltd.service"
+RECOVERY_UNIT = "negroni-ims-recovery.service"
 DAEMON = "/usr/local/libexec/81voltd"
+RECOVERY_DAEMON = "/usr/local/libexec/negroni-ims-recovery.py"
 # image path -> (repository source, mode)
 FILES = {
     DAEMON: ("config/volte/81voltd", "0755"),
     f"/etc/systemd/system/{UNIT}": (f"config/systemd/{UNIT}", "0644"),
+    RECOVERY_DAEMON: ("config/volte/negroni-ims-recovery.py", "0755"),
+    "/etc/negroni-ims-recovery.conf":
+        ("config/volte/negroni-ims-recovery.conf", "0644"),
+    f"/etc/systemd/system/{RECOVERY_UNIT}": (f"config/systemd/{RECOVERY_UNIT}", "0644"),
     "/etc/polkit-1/rules.d/49-negroni-spacebar-bearers.rules":
         ("config/volte/49-negroni-spacebar-bearers.rules", "0644"),
 }
@@ -52,16 +58,18 @@ def verify(image_dir, log_dir):
     for dependency in DEPENDENCIES:
         debugfs(f"stat {dependency}")
     wants = debugfs("ls -p /etc/systemd/system/ModemManager.service.wants").decode()
-    if f"/{UNIT}/" not in wants:
-        raise RuntimeError(f"{UNIT} is not enabled")
+    for unit in (UNIT, RECOVERY_UNIT):
+        if f"/{unit}/" not in wants:
+            raise RuntimeError(f"{unit} is not enabled")
     verification = {
-        "image": str(image), "service": UNIT, "enabled": True,
+        "image": str(image), "service": UNIT,
+        "recovery_service": RECOVERY_UNIT, "enabled": True,
         "sha256": checksums,
         # Outgoing call reached ringing-out on the device; call audio is not wired up.
         "hardware_tested": "outgoing call setup only",
     }
     report.write_text(json.dumps(verification, indent=2) + chr(10))
-    print("VoLTE image verified: IMS data service installed and enabled")
+    print("VoLTE image verified: IMS data service and recovery installed and enabled")
     return verification
 
 

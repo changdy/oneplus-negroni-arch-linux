@@ -1,0 +1,14 @@
+[Unit]
+Description=Recover the IMS data bearer for VoLTE on OnePlus Negroni
+After=ModemManager.service negroni-81voltd.service
+# Deliberately no BindsTo/PartOf: this unit may restart ModemManager itself.
+
+[Service]
+Type=simple
+ExecStart=/usr/local/libexec/negroni-ims-recovery.py
+Restart=always
+RestartSec=10s
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=ModemManager.service

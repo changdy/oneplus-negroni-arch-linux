@@ -29,6 +29,7 @@ paths = sorted(Path("scripts").glob("*.py")) + sorted(Path("tests").glob("*.py")
 paths.append(Path("config/charge-limit/negroni-charge-limit"))
 paths.append(Path("config/cpu-performance/negroni-cpu-performance"))
 paths.extend(sorted(Path("config/audio/voice").glob("*.py")))
+paths.append(Path("config/volte/negroni-ims-recovery.py"))
 for path in paths:
     compile(path.read_bytes(), str(path), "exec")
 print(f"{len(paths)} Python files passed")
@@ -46,6 +47,9 @@ python3 -B tests/test-charge-limit-service.py
 
 printf 'Running GNSS assistance protocol checks...\n'
 python3 -B tests/test-gnss-assist.py
+
+printf 'Running IMS bearer recovery tests...\n'
+python3 -B tests/test-ims-recovery.py
 
 printf 'Running submodule bundle recovery tests...\n'
 python3 -B tests/test-submodule-restore.py
