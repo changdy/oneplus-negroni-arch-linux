@@ -44,6 +44,9 @@ python3 -B tests/test-call-audio.py
 printf 'Running charge-limit service tests...\n'
 python3 -B tests/test-charge-limit-service.py
 
+printf 'Running GNSS assistance protocol checks...\n'
+python3 -B tests/test-gnss-assist.py
+
 printf 'Running submodule bundle recovery tests...\n'
 python3 -B tests/test-submodule-restore.py
 

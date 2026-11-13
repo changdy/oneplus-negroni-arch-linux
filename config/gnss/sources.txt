@@ -8,3 +8,8 @@ Build: scripts/build-gnss-stack.sh (native aarch64, prefix /opt/negroni-gnss)
 2026-11-12 deployed sha256:
   ModemManager e3904776942e8a18a4dbd1ecc8f4934369d2d2c44d5a0e96423b0fafc704a149
   libqmi-glib.so.5.12.0 408dc26901dac775e866d27c687c8029a461aa4ca5e009b5b20fc2d723d6a355
+2026-11-13 assistance helper:
+  source scripts/gnss-assist.py (Python standard library, local implementation)
+  protocol https://github.com/qualcomm-linux/location-apis-qcom aa950a783a4b8fbb41807bab4d840d44643878a9
+  installed /usr/local/libexec/negroni-gnss-assist.py
+  sha256 0af4c0cc5025071573f8ace273785f17d27ee1bc7ad1599a3b4d67084a785cc8

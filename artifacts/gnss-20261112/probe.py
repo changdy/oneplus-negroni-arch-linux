@@ -79,7 +79,8 @@ class Probe:
         self.reports[message] += 1
         if message == 0x24:
             status = int.from_bytes(fields.get(1, b"\xff"), "little")
-            if status == 0 and 0x13 in fields and 0x14 in fields:
+            # 0x10/0x11 are coordinates; 0x13/0x14 are uncertainty axes.
+            if status == 0 and len(fields.get(0x10, b"")) == 8 and len(fields.get(0x11, b"")) == 8:
                 self.have_fix = True
         elif message == 0x25:
             expanded = 0x11 in fields
@@ -92,6 +93,7 @@ class Probe:
             if len(data) != 1 + count * width:
                 raise ValueError("unexpected satellite array length")
             systems = collections.Counter()
+            tracking_systems = collections.Counter()
             tracking = 0
             cn0 = []
             for offset in range(1, len(data), width):
@@ -100,11 +102,14 @@ class Probe:
                 if valid & 1:
                     systems[system] += 1
                 tracking += bool(valid & 8 and status == 3)
+                if valid & 1 and valid & 8 and status == 3:
+                    tracking_systems[system] += 1
                 if valid & 0x80:
                     cn0.append(round(row[8], 1))
             if time.monotonic() - self.last_summary >= 15:
                 self.last_summary = time.monotonic()
                 print(f"SV targets={count} systems={dict(systems)} tracking={tracking} "
+                      f"tracking_systems={dict(tracking_systems)} "
                       f"valid_CN0={len(cn0)} max_CN0={max(cn0, default=None)} "
                       f"fix={self.have_fix}", flush=True)
 
@@ -113,6 +118,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--duration", type=int, default=120)
     parser.add_argument("--node", type=int, default=0)
+    parser.add_argument("--full-power", action="store_true",
+                        help="request high accuracy and full GNSS power for this session")
     args = parser.parse_args()
     if not 1 <= args.duration <= 1800:
         parser.error("duration must be between 1 and 1800 seconds")
@@ -134,8 +141,14 @@ def main():
                       + tlv(0x11, "<I", 1) + tlv(0x12, "<B", 0))
         # Set before sending so cleanup also runs if the Start response is lost.
         started = True
-        probe.request(0x22, tlv(1, "<B", 222) + tlv(0x10, "<I", 1)
-                      + tlv(0x12, "<I", 1) + tlv(0x13, "<I", 1000))
+        start = (tlv(1, "<B", 222) + tlv(0x10, "<I", 1)
+                 + tlv(0x12, "<I", 1) + tlv(0x13, "<I", 1000))
+        if args.full_power:
+            # Qualcomm accuracy HIGH=3; power IMPROVED_ACCURACY=1,
+            # timeBetweenMeasurement=0. This setting belongs to our session.
+            start += tlv(0x11, "<I", 3)
+            start += struct.pack("<BHII", 0x1a, 8, 1, 0)
+        probe.request(0x22, start)
         deadline = time.monotonic() + args.duration
         while time.monotonic() < deadline:
             try:
