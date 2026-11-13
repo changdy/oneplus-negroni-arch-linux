@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Protocol regressions for GNSS assistance and fix detection (no device I/O)."""
 
+import collections
 import contextlib
 import importlib.util
 import io
@@ -103,6 +104,59 @@ class GnssTests(unittest.TestCase):
         self.assertFalse(instance.have_fix)
         instance.indication(0x24, {1: bytes(4), 0x10: bytes(8), 0x11: bytes(8)})
         self.assertTrue(instance.have_fix)
+
+    def test_rf_metrics_preserve_signed_gain_and_unscaled_wire_values(self):
+        fields = {2: bytes.fromhex("f4ffffff"), 0x17: bytes.fromhex("faffffff"),
+                  0x10: struct.pack("<HHi", 200, 201, 7900), 0x11: b"truncated"}
+        result = probe.rf_metrics(fields)
+        self.assertEqual(result["band1_pga_db"], -12)
+        self.assertEqual(result["band5_pga_db"], -6)
+        self.assertEqual(result["gps_l1"]["jammer_raw"], 7900)
+        self.assertNotIn("glo_g1", result)
+
+    def test_measurements_use_protocol_scales_and_valid_status_bits(self):
+        row = struct.pack("<HBIHBBQQHH", 7, 0, 3, 0, 1, 1, 4, 0x08000004, 348, 0)
+        fields = {3: struct.pack("<I", 1), 0x1e: struct.pack("<Q", 1),
+                  0x1f: struct.pack("<ii", -1234, 7900), 0x1b: b"\1" + row + bytes(59)}
+        result = probe.measurement_summary(fields)
+        self.assertEqual(result["max_cn0"], 34.8)
+        self.assertEqual(result["agc_db"], -12.34)
+        self.assertEqual(result["bp_db"], 79)
+        self.assertEqual(result["known_sv_ms"], 1)
+        self.assertEqual(result["fresh"], 0)  # The fresh bit is not marked valid.
+        self.assertEqual(result["with_ephemeris"], 1)
+        self.assertNotIn("agc_status", result)  # Absent does not mean no saturation.
+        with self.assertRaises(ValueError):
+            probe.measurement_summary({0x1b: b"\1" + bytes(89)})
+
+    def test_measurement_configuration_waits_for_successful_indication(self):
+        def packet(flags, fields):
+            return struct.pack("<BHHH", flags, 1, 0x88, len(fields)) + fields, (0, 111)
+
+        response = packet(2, struct.pack("<BH", 2, 4) + bytes(4))
+        for status in (0, 1):
+            indication = packet(4, struct.pack("<BHI", 1, 4, status))
+            for packets in ([response, indication], [indication, response]):
+                with self.subTest(status=status, first_flags=packets[0][0][0]):
+                    class Socket:
+                        def sendto(self, data, peer):
+                            pass
+
+                        def recvfrom(self, size):
+                            return self.packets.pop(0)
+
+                    instance = probe.Probe.__new__(probe.Probe)
+                    instance.sock = Socket()
+                    instance.sock.packets = list(packets)
+                    instance.peer = (0, 111)
+                    instance.transaction = 0
+                    instance.reports = collections.Counter()
+                    with contextlib.redirect_stdout(io.StringIO()):
+                        if status:
+                            with self.assertRaises(RuntimeError):
+                                instance.request(0x88, indication=True)
+                        else:
+                            instance.request(0x88, indication=True)
 
 
 if __name__ == "__main__":
