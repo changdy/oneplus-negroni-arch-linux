@@ -118,6 +118,8 @@ if [[ $with_kernel == true ]]; then
     check_dir=$(mktemp -d "${TMPDIR:-/tmp}/negroni-check.XXXXXX")
     trap 'rm -rf -- "$check_dir"' EXIT
     printf 'Running charge-limit policy and driver tests...\n'
+    cc -O2 -Wall -Wextra artifacts/call-audio-research-20261112/tools/adsp-f3.c -o "$check_dir/adsp-f3"
+    "$check_dir/adsp-f3" --selftest
     cc -std=c11 -Wall -Wextra -Werror tests/charge-limit-policy.c -o "$check_dir/charge-limit-policy"
     "$check_dir/charge-limit-policy"
     python3 -B tests/test-charge-limit-driver.py

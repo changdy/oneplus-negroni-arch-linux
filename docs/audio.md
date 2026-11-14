@@ -1,143 +1,195 @@
-# 音频（扬声器、麦克风、耳机）
+# 音频（扬声器、麦克风、耳机与通话）
 
-状态日期：2026-11-14。**声卡已经可用**：刷入路由修正后的 `vendor_boot_b`，开机即生成 `OnePlus-10-Pro` 声卡，PipeWire 识别出扬声器、耳机、内置麦克风和耳机麦克风。用户已确认扬声器正常出声。**内置麦克风从 2026-11-14 傍晚起可以录音**。此前稳定段全零：早期非零样本只是启动瞬态；原厂路由是 DMIC3/DMIC4，2026-11-13 补齐 DMIC4 的 MIC BIAS1、双 DMIC 门控与 VA_MCLK 并部署后 VA 端口能打开但仍全零；2026-11-14 的 TX/VA 多通道修正和 DMIC3/4 UCM 启停通过，声学信号仍为零。当天下午定位到 `audio-codec` 的 `sleep` 引脚状态把 WCD9385 复位脚在空闲时拉低；傍晚去掉该状态、刷入 `vendor_boot_b` 并重启后，ALSA `hw:0,2` 录到扬声器播放的 1 kHz 测试音。同一改动已进入内核提交 `67d9e35c9ac0`，这次提交没有重新构建镜像。见[本轮记录](../artifacts/mic-clock-20261113/README.md)。耳机出声和插拔检测尚未测试。通话相关的内容（语音图、通话录音与放音、麦克风排查）统一写在[通话语音](call-audio.md)。
+资料整理：2026-11-15；最近实机证据：2026-11-14。本页是音频的主要入口，桌面音频、通话、录音、听筒/免提和调试资料集中在这里。
 
-DMIC3/DMIC4 路由在内核提交 `cba22a622ac0`：DMIC3 用 GPIO8/9 和 MIC BIAS3，DMIC4 用 GPIO12/13 和 MIC BIAS1，VA DMIC 时钟 2.4 MHz，两路 TX DMIC 依赖 VA DMIC 门控和 `VA_MCLK`，`VA Capture` 改用 `VA_CODEC_DMA_TX_0`。2026-11-14 22 时整理时，曾把工作区里的 DMIC3 部分误当成失败试验。23:10 读取手机运行中的设备树，确认能录音时用的 `vendor_boot` 同时带着这份路由和 `67d9e35c9ac0`。`67d9e35c9ac0` 本身没有 DMIC 引脚复用，单独使用的效果没有实测。用 `cba22a622ac0` 重新构建的镜像未构建、未刷入。
+## 当前能力与默认交付
 
-2026-11-14 补充：用户未测试刷机前的原厂麦克风，当前没有正常采集基线。对照原厂 WCD 模块又验证了 eFuse/SLEEP_CTL 校准：运行时字段调整及启动时模块对照均未恢复信号，实验 WCD 模块已还原并重启；详见[续测记录](../artifacts/mic-clock-20261113/README.md#同日续测原厂基线未测与-wcd9385-启动校准)。
-
-2026-11-14 下午定位到原因，傍晚已刷入并重启验证。从主 TLMM 一侧读回确认录音时两路 DMIC 时钟都在，此前“没有时钟”是 LPI 读回方式的假象；设备树给 `audio-codec` 配了 `sleep` 引脚状态，声卡空闲时 WCD9385 的复位脚（gpio43）被拉低，打开 PCM 才放开，带隙和模拟偏置的初始化随复位丢失且没有被回写。临时绕过证明两路麦克风能录到 1 kHz 测试音。傍晚的持久改动只动运行中的 `vendor_boot_b`：备份 SHA-256 `c86b6e9a1f861047f9bd71cb40af2e8f508216f600ce94cfd2cc551491233ce8`，刷入镜像 `2714b634cc0fadbc96378c9c71f92851c41357a92ed4635476389e3b65473703`。`pinctrl-names` 只保留 `default`，删掉指向 gpio43 `output-low` 的 `pinctrl-1`，`pinctrl-0` 仍是 `output-high`；ramdisk、USB2 LPM 和相机设备树未动。重启后 B 槽仍是 Active/Successful/Bootable=1。空闲、录音和关闭 PCM 之后 gpio43 都保持高电平，引脚状态保持 `default`，WCD 的 TX/RX 从设备保持已枚举，没有再做 `/dev/mem` 置位或 `power/control` 切换。8 秒 `hw:0,2` 录音里，扬声器播放 2 秒、幅度 1500 的 1 kHz 测试音落在第 3–4 秒：左声道 1 kHz 分量 172 和 158，右声道 448 和 407，其余各秒接近 0；两路数据脚在录音时各翻转约一万次。第一秒仍有启动瞬态（RMS 约 1100）。关闭后 mixer 已还原。启动时有两条 `Impedance detect ramp error`，这次录音期间没有新增。随后三次 80 ms 短振结束后录了 10 秒并从喇叭外放，用户听过。第 1 秒峰值打满 32767，是启动瞬态；其后 9 秒去直流 RMS 约 27–86，峰值 187–585。外放把第 1 秒之后的峰值放大到约 6000，并把瞬态限制在 10000。通话上行、PipeWire 桌面录音、耳机出声和插拔仍未测。内核提交 `67d9e35c9ac0` 已去掉该状态，但没有用这次提交重新构建镜像，手机上跑的仍是字节补丁过的 `vendor_boot_b`。详见[刷入记录](../artifacts/mic-clock-20261113/README.md#2026-11-14-傍晚去掉-sleep-状态并刷入验证)。
-
-## 现状诊断（7.3.0-sm8450+，实机 `journalctl -k`）
-
-内核侧大部分已经就绪：
-
-- ADSP 正常启动，GPR/APM 服务 `gprsvc:service:2:1` 已注册。
-- WCD9385 通过 SoundWire 绑定（RX `sdw:2:0`、TX `sdw:3:0`），耳机/麦克风编解码器可用。
-- 两颗 TFA9874 功放（I²C13 `0x34`/`0x35`，修订 `0x0c74`）被 `tfa987x` 驱动识别。2026-11-14 用户听单侧短音确认：`0x34`（设备树里的 Speaker Left）是手机正上方的喇叭，`0x35`（Speaker Right）是下面的喇叭。
-
-声卡失败只有一个直接原因：
-
-```
-qcom-apm gprsvc:service:2:1: Direct firmware load for qcom/sm8450/OnePlus-10-Pro-tplg.bin failed with error -2
-snd-sc8280xp sound: ASoC: failed to instantiate card -2
-```
-
-公开的 [linux-msm/audioreach-topology](https://github.com/linux-msm/audioreach-topology) 和 linux-firmware 中没有一加 10 Pro 的拓扑，只有 `SM8450-HDK`。
-
-## 修改内容
-
-| 文件 | 作用 |
+| 能力 | 已有证据与限制 |
 | --- | --- |
-| [config/audio/topology/SM8450-OnePlus-10-Pro.m4](../config/audio/topology/SM8450-OnePlus-10-Pro.m4) | 基于 SM8450-HDK 的 AudioReach 拓扑：MM1/MM2 播放、MM3/MM4 录音；后端为 WCD RX0（耳机）、Tertiary MI2S（扬声器）、WCD TX3 与 VA TX0（麦克风） |
-| [scripts/build-audio-topology.sh](../scripts/build-audio-topology.sh) | 用上游 m4 宏和 `alsatplg` 生成 `OnePlus-10-Pro-tplg.bin`；在 audioreach-topology `d6bb205` 上两次构建结果一致 |
-| [config/audio/sm8450-oneplus-negroni-audio.patch](../config/audio/sm8450-oneplus-negroni-audio.patch) | 内核 DT：扬声器链路由 `TERTIARY_TDM_RX_0` 改为 `TERTIARY_MI2S_RX` 并添加位时钟投票；`audio-routing` 换成上游 SM8450-HDK 的有效路由。目前只在 WSL 内核树中未提交，尚未进入 `linux/` 子模块 |
-| [config/audio/ucm2/](../config/audio/ucm2/) | ALSA UCM：`conf.d/sm8450/OnePlus-10-Pro.conf`，hw:0 耳机、hw:1 扬声器、hw:2 麦克风 |
-| [config/audio/negroni-audio-test.sh](../config/audio/negroni-audio-test.sh) | 手机端测试脚本（见下） |
+| 扬声器 | 用户确认可听；顶部为 `0x34`，底部为 `0x35` |
+| 内置麦克风 | ALSA 两路录到测试音，用户听过录音外放；启动首秒仍有瞬态，独立桌面录音和原厂基线未完整验证 |
+| 通话上行 | 电信 VoLTE 对端听过，反馈听着还可以 |
+| 通话下行、录音与注入放音 | 已有通话及电平/测试音记录；人工听音、网络和编码条件按下节分别解释 |
+| 听筒/免提 | 用户确认切换有效；听筒模式只留顶部功放，未加载原厂 receiver 音效，可能偏响 |
+| 耳机、蓝牙通话、回声消除、扬声器保护 | 未完成或未测；不作为可用能力承诺 |
 
-### 为什么扬声器改用 MI2S
+当前固定内核同时包含音频路由、语音图、TX/VA 多通道修正、WCD9385 复位脚修复、RX 中断修复与 DMIC3/DMIC4 路由。麦克风可用状态依赖路由和复位修复共同存在：DMIC3 为 GPIO8/9、MIC BIAS3，DMIC4 为 GPIO12/13、MIC BIAS1，VA 2.4 MHz、共享门控及 VA Capture 链路为已核对值。不能只带 `67d9e35c9ac0` 就省掉 `cba22a622ac0`。
 
-DT 原本把 TFA9874 接在 Tertiary **TDM**。在 7.3 的 AudioReach 驱动中，TDM 端口只能通过新的 `AUDIO_IF`（QAIF，`0x0700117C`）模块驱动，上游只在 Hawi/Nord/Shikra 等新平台使用；SM8450 的 HDK 拓扑只用到 `I2S_SINK`（`0x0700100A`）和 Codec DMA。Tertiary TDM 与 Tertiary MI2S 共用 `mi2s2_*` 引脚，`tfa987x` 驱动在探测时把功放配置为每帧 2×16 bit（等同 16 bit 立体声 I²S），按 `sound-channel` 选择左右声道，所以改为 Tertiary MI2S、数据线 SD1（`mi2s2_data1`）。
+全新 rootfs 由 `configure-audio.sh` 安装手机已验证的拓扑、UCM 和通话服务；已有镜像由源文件指纹更新，`verify-audio-image.py` 打包前核对文件与依赖。服务仅在通话期间打开语音图，结束后恢复桌面路由。**带齐这些成果的新完整镜像未构建、未刷入。**
 
-这是**推断**，需要实机确认：
-- ADSP 固件是否接受 Tertiary MI2S；
-- 功放是否需要 MCLK；
-- 帧格式与 Android 是否一致。
+## 日常播放与录音检查
 
-若播放无声或 hw_params 报错，就要按 Android 的 TDM 参数排查（槽数、位宽、同步模式）。
+先确认 `OnePlus-10-Pro` 声卡与 PipeWire 设备存在。ALSA 采集端为双声道，错误地配置成单声道会使桌面丢掉麦克风。具体测试命令、拓扑/UCM 设计和早期失败过程见[桌面音频调试记录](archive/audio-bringup-2026-11-14.md)、[DMIC 与复位脚证据](../artifacts/mic-clock-20261113/README.md)。[可选调试应用](optional-apps.md)可用于播放已知音视频及观察路由。
 
-### 风险
+不要 unbind/bind `qcom-apm`：会丢失 GPR port 1，声卡热重建也可能使 WCD TX 无法重新上线。更换拓扑或模块前按设备操作规则安排重启，避免同时干扰相机和其他会话。
 
-- `tfa987x` 驱动没有扬声器保护（无 I/V 反馈、无 NXP 校准参数）。测试时请**先把音量调低**，不要长时间大音量播放。
-- UCM 中扬声器设备没有音量控件，音量只能由 PipeWire 软件调节。
-- 内置麦克风已按原厂改成 DMIC3/DMIC4（MIC BIAS3 / MIC BIAS1）。2026-11-14 傍晚去掉复位脚的 `sleep` 状态并重启后，ALSA 直接录音能录到 1 kHz 测试音；UCM / PipeWire 桌面录音未再测。耳机麦克风仍沿用 AMIC2 → ADC2，实机声学验证未测。
-- 耳机通过 USB-C 模拟转接（FSA4480），插拔检测和模式切换是否正常尚待测试。
+## 根因与历史资料
 
-## 2026-11-11 实机结果（阶段 1）
+- 扬声器由 TDM 改接 Tertiary MI2S，并修正不存在的路由 widget，解决声卡实例化和播放问题。
+- 麦克风早期“没有时钟”的软件采样判断后来被否证；空闲时 sleep 引脚状态把 WCD9385 复位，导致模拟偏置初始化丢失，移除该状态后恢复声学信号。原厂时钟/偏置、eFuse 对照与失败实验保留在 DMIC 记录中。
+- RX SoundWire 告警曾通过空 regmap 读寄存器，修复后改走 TX 映射，并在缺失时返回。
+- 详细版本、数值和操作按[桌面调试历史](archive/audio-bringup-2026-11-14.md)、[通话初期调试历史](archive/call-audio-bringup-2026-11-12.md)、[语音研究](../artifacts/call-audio-research-20261112/README.md)阅读，旧的“全零”“未提交”“未接入构建”是当时状态。
 
-- 安装拓扑后不能用 unbind/bind 重新探测 `qcom-apm`：`apr_device_remove()` 会从 GPR 路由表中删除端口 1，bind 后不会重新登记，DSP 的回复随即被丢弃（`GPR: Port(1) is not registered`，命令 5 秒超时）。脚本已改为提示重启。
-- 重启后拓扑加载成功（不再出现 `-2`），声卡走到注册路由（DT 中 VA/DMIC 等 widget 缺失会报 `Failed to add route`，属于警告），但最终没有生成声卡，也没有错误日志；`devices_deferred` 为空，`sound` 设备未绑定驱动。
-- 此后手动 bind `snd-sc8280xp` 时，DSP 拒绝共享内存映射（`Error (1) Processing 0x0100100c`，`Buffer Allocation failed rc = -22`）。这与上游 2026-10 修复的问题一致：上一次失败的探测没有解除缓冲区映射，重新映射时被 DSP 拒绝，见 [ASoC: qcom: q6apm: Fix shared memory unmap](https://lore.landau.one/lkml/20261016141153.1346219-2-shengchao.guo%40oss.qualcomm.com/T/)。所以这不是根因，真正要查的是开机时第一次探测为什么静默失败。
-- 开机时 `APM_CMD_GET_SPF_STATE`（0x1001021）总是超时 5 秒；其他 SM8450 移植也有相同现象，被认为无害。
-- 第二次重启后，手机超过 30 分钟没有重新连上网络，原因未知。参照此前 A 槽因缺少启动成功标记耗尽重试次数的经历，怀疑 B 槽也是同样情况，需在手机旁确认。
+## 通话语音
 
-## 2026-11-12 根因：DT 路由引用不存在的 widget
+状态日期：2026-11-14 21:59（对端人耳确认通话听着还可以；听筒/免提切换用户确认可以了）。设备 NE2210，内核 `7.3.0-sm8450+`，中国电信 VoLTE。这里只写当前结论、用法和已知问题；通话调试过程见[2026-11-12 调试记录](archive/call-audio-bringup-2026-11-12.md)，整理过的依据见[研究记录](../artifacts/call-audio-research-20261112/README.md)，新增麦克风实机对照见[原厂 DMIC 路由与共享时钟](../artifacts/mic-clock-20261113/README.md)。
 
-第三次开机（槽位 B，`qbootctl` 显示 B 为唯一可启动槽位且已标记成功，此前“重试次数耗尽”的猜测不成立）的日志显示，声卡探测停在 29 条 `ASoC: Failed to add route`，例如 `Analog Mic1 -> VA AMIC1`、`Digital Mic0 -> TX DMIC0`、`WCD_TX_OUTPUT -> TX SWR_INPUT`。这些 widget 在主线 lpass 宏/WCD938x 驱动中不存在，路由失败会使声卡放弃实例化（驱动核心对 `-ENODEV` 不打印错误，所以看起来像静默失败）。
+### 现状
 
-修正：`audio-routing` 换成上游 `sm8450-hdk.dts` 的路由（去掉 WSA 扬声器条目）。新的 `vendor_boot-audio-test.img`（SHA-256 `70a5c017…`）同时包含该修正和扬声器 MI2S 修改，已复制到手机 `~/audio-test`，**尚未刷入**。路由修正与拓扑同样关键：不刷这个 DTB，耳机和麦克风也不会出现。
+| 功能 | 状态 | 依据 |
+| --- | --- | --- |
+| 通话下行（听到对方） | **可用**，通话时自动打开 | DSP 日志：VCPM 进入运行态，EVS 解码器处理下行语音帧；用户在一通来电中反馈“好像听到一个声音”。音量和清晰度没有仔细听过 |
+| 向对方播放音频 | **可用**（`hw:0,6`） | 用户在被叫手机上听到 1 kHz 测试音：干净、无失真、音量略偏大 |
+| 通话录音 | **可用**（`hw:0,7`） | 16 秒双声道录音：下行声道有对端的声音，上行声道有注入的测试音。内容只看过电平，没有人工听过 |
+| 通话上行（对方听到本机麦克风） | **可用** | 2026-11-14 20:01 拨出后语音图打开。8 秒 `hw:0,7` 录音里上行每秒 RMS 43–224、峰值 330–1602；下行前 6 秒接近 0，第 8 秒 RMS 5888、峰值 27394。用户在对端听完并自行挂断，反馈听着还可以。没有回声消除。拨号前 RX SoundWire 告警曾对空 regmap 读寄存器，控制器中断线程因此退出；修复为内核 `baa7d74668f4`，三个编解码器模块随这次重启装入后没有再崩溃 |
+| 回声消除、扬声器保护 | 没有 | 厂商的设备后处理模块需要 FastRPC audio PD，没有启用 |
+| 听筒/免提切换 | **可用** | 2026-11-14 21:56 拨出 `测试号码`。振铃时两颗功放 `L=0x0018 R=0x0018`；写入 `earpiece` 后右侧关掉并保持到接通（`R=0x0010`）；再写回 `speaker` 后两侧都是 `0x0018`。用户确认这次切换可以了。没有加载原厂 receiver 音效，音量可能与原厂听筒不同 |
+| 耳机、蓝牙通话 | 未做 | 没有耳机和蓝牙的通话路由 |
+| 自动接听 | 未做 | |
 
-## 2026-11-12 刷入后的实机结果
+只在一种条件下验证过：电信 VoLTE，下行 EVS、上行 AMR-WB，16 kHz。其他网络、声码器和采样率未测。
 
-`vendor_boot_b` 已写入（原分区备份 SHA-256 `0b873148…`，在手机 `~/audio-test/vendor_boot-backup-sde54.img` 和本地 `logs/audio-20261111/backup/`），重启正常。
+### 工作方式
 
-| 项目 | 结果 |
+SM8450 用 GPR/AudioReach，通话音频由 DSP 里的 VCPM 管理，不能套用旧 APR 平台的 q6voice。主机不传输通话 PCM 数据，只负责打开图。
+
+- **语音图**：从手机自己的 ACDB 提取 handset RX/TX 图，生成两个不传数据的前端：MM5（下行，到 Tertiary MI2S 扬声器）和 MM6（上行，来自 TX Codec DMA 3）。原有 MM1–MM4 保留。
+- **VCPM 的放行条件**：打开图时 VCPM 会统计每个方向的流容器和后处理容器，任一方向没有后处理容器就一直推迟启动（`Defer Prepare operation as complete graph is not yet opened`），而且不向主机报错，表现为 PCM 显示 RUNNING 却没有声音。所以即使不用厂商的后处理模块，每个方向也保留一个后处理容器：TX 是 `b00000b1`（转换器 `4446` 加 SmartSync `4449`），RX 是 `b0000044`（转换器 `41DD` 加增益 `41DA`）。
+- **下行音量**：厂商的音量级不在图里，RX 用独立增益固定在 −24.08 dB。
+- **通话录音与放音**：另外两个传数据的前端，接在语音图的模块上，没有自己的硬件端点。
+
+  | PCM | 方向 | 接法 |
+  | --- | --- | --- |
+  | `MultiMedia7 InCall`（`hw:0,6`） | 播放 | 主机 → 解码 → 转换 → MFC `4596` → 通话 TX 流的 MFC `458b` 端口 2 |
+  | `MultiMedia8 InCall`（`hw:0,7`） | 录音 | 原厂录音图 `b00000d0`，抽头是分路器 `4561`（下行）和 `4560`（上行，在放音混入点之后）的端口 3 |
+
+  录音的声道由 MUX_DEMUX 的模式决定：1 只录上行，2 只录下行（只有对方的声音），3/4 左声道上行、右声道下行。实测用的是模式 4。
+- **内核**：语音图在内核提交 `81637d2a07f3`（hostless 前端、VCPM 校准共享内存、跨图控制连接、路由修正）。录音和放音的起点在语音图里，作为原始的图打开参数下发，后端用不带控件的 DAPM 路由挂接。
+
+### 文件
+
+| 文件 | 用途 |
 | --- | --- |
-| 声卡 | `card 0: OnePlus10Pro [OnePlus-10-Pro]`，播放 hw:0,0 / hw:0,1，录音 hw:0,2 / hw:0,3 |
-| 耳机播放 hw:0,0 | `speaker-test` 正常运行无错误；未插耳机，未人耳确认 |
-| 扬声器播放 hw:0,1 | `speaker-test` 正常运行；两颗 TFA9874 的 `SYS_CTRL0` 由 `0x0011` 变为 `0x0018`（上电、功放使能），`STATUS0` 的 NOCLK 位清零，说明 Tertiary MI2S 时钟已送达功放；**用户确认扬声器出声** |
-| 内置麦克风 | hw:0,2 只接受双声道。当时测得 ADC1 在声道 0 去直流 RMS 约 1290、峰值 16001，通过 PipeWire 录音去直流 RMS 645；**后来按 100 ms 分窗复查，这只是启动瞬态，稳定段没有信号**，不能算作麦克风可用 |
-| PipeWire / UCM | 配置组合 `HiFi (Headphones, Mic1, Speaker)`；输出为扬声器（默认）和耳机，输入为内置麦克风（默认）和耳机麦克风 |
+| [voice-topology.py](../config/audio/voice/voice-topology.py) | 把提取的 handset 图和校准转成语音图的拓扑片段 |
+| [incall-topology.py](../config/audio/voice/incall-topology.py) | 生成通话录音和放音两个前端 |
+| [build-voice-topology.sh](../scripts/build-voice-topology.sh) | 合并基础媒体拓扑并用 `alsatplg` 编译 |
+| [negroni-call-audio.py](../config/audio/voice/negroni-call-audio.py)、[.service](../config/audio/voice/negroni-call-audio.service) | 通话期间自动打开和关闭语音图 |
+| [negroni-voice-test.py](../config/audio/voice/negroni-voice-test.py) | 限时手动打开语音图；服务复用它的 PCM 和 mixer 代码 |
+| [install-test.sh](../config/audio/voice/install-test.sh) | 安装或恢复三个实验内核模块和拓扑，不重启 |
+| [sm8450-audioreach-voice.patch](../config/audio/sm8450-audioreach-voice.patch)、[sm8450-oneplus-negroni-dmic.patch](../config/audio/sm8450-oneplus-negroni-dmic.patch) | 语音图内核改动已进入内核提交 `81637d2a07f3`。DMIC3 补丁和下一行的 DMIC4 补丁合起来是内核提交 `cba22a622ac0`。补丁文件仍保留对照 |
+| [sm8450-oneplus-negroni-dmic34-va.patch](../config/audio/sm8450-oneplus-negroni-dmic34-va.patch) | 2026-11-13—14 修正 VA CPU DAI、补齐 DMIC4，已刷入 B 槽并重启。单独部署时 VA 录音能打开但仍无信号；加上 WCD9385 复位脚修正 `67d9e35c9ac0` 后录到声音。已进入内核提交 `cba22a622ac0` |
 
-UCM 修正：麦克风设为 `CaptureChannels 2`（单声道会使 PipeWire 丢弃 Mic1）；耳机音量控件改为 `HP`（`HP Digital` 不存在）。
+原厂 ACDB、提取出的图和校准、生成的拓扑、内核模块和原始日志都在本地 `logs/call-audio-20261112/`，不纳入 Git。校准来自手机自己的 `~/android-ro/odm_b/etc/acdbdata/acdb_cal.acdb`，SHA-256 `da0cd92a94e77d6f7894de44f4afe4c701715ba46c6cf9bbe0b45fe1ea1ab63a`。许可见[来源与许可](licensing.md)。
 
-已知遗留：
-- 开机时 `APM_CMD_GET_SPF_STATE` 仍超时 5 秒，不影响使用。
-- `MultiMedia4 Capture` 没有路由（未在 UCM 中使用）。
-- 扬声器无保护：PipeWire 重载后音量可能被重置为 100%，建议保持在 40% 左右。
-- 耳机插拔检测（FSA4480 + MBHC）尚未测试。
+### 构建拓扑
 
-## 实机测试步骤
-
-测试包已在手机 `~/audio-test`（拓扑、UCM、`vendor_boot-audio-test.img`、脚本、`SHA256SUMS`）。
-
-**阶段 1：耳机与麦克风（不写分区）**
+ACDB 提取用 Qualcomm [AudioReach graphservices](https://github.com/AudioReach/audioreach-graphservices/tree/e0ecb6a1f10b9a0fced2de8101160e160ad02e5d) 和参考项目 [diting-ubuntu](https://github.com/royka1/diting-ubuntu/tree/c68ff47db94792fb5fd608e98d1ae489c2e592b1) 的 `acdb-query`，查询键保存在本地 `acdb/extract.sh` 和 `acdb/extract-incall.sh`。
 
 ```sh
-cd ~/audio-test
-sudo bash negroni-audio-test.sh install
+# 只有通话语音
+bash scripts/build-voice-topology.sh /path/to/audioreach-topology \
+  logs/call-audio-20261112/acdb/handset-rx \
+  logs/call-audio-20261112/acdb/handset-tx \
+  logs/call-audio-20261112/OnePlus-10-Pro-voice-tplg.bin
+
+# 加上通话录音和放音
+INCALL_MUSIC_DIR=logs/call-audio-20261112/acdb/incall/music \
+INCALL_RECORD_DIR=logs/call-audio-20261112/acdb/incall/rec-c \
+INCALL_MUX_CONFIG=logs/call-audio-20261112/acdb/incall/tool/rec-mode4.bin \
+bash scripts/build-voice-topology.sh ...同上四个参数...
 ```
 
-脚本会安装 `alsa-utils`、拓扑和 UCM。安装后需要重启，然后执行 `sudo bash negroni-audio-test.sh probe`。出现声卡后，接入 USB-C 耳机转接器，执行 `sudo bash negroni-audio-test.sh tone`，它会依次播放耳机和扬声器测试音并录 3 秒麦克风到 `mic-test.wav`。在当前 DT 下扬声器预计无声。
+| 拓扑 | SHA-256 | 状态 |
+| --- | --- | --- |
+| 只有通话语音 | `23bcdd6dfdfd6946f73637c8dc6565fe6769ca25f1ee3cdd2b09baddc9bec7b9` | 实测通过，手机上留有备份 |
+| 通话语音 + 录音 + 放音（MUX 模式 4） | `5fb6fba602ed054da1319f06104c374289f9d38ab8955220bd8d7312f64e15a3` | 实测通过，**手机当前安装的版本** |
 
-**阶段 2：声卡 DT（写 `vendor_boot`，耳机、麦克风、扬声器都需要）**
+加 `--loopback` 生成 DSP 内部回环版（8 kHz，不经过基带），只用于诊断；它和真实通话停在同样的位置，但没有验证过能否听到回环声。
 
-先确认 Linux 所在槽位（2026-11-11 的记录为 `b`）：
+`alsatplg` 会对四个硬件后端报 undefined widget，这些部件由内核后端驱动提供，属于预期；其他错误不能忽略。
+
+### 安装与使用
+
+镜像里的 `/usr/lib/firmware/qcom/sm8450/OnePlus-10-Pro-tplg.bin` 就是上表那份通话语音 + 录音 + 放音拓扑（`5fb6fba6…`）。`scripts/build-audio-topology.sh` 只生成桌面拓扑，不能单独再现这个文件。`configure-audio.sh` 会安装这份拓扑，并把通话服务装到 `/usr/local/libexec/negroni-voice/`、设为开机自启。2026-11-14 这次只把打包路径接上，没有构建新镜像，也没有刷入手机。手机上已有的服务和拓扑保持原样。换拓扑或语音模块后必须重启（见下文“不能热更新”）。
+
+通话音频服务的行为：
+
+- 有通话处于 `ringing-out` 或 `active` 时打开 MM5/MM6，没有时关闭并恢复改动过的 mixer 值；来电振铃阶段不打开。
+- 打开前把桌面声音服务（PipeWire/PulseAudio）的声卡 profile 切到 `off`，关闭后切回。否则通话期间桌面打开的媒体流会让扬声器 PCM 卡死，麦克风输入也会从 PipeWire 中消失。副作用是通话期间桌面提示音不响。
+- 原 profile 记录在 `/run/negroni-call-audio.json`，服务异常退出后下次启动时据此还原。
+- 它不拨号、不接听、不挂断、不录音，也不管理 `hw:0,6` 和 `hw:0,7`。
 
 ```sh
-sudo bash negroni-audio-test.sh flash-dt b
-sudo reboot
+sudo systemctl disable --now negroni-call-audio.service   # 停用
+journalctl -u negroni-call-audio.service    # 查看每次通话的打开/关闭
 ```
 
-脚本会先把原分区备份到 `~/audio-test/vendor_boot-backup-*.img`，再写入并校验。重启后执行 `tone` 测试扬声器。需要回退时执行 `sudo bash negroni-audio-test.sh restore b`。`vendor_boot-audio-test.img` 用 `images/7.3/vendor_boot.img` 的参数重新封装，DTB 相对旧版只有上述 3 处变化（已用 dtc 反编译对比），CPU 能力/功耗参数校验通过。
+通话中切换听筒和免提（服务约每秒读一次；默认免提）：
 
-所有日志写入 `~/audio-test/audio-test-*.log`。
+```sh
+echo earpiece > /run/negroni-call-audio.route   # 听筒：只留左侧 TFA9874
+echo speaker  > /run/negroni-call-audio.route   # 免提：左右两颗都开
+```
 
-> 2026-11-12 11:25 起，手机 `vendor_boot_b` 是相机会话刷入的合并镜像（内核 `ead3411b6e6` 加上未提交的 S5KJN1 相机设备树改动，SHA-256 `326eed0b…`），已确认声卡 `OnePlus-10-Pro` 与相机 `s5kjn1 6-0010` 同时存在。手机上旧的 `vendor_boot-audio-test.img` 不含相机改动，已改名为 `*.STALE-no-camera.img`，不要再刷。之后更新 `vendor_boot` 时要从包含相机改动的工作树构建，或以已提交的内核为准。
+原厂 `handset` 路径是 `TFA_CHIP_SELECTOR=1` 加 profile `receiver`，`speaker` 是 selector `3` 加 profile `speaker`。主线 `tfa987x` 不加载 NXP 的 receiver 固件，这里只在语音图已经打开之后清掉右侧功放（I²C `0x35`）的放大使能位，左侧 `0x34` 继续播放。2026-11-14 21:53–21:54 用户听 10 秒单侧短音后确认：左侧 `0x34` 是手机正上方的喇叭，右侧 `0x35` 是手机下面的喇叭。右侧播放中寄存器为 `L=0x0010 R=0x0018`。通话过程中的实际切换已在 2026-11-14 21:56 用寄存器核对，并于 21:59 由用户确认可以了：拨出后振铃阶段两侧都开，服务按路由文件关掉底部功放并保持到接通，再打开底部功放，然后挂断。挂断时驱动会自行关掉两颗功放，下一次普通播放仍是双扬声器。音量和音色与原厂听筒不同，可能偏响。服务把这个文件设成 `audio` 组可写。2026-11-14 20:35 已装上并重启服务，日志是 `waiting for calls; output file /run/negroni-call-audio.route`，文件属主 `root:audio`、模式 `0664`。21:56 那通才听过切换。
 
-## 构建集成（2026-11-12）
+通话中录音和放音（必须在通话接通、语音图已打开之后，并在挂断前结束）：
 
-- 内核：音频设备树修复为 `linux` 提交 `ead3411b6e6`（只含音频改动），父仓库 gitlink 与 `patches/linux/local-7.3.bundle` 已更新，空仓库恢复测试通过。补丁副本见 [sm8450-oneplus-negroni-audio.patch](../config/audio/sm8450-oneplus-negroni-audio.patch)。
-- rootfs：`configure-audio.sh`（新建）、`update-audio-image.sh`（续建）、`verify-audio-image.py`（封装前校验），已接入 `finalize-rootfs.sh`、`build.sh`、`pack-images.sh` 和 `check.sh`。在已有 `root.img` 的副本上实测安装、重复运行与篡改检测均符合预期。
-- 拓扑二进制 `config/audio/firmware/OnePlus-10-Pro-tplg.bin` 随仓库提供，来源与哈希见同目录 `.source`。
+```sh
+arecord -D hw:0,7 -f S16_LE -r 48000 -c 2 --period-size=1920 --buffer-size=7680 -d 16 call.wav
+aplay   -D hw:0,6 --period-size=1920 --buffer-size=7680 clip.wav
+```
 
-## 尚未完成
+- 录音周期不能小于 6144 字节，且要是 480 帧的整数倍。
+- 放音的电平只能由文件本身控制。幅度 8000（约 −12 dBFS）的测试音在对端听起来略偏大，真实音频建议再低 3–6 dB；这是估计值，换成语音后需要重新听。
 
-- 内置麦克风：2026-11-14 傍晚已在运行中的 `vendor_boot_b` 去掉 `audio-codec` 的 `sleep` 状态并重启，ALSA `hw:0,2` 录到 1 kHz 测试音。内核提交 `67d9e35c9ac0` 已包含该改动，尚未用它重新构建镜像。耳机和耳机检测未重测。2026-11-14 20:04 通话上行已由对端听过，反馈听着还可以。实际偏置电压与 PDM 时钟波形仍未用仪器测过。
-- 通话语音、通话录音与放音已单独成文，见[通话语音](call-audio.md)；通话下行、录音和向对方放音可用。内置麦克风的 ALSA 录音已恢复，2026-11-14 20:04 通话上行对端听着还可以。
-- 单独重绑声卡会遇到 WCD TX 重新初始化超时，换拓扑或模块只能重启。
+### 已知问题
 
-- 耳机出声与 USB-C 耳机插拔检测。
-- 全新完整镜像的构建与刷入验证（目前只在已有镜像副本与手机现有系统上验证）。
-- 扬声器保护（TFA9874 无 I/V 反馈与校准）。
-- 开机时 `APM_CMD_GET_SPF_STATE` 5 秒超时。
-- 可选：将拓扑与 UCM 提交到上游 audioreach-topology / alsa-ucm-conf。
+- **内置麦克风的 ALSA 录音已在 2026-11-14 傍晚恢复**；20:04 对端人耳确认通话上行听着还可以。原厂用 DMIC3/DMIC4，不是最初假定的 ADC1。此前稳定段全零的排查保留在下面。`MICB3_TEST_CTL_2` 的两次试验一次无效、一次无结论。
+  - **2026-11-14 下午的结论（取代下面各条里“没有时钟”的判断）**：从主 TLMM 一侧读同一焊盘（LPI gpio n 即 TLMM gpio 165+n），录音时 GPIO8、GPIO12 上都有约 2.4 MHz 的时钟，此前 LPI 一侧的采样读不到功能复用输出脚的电平；数据脚恒为 0，说明麦克风没有供电。原因是本机设备树给 `audio-codec` 写了 `sleep` 引脚状态并把复位脚 gpio43 配成 `output-low`：ASoC 在声卡空闲时选用该状态，WCD9385 一直处于复位，打开 PCM 时才放开，而带隙和模拟偏置的初始化只在驱动探测时做过一次，之后的 regcache 回写赶在芯片重新枚举之前，落空了（上午旁路读到的 `SLEEP_CTL` 硬件 0x16、缓存 0xde 即此状态）。MICBIAS 寄存器写上了，偏置脚没有输出。
+  - 不刷机验证：空闲时手动把 gpio43 置高，让 TX SoundWire 从设备枚举后再经历一次运行时挂起/恢复（回写到已枚举的芯片），随后按原厂路由录音。两路数据脚出现约 49% 占空的 PDM 数据，两声道稳定段非零；扬声器播放 1 kHz 测试音的两秒内，1 kHz 分量左 252–255、右 350–354，其余时间 ≤1.1。试验后已全部复原。
+  - 2026-11-14 傍晚已把同样的改动刷进 `vendor_boot_b` 并重启：`pinctrl-names` 只保留 `default`，删掉 `pinctrl-1`。空闲时 gpio43 保持高电平、引脚状态保持 `default`，从设备保持已枚举。没有再做手动置位。8 秒 ALSA 录音录到 2 秒 1 kHz 测试音（左 172/158，右 448/407）。之后三次短振结束即录 10 秒，并从喇叭外放，用户听过；第 1 秒是满幅启动瞬态，其后 9 秒 RMS 约 27–86。当次尚未测通话上行、桌面录音、耳机及耳机检测误报；同日 20:04 通话上行后来已由对端听过，其他项目仍待验收。内核提交 `67d9e35c9ac0` 已包含该改动，尚未重新构建镜像。数值见[刷入记录](../artifacts/mic-clock-20261113/README.md#2026-11-14-傍晚去掉-sleep-状态并刷入验证)。
+  - 以下各条是此前的排查记录，其中“GPIO 无时钟翻转”均来自 LPI 一侧的读回，不能再当作时钟不存在的依据；偏置、BOB、eFuse 等对照都是在 WCD9385 模拟部分未上电的状态下做的，结论需要在修复后重新评估。
+  - 2026-11-12 晚用限时诊断模块直接读 LPI 引脚电平（脚本和源码在本地 `logs/mic-20261112/`），观察到 **GPIO8 没有软件可见的时钟翻转**，尚无物理波形测量，不能单凭该采样确定直接根因：
+    - 录音期间 GPIO8（`dmic2_clk`）两万次采样零翻转；同样方法读 SoundWire 时钟脚 GPIO0 约一半为 1、翻转上万次。把 GPIO8 临时改成普通 GPIO 输出，读回能跟随高低电平，所以读回可信。
+    - VA 宏硬件寄存器直读 `0x000=1`、`0x004=1`、`0x080=2`、`0x088=5`（使能、四分频），不是 regmap 缓存假象。改二分频、十六分频、重新使能，或把 GPIO8 切到其余四个复用功能后，软件采样仍无翻转。
+    - 数据脚 GPIO9 在当时试验中完全跟随上下拉，未观察到麦克风主动输出。保持 `dmic2_data` 功能只加上拉时，录音立刻出现大幅跳变，说明“数据脚 → TX 宏解码器 → 录音”这一段是通的。
+    - 置配置寄存器 bit 11、去掉时钟脚输出使能位，都无效。录音同时让 MIC BIAS2/MIC BIAS4 上电也无效。
+    - 临时申请 `VA_CORE_MCLK` 成功但仍无时钟。**随后申请 `VA_CORE_2X_MCLK` 和 `TX_CORE_NPL_MCLK` 超时（−110），ADSP 的 `audio_process` 崩溃（`PRM:0xba`），内核在 ADSP 重启路径上 oops，手机卡死，只能强制重启。不要再做申请额外 q6prm 时钟的试验。**
+  - DMIC4 的设备树原先未配齐：它在另一组引脚（GPIO12/13，`dmic3_clk`/`dmic3_data`）。2026-11-13 对照本机原厂 DTBO 的量产候选 0/11，更正其偏置为 **MIC BIAS1**（旧记录误写为 BIAS4）。临时添加引脚复用、`TX DMIC4 -> VA DMIC4`、MIC BIAS1 与 VA_MCLK 依赖后，VA `0x08c=5`、MICB1=`0x50`，DAPM 显示对应 widget 均为 On；两轮 12 秒录音的第一秒之后仍全零，GPIO8/12 各两万次采样均无翻转。上述临时试验已恢复；后续同样的引脚/依赖已随 VA CPU DAI 候选部署到 B 槽并重启，仍无信号。
+  - 原厂 `lpass_cdc_dmic_clk_enable` 已由本机模块反汇编确认：按 DMIC 对维护 TX/VA 共享引用计数，操作 VA DMIC_CFG 和 `0x084/088/08c/090` 的分频、使能。函数本身不申请 PRM 时钟。补齐试验中现有 TX_CORE_MCLK、FS generator 和两个 DMIC 门控均已使能，仍不能恢复采集；不能把“主线缺少共享函数”直接当成全部根因。细节和数值见[2026-11-13 记录](../artifacts/mic-clock-20261113/README.md)。
+  - `VA Capture` 的 CPU DAI 原先与 TX 重复，现已在运行 DT 改为 `VA_CODEC_DMA_TX_0` 并重启验证：可以正常完成独立 VA 录音，12 秒稳定段仍全零。完整分区备份与回滚材料保留。
+  - 2026-11-14 已修正 TX/VA 多通道 mixer 的重复计数/关闭遗漏，以及 TX 只静音最后一个解码器的问题；内核提交 `463023bf84b1`，对应模块已安装并重启验证。UCM 的 Mic1 改为 DMIC3/4、两路 0 dB，真实 UCM 启停和 11 个控件还原均通过；新 TX 12 秒、VA 6 秒录音稳定段仍全零。
+  - 逐路弱上下拉试验确认 GPIO9 对应左声道、GPIO13 对应右声道，两个数据输入到 PCM 的对应关系有效。BOB 实际请求到 3.320 V 并配合原厂 MICBIAS 初始化顺序仍无信号，电压/寄存器已恢复；此前精确 3.296 V 请求在写入前失败，不能作为有效电压对照。全部整理结果见[续测记录](../artifacts/mic-clock-20261113/README.md)。
+  - 用户确认刷机前没有测试原厂麦克风，原厂正常采集基线仍缺失。2026-11-14 对照本机 WCD 模块发现主线省略 eFuse30 → SLEEP_CTL 校准；运行时字段调整、启动时实验模块，以及原厂偏置顺序/BOB 组合均未恢复信号。实验 WCD 模块已还原并重启，详见[续测记录](../artifacts/mic-clock-20261113/README.md#同日续测原厂基线未测与-wcd9385-启动校准)。
+  - “VA 宏分频寄存器正确但 GPIO 软件采样没有时钟翻转”已在 2026-11-14 下午查明是 LPI 读回方式的问题，见本节开头。物理波形、偏置电压仍没有用仪器测过，原厂 Android 下采集和 TX/VA 并发未测。
+- **重启后 IMS 承载经常不自动建立**，拨号返回 `InvalidArgument`，见[基带说明](modem.md)。
+- **通话之外打不开 `hw:0,6`/`hw:0,7`**。桌面声音服务探测它们时，内核会记录 `set config … rejected` 或 `Failed to Start Graph`。普通播放和录音不受影响。
+- **录音和放音必须先于语音图关闭**，目前没有任何保护；语音图先关闭时 DSP 的行为没有测过。
+- **多通道 mixer 还原问题已修正**：2026-11-14 更新 TX/VA 模块并重启后，两路 UCM mixer 均能关闭，完整还原通过。新驱动下的实际通话建立/挂断回归未测，不能据此宣称通话流程的全部还原问题已验证。
+- **扬声器没有保护**，桌面音量可能是 100%；通话下行不受桌面音量影响。
+- **不能热更新**：unbind/bind 或卸载 `qcom-apm` 会丢失 GPR port 1；单独重绑声卡时 WCD TX SoundWire 设备无法重新上线。换模块或拓扑只能重启。
+- **源码与构建已接通**：当前固定内核包含语音图 `81637d2a07f3`、复位脚 `67d9e35c9ac0`、RX 中断 `baa7d74668f4` 和 DMIC 路由 `cba22a622ac0`；gitlink 与 bundle 已更新。
+- `configure-audio.sh` 安装已验证拓扑、UCM 和开机通话服务；新完整镜像未构建、未刷入。
+- 运行中有两类未评估的 DSP 消息：mailbox 的 `intent set param … failed result 4`，以及 EVS 解码器的 `unsupported bandwidth(-1)`。
 
-<!-- superseded list below kept for history -->
-### 旧待办（2026-11-11）
+### 未测
 
+通话保持与多方通话、来电时铃声到语音图的衔接、长时间通话和录音、只录对方的单声道模式、语音内容经编码后的可懂度、其他声码器与采样率、漫游或其他运营商。
 
-- 以上所有实机测试。
-- 把 DT 补丁提交到 `linux/` 子模块并更新 bundle。
-- 在 rootfs 构建中安装拓扑与 UCM（`configure-audio.sh` / `update-audio-image.sh` / 校验），需等实机确认可用后再加。
-- 可选：将拓扑与 UCM 提交到上游 audioreach-topology / alsa-ucm-conf。
+### 排查方法
+
+VCPM 的拒绝不会以错误返回给主机，只能看 ADSP 的 F3 日志。
+
+1. 用本地 `adsp-f3` 工具限时采集（仅文字，不含音频数据）。
+2. 本机固件剥掉了大部分日志文字，但消息哈希只取决于“源文件名 + 格式串”：取 MD5 最后四字节按大端解释，低两位为零时加一。上游 [linux-firmware](https://gitlab.com/kernel-firmware/linux-firmware) 里的公开 ADSP 固件（`qcom/sc8280xp/LENOVO/21BX/qcadsp8280.mbn`、`qcom/qcs6490/radxa/dragon-q6a/adsp.mbn`、`qcom/sa8775p/adsp.mbn` 等）保留了这些字符串，从中提取 `文件名.c:格式串` 求哈希即可对上。两份通话日志的 797 个哈希对上 793 个，VCPM 的消息全部可读。只采用哈希完全相同的条目。
+3. 先看 `vcpm_process_proxy_graph_info_cmd` 的容器计数、`vcpm_utility_update_sg_states` 的 `apps_state`/`modem_state`，以及 `vcpm_graph_*_sequencer` 走到哪一步。
+
+离线解码脚本已保留到 [tools](../artifacts/call-audio-research-20261112/tools/README.md)。原始采集、固件与生成的映射仍留在本地日志目录。
+
+### 下一步
+
+- 自动接听，并把“接通 → 录音 → 播放固定音频 → 挂断”做成一个服务，同时让它管理录音和放音的关闭顺序。
+- 用当前固定内核（同时含复位脚和 DMIC 路由）重新构建完整镜像。运行中的 `vendor_boot_b` 已是同一改动的字节补丁，ALSA 录音、外放和这次通话上行已验证。
+- IMS 恢复已实现并接入构建，验证范围见[基带](modem.md)；继续做新完整镜像回归。
+- RX 中断修复已提交为内核 `baa7d74668f4` 并写入恢复 bundle。完整镜像尚未重建。
