@@ -1,6 +1,6 @@
 # USB 调试通道（USB 网络 SSH + USB 串口）
 
-状态日期：2026-11-13。这条通道**不依赖 Wi-Fi**。手机用 USB 线接电脑后，可以同时得到：
+资料整理：2026-11-15；实机记录截至 2026-11-14。这条通道**不依赖 Wi-Fi**。手机用 USB 线接电脑后，可以同时得到：
 
 | 通道 | 电脑侧 | 手机侧 | 用途 |
 | --- | --- | --- | --- |
@@ -137,3 +137,9 @@ sudo python3 /tmp/negroni-usb2-recover.py --apply   # 核对状态后只清 PHY_
 随后双通道每秒观测 3 分钟：均为 `configured / high-speed / device`，carrier 计数不变，netlink 无变化；USB 上下行各 512 MiB 哈希一致，原目录 158,666,752 字节文件的 SCP 复测也一致，未复现。Windows 同时有 Hyper-V/FSE 虚拟网络活动，但时序和本轮对照不足以证明因果；手机到电脑的 ICMP 无响应也不能作为断连依据，同期 TCP 双向传输正常。
 
 本轮全程未重启、刷写或改动 USB/网络配置。尚缺故障当时的双端抓包或 USB 请求跟踪，主机 NCM/过滤/路由及手机数据路径的短暂异常均未排除，长时间稳定性未测。整理后的 [事件时序与证据](../artifacts/usb-disconnect-20261113/README.md) 区分了观测与推测，原始日志独立保存在 `logs/usb-disconnect-20261113/`。
+
+## 历史实验与恢复操作边界（2026-11-15 整理）
+
+LPM 已否证实验的[补丁和离线 DTB 注入脚本](../artifacts/usb2-gadget-20261113/experiments/README.md)已保存；默认构建不应用。只读对照 10T 设备树的结论仍有效：硬件通路不同，不能照搬。USB2 后续 datapath 修复与自动拔插成功采用较晚记录，不能继续概括为“USB2 一律不可用”；OTG/PD Hub、断电和深睡按上文保留验证边界。
+
+旧手机 `usb-gadget.sh` 的 start 在 configfs 目录已存在时直接退出，`systemctl restart usb-gadget.service` 可能只解除绑定而不恢复。不要用它作为随手修复方法，也不要在多人会话中重绑 UDC；会同时断开 USB SSH/串口，Windows 还可能重建网卡实例而丢失静态地址。保留已知可用 USB3 通道，故障时先采证据，恢复和重启按操作规则安排。

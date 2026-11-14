@@ -40,3 +40,4 @@ config/gnss/runtime/SHA256SUMS text eol=lf
 *.desktop text eol=lf
 config/packages/*.txt text eol=lf
 *.page text eol=lf
+artifacts/usb2-gadget-20261113/experiments/*.patch text eol=lf whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab

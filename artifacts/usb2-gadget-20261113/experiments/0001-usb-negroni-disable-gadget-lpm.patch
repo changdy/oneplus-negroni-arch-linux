@@ -1,0 +1,16 @@
+From: changdy
+Subject: [PATCH] arm64: dts: qcom: sm8450-oneplus-negroni: disable USB2 gadget LPM
+
+Experiment for the USB debug gadget: when the phone acts as a USB device it
+enumerates on the PC but drops after ~3 s and only reaches full-speed. DCFG
+reads 0x00e00804 (LPMCap set). The vendor waipio DT sets
+snps,usb2-gadget-lpm-disable on the same DWC3 core. Add only that property.
+
+---
+--- a/arch/arm64/boot/dts/qcom/sm8450-oneplus-negroni.dts
++++ b/arch/arm64/boot/dts/qcom/sm8450-oneplus-negroni.dts
+@@ -1654,3 +1654,4 @@ &usb_1 {
+ 	maximum-speed = "super-speed";
++	snps,usb2-gadget-lpm-disable;
+ 	status = "okay";
+ };
