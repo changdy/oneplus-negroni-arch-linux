@@ -1,6 +1,6 @@
 # 7.3 设备修复与源码恢复
 
-当前 `linux` 子模块固定到 `7.3` 修复提交 `472db17c1a3b1aea2d1a9a660b479bc53d529026`。修复从重新同步的上游 `476a4a8984395a77b6b6508f849dfb7b786d86b3` 直接修改，新增提交均只有一个父提交；没有 merge 或 cherry-pick `7.3-rc2`。之前的本地合并版本不再作为固定内核。
+当前 `linux` 子模块固定到 `7.3` 修复提交 `b7385d286e15eb184f9938311901909709e9f818`。修复从重新同步的上游 `476a4a8984395a77b6b6508f849dfb7b786d86b3` 直接修改，新增提交均只有一个父提交；没有 merge 或 cherry-pick `7.3-rc2`。之前的本地合并版本不再作为固定内核。
 
 新增提交为 `835c18d2739`（电池驱动及限充）、`3ca85b51d20`（CPU 参数）和 `1eaec99b04a`（补齐触觉驱动 trace 头文件）。
 
@@ -32,9 +32,11 @@ AudioReach 通话语音 `81637d2a07f3` 打开 Negroni 的 hostless 语音图：V
 
 超广角出流设备树 `463b5ac2be3b` 写下已经取到帧的 JN1：PM8010J L1 1.056 V、L3 2.8 V，CSI PHY2，MCLK 24 MHz，GPIO24 低有效复位，EEPROM `0x50`。`0x51` 无应答。主摄、长焦和前摄仍是外部模块加 overlay，不进这块板级设备树，也不自动加载。失败的 DMIC 偏置试验没有混入。bundle 保留原两个前置提交与历史 rc2 引用，见[相机说明](../../docs/camera.md)。
 
-SN100 `fff7de955691` 在控制器打开期间使用 `LN_BB_CLK2`，并把中断做成电平触发。NE2210 打开控制器、完成 RF 发现，并读到一张 Type 2 卡的 UID。块读取得到 Classic NAK，NDEF 未做。被动监听 UID 的改动没有读卡器证实，留在工作区，没有进入这个提交。bundle 保留原两个前置提交与历史 rc2 引用，见 [NFC](../../docs/nfc.md)。
+SN100 `fff7de955691` 在控制器打开期间使用 `LN_BB_CLK2`，并把中断做成电平触发。NE2210 打开控制器、完成 RF 发现，并读到一张 Type 2 卡的 UID。块读取得到 Classic NAK，NDEF 未做。被动监听 UID 没有进入这个提交。bundle 保留原两个前置提交与历史 rc2 引用，见 [NFC](../../docs/nfc.md)。
 
 SMEM 光线距离 `472db17c1a3b` 分配 Oplus SMEM 项 130，并通过 debugfs 写入 5140 字节。NE2210 写入 TCS3701 描述并重启 SLPI 后，遮住传感器时光线降到约 0 lux，距离为 NEAR，加速度计和磁力计仍有读数。父仓库用 `negroni-smem-sensor.service` 在开机时做同样的写入。`hexagonrpc` 仍未进镜像。DMIC 偏置试验和 NFC 被动监听没有混入。bundle 保留原两个前置提交与历史 rc2 引用，见[传感器说明](../../docs/sensors.md)。
+
+NFC-A 被动监听 `b7385d286e` 在目标协议只有 MIFARE、没有发起方协议时写入 `LA_NFCID1` 和 `SEL_INFO 0x08`，再以模式 `0x80` 监听。NE2210 的 SN100 接受了 UID `CD 27 FC DB`、ATQA `00 04` 和 SEL_INFO `0x08`，并保持监听 20 秒。旁边没有读卡器，空中身份未证实。Classic 加密扇区没有实现。这一提交只改 `nci`。bundle 保留原两个前置提交与历史 rc2 引用，见 [NFC](../../docs/nfc.md)。
 
 ## 重做范围
 

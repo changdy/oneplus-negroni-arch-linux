@@ -500,8 +500,8 @@ int main(int argc, char **argv)
 
 	printf("[%6.2f] dev_up result %d (%s)\n", now_s(), rc, strerror(rc < 0 ? -rc : 0));
 	fflush(stdout);
-	if (rc)
-		return 1;
+	if (rc && rc != -EALREADY)
+		goto down;
 	if (cmd(nl, fam, NFC_CMD_START_POLL, 0, dev_idx, 0xfe) < 0) {
 		perror("poll");
 		goto down;

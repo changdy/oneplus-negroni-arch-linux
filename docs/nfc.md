@@ -38,7 +38,7 @@
 nfc-emulate 25
 ```
 
-程序在 `/usr/local/bin/nfc-emulate`。这只让手机在读卡器场里报出这个 UID 和 SEL_INFO `0x08`，不会回答 Classic 加密扇区。旁边没有读卡器，不能证明门禁或别的手机看得见。监听改动还在未提交的 `net/nfc/nci/core.c`，没有进入内核 `fff7de955691`，也没有进入镜像。
+程序源码在 `artifacts/nfc-20261114/nfc-emulate.c`，手机上装在 `/usr/local/bin/nfc-emulate`。这只让手机在读卡器场里报出这个 UID 和 SEL_INFO `0x08`，不会回答 Classic 加密扇区。旁边没有读卡器，不能证明门禁或别的手机看得见。监听改动是内核 `b7385d286e`，gitlink 和 `local-7.3.bundle` 已更新。`configure-nfc.sh` 不写入 `emulate_uid`，确认读卡器认卡之前镜像不带这张 UID。新镜像未构建、未刷入。
 
 内核 `fff7de955691` 包含已经验证的打开、`LN_BB_CLK2` 和电平触发中断。`configure-nfc.sh` 把时钟模块参数装进镜像，作为设备树还没生效时的回退；新设备树里的 `clocks` 和 `nxp,pll-19m2` 生效后，驱动不再靠 `bbclk2`。`defconfig` 和 `sm8450.config` 已经把 `nxp-nci` 编成模块。打包路径已接入，新镜像未构建、未刷入。
 
