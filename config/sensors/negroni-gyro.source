@@ -1,0 +1,4 @@
+negroni-gyro
+built on the phone from config/sensors/negroni-gyro.c
+linked against libssc 0.4.4
+sha256 ff7a849d4a64bcf65170354bfddb623a053ddb36250a6bccb0d83313f505a825

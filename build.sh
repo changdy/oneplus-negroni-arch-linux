@@ -80,5 +80,9 @@ if [[ ! -f "$log_dir/volte-sources.sha256" ]] ||
    ! sha256sum --check --status "$log_dir/volte-sources.sha256"; then
     sudo env IMAGE_DIR="$image_dir" LOG_DIR="$log_dir" bash scripts/update-volte-image.sh
 fi
+if [[ ! -f "$log_dir/sensors-sources.sha256" ]] ||
+   ! sha256sum --check --status "$log_dir/sensors-sources.sha256"; then
+    sudo env IMAGE_DIR="$image_dir" LOG_DIR="$log_dir" bash scripts/update-sensors-image.sh
+fi
 if [[ ! -f "$log_dir/images.complete" ]]; then bash scripts/pack-images.sh; fi
 printf '\nImages are in %s/%s\n' "$PWD" "$image_dir"

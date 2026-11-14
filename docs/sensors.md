@@ -1,4 +1,4 @@
-# 传感器（加速度、磁力、光线、距离）
+# 传感器（加速度、陀螺仪、磁力、光线、距离）
 
 状态日期：2026-11-14。设备为 OnePlus 10 Pro NE2210（项目 20846，SM8450）。传感器不在应用处理器的 I²C 上，而在 SLPI（`remoteproc0`，固件 `slpi.mdt`，QRTR 节点 9）。Snapdragon Sensor Core 是 QMI 服务 400。本次没有刷写分区，也没有整机重启；只重启过 SLPI。
 
@@ -32,4 +32,14 @@ udev 规则、SMEM 描述和换过的 `iio-sensor-proxy` 已接入镜像打包�
 
 桌面自动旋转策略是 `always`。平放朝上时方向是 `undefined`，KWin 保留手动变换。DPMS 关闭时也不会跟着转。2026-11-14 19:01 安装矩阵取反 X/Y 后，右边框在上的姿势从 `left-up`（旋转 2）改为 `right-up`（旋转 8）。20:20 用户确认这个方向正确。登录界面那次 KWin 启动较早，当时仍显示 `incapable`；登录后的会话已经认领到加速度计。
 
-磁力计有读数，桌面罗盘和安装方向尚未对照实机方位。陀螺仪没有单独取样。
+磁力计有读数，桌面罗盘和安装方向尚未对照实机方位。
+
+## 陀螺仪
+
+ICM-4x6xx 的角速度和加速度计走同一条 SLPI 通道。2026-11-14 22:51 手机静止时，`negroni-gyro` 读到屏幕坐标下大约 X −0.009、Y 0.003、Z 0.013 rad/s。`libssc` 命令行把单位印成 m/s，那是加速度计文案；静止时大约 0.01 的量级是 rad/s 零偏。
+
+程序按加速度计已经确认的方向把芯片坐标换成屏幕坐标：X、Y 取反，Z 保持。源码是 [negroni-gyro.c](../config/sensors/negroni-gyro.c)，手机上编译的二进制和校验记在 [negroni-gyro.source](../config/sensors/negroni-gyro.source)。`configure-sensors.sh` 把它装到 `/usr/local/sbin/negroni-gyro`，并启用 `negroni-gyro.service`。
+
+普通用户可以读 `/run/negroni/gyro`，一行三个数，单位 rad/s。系统总线 `org.negroni.Gyroscope` 的 `GetAngularVelocity` 返回同样三个数。22:52 这台手机上文件和 D-Bus 都能读到，加速度计同时仍约 Z 9.80 m/s²。用手转动来核对三个轴的方向还没有做。
+
+`hexagonrpc` 和传感器注册表仍只在本机。全新 rootfs 和已有镜像的下一次构建都会装上这个程序并启用服务；没有那两样时服务起不来，角速度不会出现。新镜像未构建、未刷入。

@@ -57,6 +57,11 @@ if len(blob) != 5140 or digest != recorded("config/sensors/smem-sensor.bin.sourc
 proxy = Path("config/sensors/iio-sensor-proxy").read_bytes()
 if hashlib.sha256(proxy).hexdigest() != recorded("config/sensors/iio-sensor-proxy.source"):
     raise SystemExit("iio-sensor-proxy does not match its source note")
+gyro = Path("config/sensors/negroni-gyro").read_bytes()
+if hashlib.sha256(gyro).hexdigest() != recorded("config/sensors/negroni-gyro.source"):
+    raise SystemExit("negroni-gyro does not match its source note")
+if gyro[:4] != b"\x7fELF" or gyro[18:20] != b"\xb7\x00":
+    raise SystemExit("negroni-gyro is not an aarch64 ELF binary")
 print("sensor payloads match")
 PY
 
@@ -78,6 +83,9 @@ python3 -B tests/test-camera-sensormodule.py
 
 printf 'Running software camera meter checks...\n'
 python3 -B tests/test-camera-meter.py
+
+printf 'Running gyroscope axis checks...\n'
+python3 -B tests/test-gyro-axes.py
 
 printf 'Running IMS bearer recovery tests...\n'
 python3 -B tests/test-ims-recovery.py

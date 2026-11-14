@@ -1,0 +1,17 @@
+[Unit]
+Description=Publish the ICM-4x6xx gyroscope
+After=hexagonrpcd-sdsp.service
+Wants=hexagonrpcd-sdsp.service
+StartLimitIntervalSec=0
+
+[Service]
+Type=dbus
+BusName=org.negroni.Gyroscope
+ExecStart=/usr/local/sbin/negroni-gyro
+Restart=on-failure
+RestartSec=5
+TimeoutStartSec=20
+RuntimeDirectory=negroni
+
+[Install]
+WantedBy=multi-user.target

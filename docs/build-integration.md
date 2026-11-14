@@ -21,7 +21,7 @@ Wi-Fi 默认关闭省电、采用设备和连接固定的本地 MAC，国家域�
 
 音频：新 rootfs 由 `configure-audio.sh` 安装 AudioReach 拓扑 `/usr/lib/firmware/qcom/sm8450/OnePlus-10-Pro-tplg.bin`、ALSA UCM（`conf.d/sm8450/OnePlus-10-Pro.conf`、`OnePlus/negroni/HiFi.conf`），以及开机启用的 `negroni-call-audio.service`。随仓库提供的拓扑是 2026-11-14 实机用的通话语音 + 录音 + 放音文件（SHA-256 `5fb6fba6…`），不是 `scripts/build-audio-topology.sh` 单独生成的桌面拓扑。已有镜像在 `audio-sources.sha256` 失效时由 `update-audio-image.sh` 补装。封装前 `verify-audio-image.py` 核对文件与源码一致、服务已启用，以及 UCM 引用的 `alsa-ucm-conf` 共用片段存在；`check.sh` 只做源码一致性检查。声卡还需要内核 `ead3411b6e6` 的设备树和 `81637d2a07f3` 的语音图，见[音频说明](audio.md)和[通话语音](call-audio.md)。这次只接入打包路径，新镜像未构建、未刷入。
 
-传感器：`prepare-rootfs.sh` 保留 `iio-sensor-proxy`。`configure-sensors.sh` 安装加速度计安装矩阵、手机上验证过的代理程序，以及开机写入 SMEM 项 130 并重启 SLPI 的 `negroni-smem-sensor.service`。`hexagonrpc` 和传感器注册表仍不在镜像里。内核需要 `CONFIG_QCOM_OPLUS_SMEM_SENSOR=m`。见[传感器说明](sensors.md)。
+传感器：`prepare-rootfs.sh` 保留 `iio-sensor-proxy`。全新 rootfs 由 `configure-sensors.sh` 安装加速度计安装矩阵、手机上验证过的代理程序、开机写入 SMEM 项 130 并重启 SLPI 的 `negroni-smem-sensor.service`，以及陀螺仪发布程序 `negroni-gyro` 和开机启用的 `negroni-gyro.service`。已有镜像在 `sensors-sources.sha256` 失效时由 `update-sensors-image.sh` 补装，封装前 `verify-sensors-image.py` 核对陀螺仪程序、D-Bus 策略、单元和启用链接。`hexagonrpc` 和传感器注册表仍不在镜像里；没有它们时陀螺仪服务没有数据。内核需要 `CONFIG_QCOM_OPLUS_SMEM_SENSOR=m`。见[传感器说明](sensors.md)。
 
 固件加载器、Plasma 快捷设置和电话/portal 元数据修复通过 `configure-runtime-fixes.sh` 接入全新 rootfs；已有镜像由 `build.sh` 根据源文件指纹触发增量更新，封装前校验文件、权限、运行依赖和安装清单。加载器修正 A/B 蓝牙路径、固件分组与目录链接；快捷设置修正尺寸未就绪时的分页计算，并移除模块的 qrc 优先声明，使修复后的 QML 实际生效。电话组件的三个真实总线名与 autostart 共用一个 systemd 用户服务；四个后台组件的隐藏应用描述安装到 `/usr/local/share/applications`，供 portal 识别。
 
