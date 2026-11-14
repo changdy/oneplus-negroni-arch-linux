@@ -1,0 +1,656 @@
+{
+  "date": "2026-11-13",
+  "method": "Read-only partition reads; lpdump slots 0/1; lpunpack --slot=1; offline debugfs/fsck.erofs, FDT parser and dtc, readelf and AArch64 objdump. No partition writes, reboot or USB role changes.",
+  "device": {
+    "model": "OnePlus 10 Pro NE2210",
+    "soc": "SM8450",
+    "soc_id": 457,
+    "project": 20846,
+    "kernel": "7.3.0-sm8450+"
+  },
+  "stock_manifest": {
+    "display_id": "NE2210_15.0.0.401(CN01)",
+    "full_id": "NE2210domestic_11_15.0.0.401(CN01)_2025010701470186",
+    "ota": "NE2210_11.H.82_3820_202501070147",
+    "android_release": 15
+  },
+  "slot_readback": {
+    "a": {
+      "active": false,
+      "successful": true,
+      "bootable": false
+    },
+    "b": {
+      "active": true,
+      "successful": true,
+      "bootable": true
+    }
+  },
+  "super_size_bytes": 11274289152,
+  "dtbo_entries": 12,
+  "production_overlay_candidates": [
+    {
+      "index": 0,
+      "selector": {
+        "qcom,pmic-id": [
+          47,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          65,
+          65
+        ],
+        "qcom,pmic-id-size": [
+          10
+        ],
+        "model": [
+          "Qualcomm Technologies, Inc. Waipio MTP with PM8010, wly"
+        ],
+        "compatible": [
+          "qcom,waipio-mtp",
+          "qcom,waipio",
+          "qcom,mtp"
+        ],
+        "qcom,msm-id": [
+          482,
+          131072,
+          457,
+          65536,
+          457,
+          131072,
+          552,
+          65536,
+          482,
+          65536
+        ],
+        "qcom,board-id": [
+          65544,
+          0
+        ],
+        "oplus,project-id": [
+          20847,
+          20848,
+          20849,
+          20846
+        ],
+        "oplus,hw-id": [
+          40,
+          24,
+          33,
+          16,
+          25,
+          32
+        ]
+      }
+    },
+    {
+      "index": 11,
+      "selector": {
+        "qcom,pmic-id": [
+          47,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          65,
+          65
+        ],
+        "qcom,pmic-id-size": [
+          10
+        ],
+        "model": [
+          "Qualcomm Technologies, Inc. Waipio MTP with PM8010, wly"
+        ],
+        "compatible": [
+          "qcom,waipio-mtp",
+          "qcom,waipio",
+          "qcom,mtp"
+        ],
+        "qcom,msm-id": [
+          482,
+          131072,
+          457,
+          65536,
+          457,
+          131072,
+          552,
+          65536,
+          482,
+          65536
+        ],
+        "qcom,board-id": [
+          50397192,
+          3
+        ],
+        "oplus,project-id": [
+          20847,
+          20848,
+          20849,
+          20846
+        ],
+        "oplus,hw-id": [
+          40,
+          24,
+          33,
+          16,
+          25,
+          32
+        ]
+      }
+    }
+  ],
+  "panel_modes_from_overlay0": [
+    {
+      "node": "timing@fhd_sdc_120",
+      "qcom,mdss-dsi-panel-width": 1080,
+      "qcom,mdss-dsi-panel-height": 2412,
+      "qcom,mdss-dsi-panel-framerate": 120,
+      "qcom,mdss-dsc-slice-width": 540,
+      "qcom,mdss-dsc-slice-height": 36,
+      "qcom,mdss-dsc-slice-per-pkt": 2,
+      "qcom,mdss-dsc-bit-per-pixel": 8,
+      "qcom,mdss-dsc-version": 18
+    },
+    {
+      "node": "timing@fhd_sdc_90",
+      "qcom,mdss-dsi-panel-width": 1080,
+      "qcom,mdss-dsi-panel-height": 2412,
+      "qcom,mdss-dsi-panel-framerate": 90,
+      "qcom,mdss-dsc-slice-width": 540,
+      "qcom,mdss-dsc-slice-height": 36,
+      "qcom,mdss-dsc-slice-per-pkt": 2,
+      "qcom,mdss-dsc-bit-per-pixel": 8,
+      "qcom,mdss-dsc-version": 18
+    },
+    {
+      "node": "timing@fhd_sdc_60",
+      "qcom,mdss-dsi-panel-width": 1080,
+      "qcom,mdss-dsi-panel-height": 2412,
+      "qcom,mdss-dsi-panel-framerate": 60,
+      "qcom,mdss-dsc-slice-width": 540,
+      "qcom,mdss-dsc-slice-height": 36,
+      "qcom,mdss-dsc-slice-per-pkt": 2,
+      "qcom,mdss-dsc-bit-per-pixel": 8,
+      "qcom,mdss-dsc-version": 18
+    },
+    {
+      "node": "timing@fhd_oplus_120",
+      "qcom,mdss-dsi-panel-width": 1080,
+      "qcom,mdss-dsi-panel-height": 2412,
+      "qcom,mdss-dsi-panel-framerate": 120,
+      "qcom,mdss-dsc-slice-width": 540,
+      "qcom,mdss-dsc-slice-height": 36,
+      "qcom,mdss-dsc-slice-per-pkt": 2,
+      "qcom,mdss-dsc-bit-per-pixel": 8,
+      "qcom,mdss-dsc-version": 18
+    },
+    {
+      "node": "timing@wqhd_sdc_60",
+      "qcom,mdss-dsi-panel-width": 1440,
+      "qcom,mdss-dsi-panel-height": 3216,
+      "qcom,mdss-dsi-panel-framerate": 60,
+      "qcom,mdss-dsc-slice-width": 720,
+      "qcom,mdss-dsc-slice-height": 24,
+      "qcom,mdss-dsc-slice-per-pkt": 2,
+      "qcom,mdss-dsc-bit-per-pixel": 8,
+      "qcom,mdss-dsc-version": 18
+    },
+    {
+      "node": "timing@wqhd_sdc_90",
+      "qcom,mdss-dsi-panel-width": 1440,
+      "qcom,mdss-dsi-panel-height": 3216,
+      "qcom,mdss-dsi-panel-framerate": 90,
+      "qcom,mdss-dsc-slice-width": 720,
+      "qcom,mdss-dsc-slice-height": 24,
+      "qcom,mdss-dsc-slice-per-pkt": 2,
+      "qcom,mdss-dsc-bit-per-pixel": 8,
+      "qcom,mdss-dsc-version": 18
+    },
+    {
+      "node": "timing@wqhd_sdc_120",
+      "qcom,mdss-dsi-panel-width": 1440,
+      "qcom,mdss-dsi-panel-height": 3216,
+      "qcom,mdss-dsi-panel-framerate": 120,
+      "qcom,mdss-dsc-slice-width": 720,
+      "qcom,mdss-dsc-slice-height": 24,
+      "qcom,mdss-dsc-slice-per-pkt": 2,
+      "qcom,mdss-dsc-bit-per-pixel": 8,
+      "qcom,mdss-dsc-version": 18
+    },
+    {
+      "node": "timing@wqhd_oplus_120",
+      "qcom,mdss-dsi-panel-width": 1440,
+      "qcom,mdss-dsi-panel-height": 3216,
+      "qcom,mdss-dsi-panel-framerate": 120,
+      "qcom,mdss-dsc-slice-width": 720,
+      "qcom,mdss-dsc-slice-height": 24,
+      "qcom,mdss-dsc-slice-per-pkt": 2,
+      "qcom,mdss-dsc-bit-per-pixel": 8,
+      "qcom,mdss-dsc-version": 18
+    }
+  ],
+  "camera_board_jn1": {
+    "status": [
+      "ok"
+    ],
+    "clock-rates": [
+      19200000
+    ],
+    "clock-cntl-level": [
+      "nominal"
+    ],
+    "clock-names": [
+      "cam_clk"
+    ],
+    "clocks": [
+      4294967295,
+      78
+    ],
+    "cci-master": [
+      1
+    ],
+    "gpio-req-tbl-label": [
+      "CAMIF_MCLK1",
+      "CAM_RESET1"
+    ],
+    "gpio-req-tbl-flags": [
+      1,
+      0
+    ],
+    "gpio-req-tbl-num": [
+      0,
+      1
+    ],
+    "gpio-reset": [
+      1
+    ],
+    "gpios": [
+      4294967295,
+      101,
+      0,
+      4294967295,
+      24,
+      0
+    ],
+    "pinctrl-1": [
+      178,
+      179
+    ],
+    "pinctrl-0": [
+      176,
+      177
+    ],
+    "pinctrl-names": [
+      "cam_default",
+      "cam_suspend"
+    ],
+    "gpio-no-mux": [
+      0
+    ],
+    "rgltr-load-current": [
+      600000,
+      600000,
+      1200000,
+      0
+    ],
+    "rgltr-max-voltage": [
+      1800000,
+      2800000,
+      1050000,
+      0
+    ],
+    "rgltr-min-voltage": [
+      1800000,
+      2800000,
+      1050000,
+      0
+    ],
+    "rgltr-cntrl-support": true,
+    "regulator-names": [
+      "cam_vio",
+      "cam_vana",
+      "cam_vdig",
+      "cam_clk"
+    ],
+    "cam_clk-supply": [
+      4294967295
+    ],
+    "cam_vdig-supply": [
+      151
+    ],
+    "cam_vana-supply": [
+      153
+    ],
+    "cam_vio-supply": [
+      4294967295
+    ],
+    "led-flash-src": [
+      181
+    ],
+    "eeprom-src": [
+      180
+    ],
+    "sensor-position-yaw": [
+      180
+    ],
+    "sensor-position-pitch": [
+      0
+    ],
+    "sensor-position-roll": [
+      90
+    ],
+    "csiphy-sd-index": [
+      2
+    ],
+    "compatible": [
+      "qcom,cam-sensor"
+    ],
+    "cell-index": [
+      1
+    ]
+  },
+  "camera_configuration": {
+    "NIGHT_SCENE_SENSOR_BAYER_PATTERN": 3,
+    "pattern_comment": "0:RGGB 1:BGGR 2:GRBG 3:GBRG",
+    "SENSOR_PHYSICAL_ID": 2,
+    "warning": "Android static configuration; does not establish the Bayer phase of the current mainline GRBG capture."
+  },
+  "audio_routing": {
+    "handset-mic": [
+      "DEC0=MSM_DMIC/DMIC3",
+      "DEC1=MSM_DMIC/DMIC4",
+      "TX_AIF1_CAP DEC0/DEC1 enabled",
+      "TX_DEC0/1 Volume=84"
+    ],
+    "tx_dmic_rate_hz": 2400000,
+    "va_dmic_rate_hz": 600000
+  },
+  "vendor_module_count": 373,
+  "selected_modules": [
+    {
+      "source": "vendor_dlkm_b/lib/modules/camera.ko",
+      "size": 12220576,
+      "sha256": "1962012bfe4cd6d45e3a6b467c8d20ea2e32afab057acf11d41538f2f098d46e",
+      "modinfo": [
+        "description=Camera Request Manager",
+        "description=MSM Camera SMMU driver",
+        "description=Camera sync driver",
+        "description=MSM CPAS driver",
+        "description=MSM Camera CDM Intf driver",
+        "description=MSM Camera HW CDM driver",
+        "description=CAM IFE_CSID driver",
+        "description=CAM IFE_CSID_LITE driver",
+        "description=CAM SFE driver",
+        "description=CAM VFE driver",
+        "description=MSM ISP driver",
+        "description=CAM IPE driver",
+        "description=CAM A5 driver",
+        "description=Camera LX7 driver",
+        "description=CAM BPS driver",
+        "description=MSM ICP driver",
+        "description=CAM JPEG_ENC driver",
+        "description=CAM JPEG_DMA driver",
+        "description=MSM JPEG driver",
+        "description=cam_actuator_driver",
+        "description=MSM CCI driver",
+        "description=CAM TPG driver",
+        "description=CAM CSIPHY driver",
+        "description=CAM EEPROM driver",
+        "description=CAM OIS driver",
+        "description=cam_sensor_driver",
+        "description=Camera resource manager driver",
+        "description=CAM CUSTOM HW SUB MODULE driver",
+        "description=cam_custom_csid_driver",
+        "description=MSM CUSTOM driver",
+        "description=Spectra camera driver",
+        "description=CAM FLASH",
+        "depends=leds-qti-flash,kernel_fb,olc,qcom-scm,mdt_loader,llcc-qcom,synx-driver,qcom_iommu_util,msm-mmrm,clk-qcom,mem_buf_dev",
+        "scmversion=g1176017a8a4c",
+        "vermagic=5.10.209-gki-gac3f956b8fca SMP preempt mod_unload modversions aarch64"
+      ]
+    },
+    {
+      "source": "vendor_dlkm_b/lib/modules/lpass_cdc_dlkm.ko",
+      "size": 122280,
+      "sha256": "4a9ae7d81cc1f02914951da83fd9430283c4b7c115c38cc08ec6a1b4caa06213",
+      "modinfo": [
+        "description=LPASS Codec driver",
+        "description=LPASS codec clock resource manager driver",
+        "depends=qti-regmap-debugfs,snd_event_dlkm,spf_core_dlkm",
+        "scmversion=g4bdcd103d9fa",
+        "vermagic=5.10.209-gki-gac3f956b8fca SMP preempt mod_unload modversions aarch64"
+      ]
+    },
+    {
+      "source": "vendor_dlkm_b/lib/modules/lpass_cdc_tx_macro_dlkm.ko",
+      "size": 148288,
+      "sha256": "aafe9b9ab47a9d70235148803be9487f67ed8bd4f323205f4c4a15a3ee59a307",
+      "modinfo": [
+        "description=TX macro driver",
+        "depends=lpass_cdc_dlkm",
+        "scmversion=g4bdcd103d9fa",
+        "vermagic=5.10.209-gki-gac3f956b8fca SMP preempt mod_unload modversions aarch64"
+      ]
+    },
+    {
+      "source": "vendor_dlkm_b/lib/modules/lpass_cdc_va_macro_dlkm.ko",
+      "size": 123984,
+      "sha256": "99ce09475a1043452313f79875fc3dcf10b69a356dc1ca17fb29abd5bf2b75e1",
+      "modinfo": [
+        "description=LPASS codec VA macro driver",
+        "depends=lpass_cdc_dlkm,swr_ctrl_dlkm,wcd_core_dlkm",
+        "scmversion=g4bdcd103d9fa",
+        "vermagic=5.10.209-gki-gac3f956b8fca SMP preempt mod_unload modversions aarch64"
+      ]
+    },
+    {
+      "source": "vendor_dlkm_b/lib/modules/audio_prm_dlkm.ko",
+      "size": 28384,
+      "sha256": "5976d8cda9f93c76cb546a97127357abb8d93093b78fd1233984ab6e708a1691",
+      "modinfo": [
+        "description=audio prm",
+        "depends=gpr_dlkm,q6_notifier_dlkm,oplus_mm_kevent_fb,spf_core_dlkm",
+        "scmversion=g4bdcd103d9fa",
+        "vermagic=5.10.209-gki-gac3f956b8fca SMP preempt mod_unload modversions aarch64"
+      ]
+    },
+    {
+      "source": "vendor_dlkm_b/lib/modules/pinctrl_lpi_dlkm.ko",
+      "size": 47480,
+      "sha256": "cd84aeeed45d549df9b24f9449d488f735e7eb062a422d48f667a14ab37a4d30",
+      "modinfo": [
+        "description=QTI LPI GPIO pin control driver",
+        "depends=q6_notifier_dlkm,snd_event_dlkm,spf_core_dlkm",
+        "scmversion=g4bdcd103d9fa",
+        "vermagic=5.10.209-gki-gac3f956b8fca SMP preempt mod_unload modversions aarch64"
+      ]
+    }
+  ],
+  "i2c_nodes_and_bindings": [
+    {
+      "device": "0-004b",
+      "driver": "synaptics-s3908",
+      "compatible": "synaptics-s3908",
+      "name": "synaptics-s3908"
+    },
+    {
+      "device": "1-000c",
+      "compatible": "oplus,hall-mxm1120,down",
+      "name": "hall-mxm1120,down"
+    },
+    {
+      "device": "1-000d",
+      "compatible": "oplus,hall-mxm1120,up",
+      "name": "hall-mxm1120,up"
+    },
+    {
+      "device": "1-0028",
+      "driver": "nxp-nci_i2c",
+      "compatible": "nxp,nxp-nci-i2c",
+      "name": "nxp-nci-i2c"
+    },
+    {
+      "device": "2-0034",
+      "driver": "tfa987x",
+      "compatible": "nxp,tfa9874",
+      "name": "tfa9874"
+    },
+    {
+      "device": "2-0035",
+      "driver": "tfa987x",
+      "compatible": "nxp,tfa9874",
+      "name": "tfa9874"
+    },
+    {
+      "device": "3-0042",
+      "driver": "fsa4480",
+      "compatible": "fcs,fsa4480",
+      "name": "fsa4480"
+    },
+    {
+      "device": "6-0010",
+      "driver": "s5kjn1",
+      "compatible": "samsung,s5kjn1",
+      "name": "s5kjn1"
+    },
+    {
+      "device": "6-0051",
+      "compatible": "giantec,gt24p128f atmel,24c128",
+      "name": "gt24p128f"
+    },
+    {
+      "device": "i2c-0",
+      "compatible": "qcom,geni-i2c",
+      "name": "Geni-I2C"
+    },
+    {
+      "device": "i2c-1",
+      "compatible": "qcom,geni-i2c",
+      "name": "Geni-I2C"
+    },
+    {
+      "device": "i2c-2",
+      "compatible": "qcom,geni-i2c",
+      "name": "Geni-I2C"
+    },
+    {
+      "device": "i2c-3",
+      "compatible": "qcom,geni-i2c",
+      "name": "Geni-I2C"
+    },
+    {
+      "device": "i2c-4",
+      "name": "dpu_dp_aux"
+    },
+    {
+      "device": "i2c-5",
+      "name": "Qualcomm-CCI"
+    },
+    {
+      "device": "i2c-6",
+      "name": "Qualcomm-CCI"
+    }
+  ],
+  "remoteproc": {
+    "remoteproc0": {
+      "name": "slpi",
+      "state": "running",
+      "firmware": "slpi.mdt"
+    },
+    "remoteproc1": {
+      "name": "adsp",
+      "state": "running",
+      "firmware": "adsp.mdt"
+    },
+    "remoteproc2": {
+      "name": "cdsp",
+      "state": "running",
+      "firmware": "cdsp.mdt"
+    },
+    "remoteproc3": {
+      "name": "modem",
+      "state": "running",
+      "firmware": "modem.mdt"
+    }
+  },
+  "files": [
+    {
+      "source": "dtbo_a",
+      "size": 7008128,
+      "sha256": "8a0e90a4ccd861a1630f8ff3d00f832b8ea36aa50c7fe0d0327125c650d81328"
+    },
+    {
+      "source": "vendor_boot_a",
+      "size": 23723864,
+      "sha256": "afcfd1d4fe772bf1e0f09936667a2eb8e95c8a3869724cfdc57ebe41249941d6"
+    },
+    {
+      "source": "vendor_dlkm_b",
+      "size": 158666752,
+      "sha256": "7102fd102ac39c470335896185e2d7443e9e2d4bb508887f7f7057bb15abaedb"
+    },
+    {
+      "source": "odm_dlkm_b",
+      "size": 348160,
+      "sha256": "329fdff29a6bb84f98000613c65adf8829d8394bd1b2df3c9780859e708807ff"
+    },
+    {
+      "source": "my_manifest_b",
+      "size": 544768,
+      "sha256": "6f58a83798bd79f8fae641f7d03aded2aa9962f9cee4eb4b87a8ff43499228d6"
+    },
+    {
+      "source": "odm_b/etc/camera/dng/ColorMatrix1_s5kjn1sq03_2.txt",
+      "size": 74,
+      "sha256": "28197777eb7015ad9727d6be856c94f5effc14bbf500934e400479acaded8ba0"
+    },
+    {
+      "source": "odm_b/etc/camera/dng/ColorMatrix2_s5kjn1sq03_2.txt",
+      "size": 73,
+      "sha256": "0d0106e67111117c5c4759f5d66d5fc56d6b8376d18ca64f8f511c7514982863"
+    },
+    {
+      "source": "odm_b/lib64/camera/com.qti.sensor.s5kjn1sq03.so",
+      "size": 23856,
+      "sha256": "a3422bd40981e83598bf7c5dea6b3be4b61b3a867787d18ee6cda8743007af7f"
+    },
+    {
+      "source": "odm_b/lib64/camera/com.qti.sensormodule.waipio.qtech_s5kjn1sq03.bin",
+      "size": 730626,
+      "sha256": "33a467e97625bd97ba68c78248f82e0cc8c9e2376efce0b6fe57ffa1e4ef41f0"
+    },
+    {
+      "source": "odm_b/lib64/camera/com.qti.tuned.qtech_s5kjn1sq03.bin",
+      "size": 10821904,
+      "sha256": "3f136ccad7c107e6f0c9a9917c564597802c52986ba6304ccd48332b2f4dfe10"
+    },
+    {
+      "source": "odm_b/etc/camera/config/s5kjn1sq03",
+      "size": 119451,
+      "sha256": "0833cf934c43ed50b7df8fd15c5e877d6387114a7ca7bc51423f03b6f14530e2"
+    },
+    {
+      "source": "odm_b/etc/mixer_paths.xml",
+      "size": 114698,
+      "sha256": "93c04a6809ab673f7838009cfbc0b50a7bc59f9a5a4a8798b86bcfd94b7ab8ad"
+    },
+    {
+      "source": "my_manifest_b/build.prop",
+      "size": 4272,
+      "sha256": "0b691772ce978a03464d6c2bc8f73403c81d83a6d49c2bb12179aea8d74a52dc"
+    }
+  ],
+  "limits": [
+    "File and DT presence is not a hardware self-test.",
+    "A-slot kernel and DTBO are not proven to match B-slot vendor modules byte-for-byte or originate from the same update.",
+    "Virtual A/B COW entries exist; no snapshot merge or Android boot was attempted.",
+    "No stock tuning, calibration or proprietary binaries are distributed in this evidence."
+  ]
+}

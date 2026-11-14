@@ -1,6 +1,6 @@
 # NE2210 原厂驱动模块参考归档
 
-整理日期：2026-11-13。来自本机 super slot 1 的 vendor_dlkm_b；同槽 my_manifest_b 记录版本 NE2210_15.0.0.401(CN01)。原厂模块面向 Android 5.10 内核，当前手机运行主线 7.3。
+整理日期：2026-11-13。来自本机 super slot 1 的 vendor_dlkm_b；同槽 my_manifest_b 记录版本 NE2210_15.0.0.401(CN01)，系统为 ColorOS 15 / Android 15。原厂模块面向 Linux 5.10.209 内核，当前手机运行主线 Linux 7.3；5.10 是内核版本，不是 Android 系统版本。
 
 - 完整分区文件树：`vendor_dlkm_b/`。
 - 驱动模块：`vendor_dlkm_b/lib/modules/`，共 **373 个 .ko**。

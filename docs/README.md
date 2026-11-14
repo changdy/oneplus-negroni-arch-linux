@@ -10,6 +10,7 @@
 | [刷机说明](flashing.md) | 固件限制、分区映射、校验、刷入和首次启动 |
 | **[USB 调试通道](usb-debug.md)** | **不依赖 Wi-Fi 的 USB 网络 SSH（`ssh oneplus@10.55.0.1`）与 USB 串口；调试首选** |
 | [设备状态](status.md) | 已验证功能、已知问题、SSH 和 GPU 配置 |
+| [原厂系统与硬件资料](stock-hardware.md) | 本机保留的原厂分区、373 个模块、JN1 调校与 WQHD 面板参数 |
 | [启动成功服务](boot-success.md) | A/B 成功标记、设备确认配置及状态检查 |
 | [充电限制](charge-limit.md) | 默认行为、启停、阈值配置及验证范围 |
 | [屏幕默认设置](screen-defaults.md) | 默认关闭调暗和休眠、5 分钟熄屏及续建更新 |
