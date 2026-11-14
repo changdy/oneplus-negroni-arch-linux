@@ -129,3 +129,11 @@ sudo python3 /tmp/negroni-usb2-recover.py --apply   # 核对状态后只清 PHY_
 本轮重启后没有复制或执行 `/tmp/negroni-usb2-recover.py`，也没有自动清寄存器的用户空间服务。恢复来自新内核；只读采集的状态转换与内核 PHY 恢复日志相互印证。
 
 完整镜像重建、完全断电后的启动、OTG host / PD Hub / 挂起恢复未测。实机仍保留之前的 `snps,usb2-gadget-lpm-disable` 实验属性，移除该属性的对照未测，不能声称已经验证不带此属性的新 DTB。原始输出与完整分区备份在忽略的 `logs/usb2-driver-20261113/`，整理后的 [验证记录](../artifacts/usb2-gadget-20261113/driver-evidence.json) 与 [构建报告](../artifacts/usb2-gadget-20261113/driver-build.json) 可供复核。
+
+## USB SSH 意外断连排查（2026-11-13 22:34–22:45）
+
+用户未移动 USB 时，SCP 曾报 `reset by peer`，随后两次 USB SSH 超时，22:36:53 自动恢复。**根因尚未定位。** Wi-Fi 只读采集未发现手机重启、gadget/NM/sshd 重启、USB 重新枚举、host 角色切换或 PHY override 回归的证据；Windows 设备最近到达时间仍为 22:02:48，手机最后的内核与 carrier 日志也在 22:02。原 SCP 的 TCP 连接仍在手机上退避重传，因此不能仅凭客户端报错认定是手机 SSH 主动断开。
+
+随后双通道每秒观测 3 分钟：均为 `configured / high-speed / device`，carrier 计数不变，netlink 无变化；USB 上下行各 512 MiB 哈希一致，原目录 158,666,752 字节文件的 SCP 复测也一致，未复现。Windows 同时有 Hyper-V/FSE 虚拟网络活动，但时序和本轮对照不足以证明因果；手机到电脑的 ICMP 无响应也不能作为断连依据，同期 TCP 双向传输正常。
+
+本轮全程未重启、刷写或改动 USB/网络配置。尚缺故障当时的双端抓包或 USB 请求跟踪，主机 NCM/过滤/路由及手机数据路径的短暂异常均未排除，长时间稳定性未测。整理后的 [事件时序与证据](../artifacts/usb-disconnect-20261113/README.md) 区分了观测与推测，原始日志独立保存在 `logs/usb-disconnect-20261113/`。

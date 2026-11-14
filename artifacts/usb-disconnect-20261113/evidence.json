@@ -1,0 +1,206 @@
+{
+  "date": "2026-11-13",
+  "timezone": "Asia/Shanghai",
+  "device": "OnePlus 10 Pro NE2210",
+  "kernel": "7.3.0-sm8450+ #4 (2026-11-13 21:54:31 CST)",
+  "conclusion": "Transient SCP/TCP failure with subsequent USB SSH timeouts; recovered spontaneously; root cause unconfirmed; not reproduced.",
+  "incident": {
+    "scp_accepted": "22:34:38.531088",
+    "old_connection_last_ack_approx": "22:35:08",
+    "last_ack_is_inferred_from_ss": true,
+    "usb_ssh_accepted_again": "22:36:53.167263",
+    "windows_device_last_arrival": "22:02:48",
+    "windows_device_problem_code": 0,
+    "failed_systemd_units": 0,
+    "service_restart_counts": {
+      "usb-gadget": 0,
+      "NetworkManager": 0,
+      "sshd": 0
+    },
+    "old_scp_tcp_state": "ESTAB",
+    "old_scp_send_queue_bytes": 1716,
+    "old_scp_rto_ms": 120000,
+    "kernel_last_entry_at_224534": "22:02:49.466550"
+  },
+  "snapshot": {
+    "time": "22:41:25",
+    "dwc3_mode": "device",
+    "dwc3_link_state": "On",
+    "DCFG": "0x00a0080c",
+    "PHY_CFG0": "0x00000000",
+    "dwc3_runtime_status": "active",
+    "phy_runtime_status": "active",
+    "dwc3_runtime_suspended_ms": 0,
+    "phy_runtime_suspended_ms": 0
+  },
+  "observations": {
+    "USB": {
+      "samples": 180,
+      "first": "2026-11-13T22:42:15.262844+08:00",
+      "last": "2026-11-13T22:45:14.493623+08:00",
+      "unique_values": {
+        "state": [
+          "configured"
+        ],
+        "speed": [
+          "high-speed"
+        ],
+        "role": [
+          "device"
+        ],
+        "carrier": [
+          "1"
+        ],
+        "changes": [
+          "14"
+        ],
+        "rx_errors": [
+          "0"
+        ],
+        "tx_errors": [
+          "0"
+        ],
+        "tx_dropped": [
+          "3"
+        ]
+      }
+    },
+    "Wi-Fi": {
+      "samples": 180,
+      "first": "2026-11-13T22:42:15.277723+08:00",
+      "last": "2026-11-13T22:45:14.493004+08:00",
+      "unique_values": {
+        "state": [
+          "configured"
+        ],
+        "speed": [
+          "high-speed"
+        ],
+        "role": [
+          "device"
+        ],
+        "carrier": [
+          "1"
+        ],
+        "changes": [
+          "14"
+        ],
+        "rx_errors": [
+          "0"
+        ],
+        "tx_errors": [
+          "0"
+        ],
+        "tx_dropped": [
+          "3"
+        ]
+      }
+    }
+  },
+  "stream_transfers": [
+    {
+      "direction": "phone-to-PC",
+      "round": 0,
+      "start": "2026-11-13T22:42:19.094990+08:00",
+      "bytes": 268435456,
+      "sha256": "a6d72ac7690f53be6ae46ba88506bd97302a093f7108472bd9efc3cefda06484",
+      "exit": 0,
+      "elapsed": 21.509
+    },
+    {
+      "direction": "PC-to-phone",
+      "round": 0,
+      "start": "2026-11-13T22:42:40.608637+08:00",
+      "bytes": 268435456,
+      "remote_hash": "a6d72ac7690f53be6ae46ba88506bd97302a093f7108472bd9efc3cefda06484  -",
+      "exit": 0,
+      "elapsed": 13.529
+    },
+    {
+      "direction": "phone-to-PC",
+      "round": 1,
+      "start": "2026-11-13T22:42:54.138008+08:00",
+      "bytes": 268435456,
+      "sha256": "a6d72ac7690f53be6ae46ba88506bd97302a093f7108472bd9efc3cefda06484",
+      "exit": 0,
+      "elapsed": 20.953
+    },
+    {
+      "direction": "PC-to-phone",
+      "round": 1,
+      "start": "2026-11-13T22:43:15.091357+08:00",
+      "bytes": 268435456,
+      "remote_hash": "a6d72ac7690f53be6ae46ba88506bd97302a093f7108472bd9efc3cefda06484  -",
+      "exit": 0,
+      "elapsed": 12.864
+    }
+  ],
+  "scp_replay": {
+    "start": "2026-11-13T22:43:38.095262+08:00",
+    "exit": 0,
+    "elapsed": 9.49,
+    "bytes": 158666752,
+    "sha256": "7102fd102ac39c470335896185e2d7443e9e2d4bb508887f7f7057bb15abaedb",
+    "hash_exit": 0
+  },
+  "phone_to_windows_icmp": {
+    "transmitted": 175,
+    "received": 0,
+    "interpretation": "Not a link-health indicator here: TCP transfers succeeded concurrently; checked Windows inbound echo allow rules were disabled."
+  },
+  "configuration_changed": false,
+  "untested": [
+    "Incident-time dual-ended packet and USB request trace",
+    "Long-duration stability",
+    "Network filter/virtual networking configuration A/B test",
+    "Suspend/resume",
+    "OTG and PD Hub regression"
+  ],
+  "raw_evidence_sha256": {
+    "phone-initial.txt": "ba9591343d6416bf6d0ef64537f6f6ec09697cb04fd27883cb7b8ebdd6ae95fe",
+    "phone-privileged-initial.txt": "f1ac05cabbf95351f2d8599896041c9997e6e7aeae82005b208e94ac9c302437",
+    "phone-final.txt": "f961143e43a1e475cc609ec60c78b009d3878568973a03b1ce4760376433c513",
+    "windows-pnp.txt": "63fe0b84cdc32bb34c0dd55dc80d81888e625965641744966001f9c0c6a18738",
+    "windows-system-all.json": "f9b5c5c8fb041bda981f913ba5bad77070d65c7d662c10d7ee6b59f2e907ddd7",
+    "windows-system-final.json": "be63b4b19bc2f7916c29479a483e2a310593b780d56b5c9d9c9bd42bc9a6dd11",
+    "windows-event-summary.json": "83aab771a277be87e9676409e1219dfbe83e67ca38f08ad1b83df2b5cb351351",
+    "windows-ncm.txt": "7956305d815517c5f988fa44ca5775ee782f64a9e80cbf5152d7ebe0c5429b17",
+    "windows-network.txt": "ed8f4f4ee9abd3213d2e03650e9aa995e0a8b1c76e141c2e5a99c8544a2f95d8",
+    "windows-ncm-statistics.txt": "f8d03d2fe37d213bc537ad5ba8e514c9f0d624b89699399d463522d36014387d",
+    "windows-ncm-statistics-final.txt": "a175dc3e479989321e4de4c3a1dae3e55b38f771d5000c7c3689e27ec6e2aff1",
+    "netlink.out": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "transfer-results.json": "154b3ffb36c11576ee265cc62eb073975a53f7e990a938dd8ef5bbb9f6661c5b",
+    "scp-results.json": "66c053cf65f3884f55d1b01f00296507a9ccc79d4ee826eba43385c16b5bc7f4",
+    "observe-wifi.jsonl": "c7ece213ee7e5b35a5a1a5c91613dc40b4597d397e5a4d0555ee09496d901db8",
+    "observe-usb.jsonl": "08cb65ea0c75860759d9077a31b93b0ed1dc314a08dc48231a89b713aa61535d",
+    "phone-ping-usb-host.txt": "f052e28dfc559ea433a545312ff5e19f164a6328235f8540ba084a1cb5975455",
+    "windows-ping-phone.txt": "7ba8c18658940c8b05e8c784f32cc972c8574550a7faaa574b1b84feb77a888f",
+    "check-wsl.txt": "de987d4e8f6675e8026fac11b62f06916cd0895b99f4c3b27a6ed10437133639",
+    "check.txt": "79e2edea532cb89d5898682d08b801ba43468adb500e21d43a0d2e1e49672e8e",
+    "phone-post-check.txt": "9f4422d9f10ba5db5df3b2a884ee17b1fc4908bd9b930079adeca9d847e4e7ba"
+  },
+  "netlink_events": 0,
+  "windows_to_phone_icmp": {
+    "transmitted": 20,
+    "received": 20,
+    "rtt_min_ms": 1,
+    "rtt_max_ms": 2,
+    "rtt_average_ms": 1
+  },
+  "repository_validation": {
+    "wsl_check_sh": "passed",
+    "git_diff_check": "passed",
+    "windows_check_sh": "Submodule restore fixtures failed due to unescaped Windows paths in temporary .gitmodules; preceding checks passed; unrelated tests unchanged."
+  },
+  "post_check": {
+    "time": "22:50:10",
+    "new_kernel_log_window": "22:47:19–22:47:21",
+    "new_kernel_messages": "Type-C state work and charger USB type 17; no USB/PHY recovery event",
+    "carrier_changes": 14,
+    "state": "configured",
+    "speed": "high-speed",
+    "role": "device",
+    "failed_systemd_units": 0,
+    "USB_and_WiFi_SSH_at_224957": "both succeeded"
+  }
+}

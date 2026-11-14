@@ -92,4 +92,4 @@ git diff --check
 
 - 当前状态汇总：[docs/status.md](docs/status.md)。各子系统：[音频](docs/audio.md)、[通话语音](docs/call-audio.md)、[基带/SIM/VoLTE](docs/modem.md)、[蓝牙](docs/bluetooth.md)、[GPU](docs/gpu.md)、[USB 调试](docs/usb-debug.md)。
 - 完成一次实机调试后，更新对应子系统文档和 `docs/status.md`，写清日期、验证了什么、还没验证什么。原始日志放在 `logs/<主题>-<日期>/`（不纳入 Git），整理后的依据放在 `artifacts/`。
-- 未提交的进行中工作：S5KJN1 超广角相机的 DT 修正（MCLK 24 MHz、reset 改为 gpio24 低有效）目前只存在于 WSL 内核树中，未提交，也未在手机上验证。USB2 gadget 的 LPM 补丁也只在 `logs/usb-debug-20261112/`，未应用。
+- 未提交的进行中工作：S5KJN1 超广角相机的 DT 修正（MCLK 24 MHz、reset 改为 gpio24 低有效）目前只存在于 WSL 内核树中，未提交，也未在手机上验证。USB2 gadget 的 LPM 补丁已在 2026-11-13 刷入 b 槽 `vendor_boot_b` 并重启验证：DT 属性和 DCFG LPMCap 清零都生效，但 USB2 口仍然失败，根因转向充电驱动的 OTG host 误切换；补丁未纳入 Git 和镜像构建，回滚镜像与注入脚本在 `logs/usb-debug-20261112/`，详见 [docs/usb-debug.md](docs/usb-debug.md)。
