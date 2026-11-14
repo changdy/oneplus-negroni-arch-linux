@@ -24,7 +24,7 @@ LPASS 录音状态修复 `463023bf84b1` 改为按 TX/VA 通道 mask 的实际 bi
 
 相机 CSID 修复 `a7d9e945d961` 让 lite CSID 不再写顶层寄存器，停流时恢复完整 CSID 的顶层复位值并真正关掉 RDI，开流失败时停掉已经启动的实体。2026-11-14 用含同一改动的模块在 NE2210 上连续 58 次四摄切换和重复启停通过，没有硬重启。同日用该提交重新封装 `/opt/negroni-build/images/7.3`，`boot.img` SHA-256 `3fb7199a69055b9d17c4bed80f1760f48fb27c72b1df6f1657d4ec9449392d98`，构建时没有本地未提交差异。2026-11-14 17:03 只写 `boot_b` 并安装对应模块后重启，内核为 `#5`，B 槽仍成功。17:10 这份模块不认识 C-PHY，四摄 overlay 无法探测；超广角随后因 `titan_top_gdsc` 卡在 off 而无法再次上电。
 
-相机 C-PHY 与 GDSC 修复 `d1ca2f4d48c2` 让 SM8450 接受 C-PHY 端点并按原厂 2.1.0 寄存器打开 trio，PHY 走 gen2 路径，CAMCC 使用 shared RCG 且 GDSC 保留触发器状态。连续 DMA 与 CSID 初始 RUP 一并纳入，因为通过 58 次启停的模块就是这套组合。构建镜像 `boot.img` SHA-256 `070cef14d8078fa09f0281a3cb1ddb4d7b2c2f8cb899c8fff9fd234185369d93`。只提交 CAMCC 和 CAMSS，音频与未提交设备树没有混入。bundle 保留原两个前置提交与历史 rc2 引用，见[相机说明](../../docs/camera.md)。
+相机 C-PHY 与 GDSC 修复 `d1ca2f4d48c2` 让 SM8450 接受 C-PHY 端点并按原厂 2.1.0 寄存器打开 trio，PHY 走 gen2 路径，CAMCC 使用 shared RCG 且 GDSC 保留触发器状态。连续 DMA 与 CSID 初始 RUP 一并纳入，因为通过 58 次启停的模块就是这套组合。构建镜像 `boot.img` SHA-256 `070cef14d8078fa09f0281a3cb1ddb4d7b2c2f8cb899c8fff9fd234185369d93`。17:34 写入 `boot_b` 并重启为内核 `#6`，17:35 四轮四摄启停 16/16 出帧，没有硬重启。只提交 CAMCC 和 CAMSS，音频与未提交设备树没有混入。bundle 保留原两个前置提交与历史 rc2 引用，见[相机说明](../../docs/camera.md)。
 
 ## 重做范围
 
