@@ -23,6 +23,8 @@ Wi-Fi 默认关闭省电、采用设备和连接固定的本地 MAC，国家域�
 
 传感器：`prepare-rootfs.sh` 保留 `iio-sensor-proxy`，并从 `xec` 源安装 `hexagonrpc`（带 `--overwrite /usr/local/share/man`）。全新 rootfs 由 `configure-sensors.sh` 安装 65 份原厂传感器 JSON、`sns_reg.conf`、开机从 persist 组装注册表和 `socinfo` 的 `negroni-sensor-files.service`、开机启用的 `hexagonrpcd-sdsp.service`、加速度计安装矩阵、手机上验证过的代理程序、开机写入 SMEM 项 130 并重启 SLPI 的 `negroni-smem-sensor.service`，以及陀螺仪发布程序 `negroni-gyro` 和开机启用的 `negroni-gyro.service`。已有镜像在 `sensors-sources.sha256` 失效时由 `update-sensors-image.sh` 补装，已有镜像缺 `hexagonrpc` 软件包时脚本停止。封装前 `verify-sensors-image.py` 核对 `hexagonrpc` 文件、原厂 JSON、陀螺仪程序、D-Bus 策略、单元和启用链接。注册表是工厂校准，只在开机时从本机 persist 拷贝。内核需要 `CONFIG_QCOM_OPLUS_SMEM_SENSOR=m`。见[传感器说明](sensors.md)。
 
+USB 调试通道：`prepare-rootfs.sh` 安装 `dnsmasq`（NetworkManager 的 shared 模式要用）。全新 rootfs 由 `configure-usb-debug.sh` 安装 `usb-gadget.sh`、`usb-gadget.service`、让 NetworkManager 接管 `usb0` 的 udev 规则和 `usb-debug` 连接（`10.55.0.1/24`，权限 0600），并启用 `usb-gadget.service` 与 `serial-getty@ttyGS0.service`。已有镜像在 `usb-debug-sources.sha256` 失效时由 `update-usb-debug-image.sh` 补装，缺 `dnsmasq` 时脚本停止。封装前 `verify-usb-debug-image.py` 核对文件、权限和启用链接。gadget 依赖内核内建的 configfs NCM/ACM。见 [USB 调试](usb-debug.md)。
+
 固件加载器、Plasma 快捷设置和电话/portal 元数据修复通过 `configure-runtime-fixes.sh` 接入全新 rootfs；已有镜像由 `build.sh` 根据源文件指纹触发增量更新，封装前校验文件、权限、运行依赖和安装清单。加载器修正 A/B 蓝牙路径、固件分组与目录链接；快捷设置修正尺寸未就绪时的分页计算，并移除模块的 qrc 优先声明，使修复后的 QML 实际生效。电话组件的三个真实总线名与 autostart 共用一个 systemd 用户服务；四个后台组件的隐藏应用描述安装到 `/usr/local/share/applications`，供 portal 识别。
 
 安装前校验原版或已记录管理版本的内容，拒绝覆盖未知软件包版本和未记录的本地修改；被替换原件保存在 `/var/lib/negroni-runtime-fixes/backups/<内容哈希>/`，当前内容记录在 `installed-files.json`。软件包升级可能覆盖加载器、QML、qmldir 或 modem autostart，需要重新核验。已有镜像可单独更新并重新封装，无需重编内核，也不会自动刷机：

@@ -25,7 +25,7 @@ A 槽曾因缺少成功标记而耗尽重试次数、进入 recovery，现已恢
 
 ## SSH
 
-> **调试首选 USB 网络 SSH**：手机接电脑 USB3 口，电脑 NCM 网卡设为 `10.55.0.2/24` 后执行 `ssh oneplus@10.55.0.1`，另有 `COM3` 串口救援。该通道已在本机手动安装，尚未进入镜像构建，见 [USB 调试通道](usb-debug.md)。
+> **调试首选 USB 网络 SSH**：手机接电脑 USB3 口，电脑 NCM 网卡设为 `10.55.0.2/24` 后执行 `ssh oneplus@10.55.0.1`，另有 `COM3` 串口救援。该通道已在本机手动安装，2026-11-14 接进镜像打包，带它的新镜像未构建、未刷入，见 [USB 调试通道](usb-debug.md)。
 
 镜像默认启用 OpenSSH，TCP 端口为 22。手机连接 Wi-Fi 后，在同一局域网电脑执行：
 
@@ -33,7 +33,7 @@ A 槽曾因缺少成功标记而耗尽重试次数、进入 recovery，现已恢
 ssh oneplus@手机IP
 ```
 
-密码为构建时本地 `image-credentials.json` 中的 `password`；也支持为 `oneplus` 配置 SSH 公钥。root 远程登录和空密码登录被禁用，主机密钥在首次启动时生成。镜像未预置 Wi-Fi 凭据；全新镜像的 USB 数据线也还不会自动提供 SSH 网络，需按 [USB 调试通道](usb-debug.md) 补装。
+密码为构建时本地 `image-credentials.json` 中的 `password`；也支持为 `oneplus` 配置 SSH 公钥。root 远程登录和空密码登录被禁用，主机密钥在首次启动时生成。镜像未预置 Wi-Fi 凭据。USB 数据线 SSH 由 `configure-usb-debug.sh` 装进下一次构建的镜像；此前构建的镜像仍需按 [USB 调试通道](usb-debug.md) 补装。
 
 ## 已知问题与配置取舍
 
@@ -56,7 +56,7 @@ ssh oneplus@手机IP
 | 通话声音 | 2026-11-14 20:04 实机：拨出接通后用户在对端听完并自行挂断，反馈听着还可以；通话录音上行有麦克风电平。挂断后语音图关闭、桌面声卡配置已还原。没有回声消除，自动接听未做。内核语音图为 `81637d2a07f3`。`configure-audio.sh` 安装实机那份拓扑（`5fb6fba6…`）并开机启用通话服务。打包路径已接入，新镜像未构建、未刷入。同日傍晚桌面音频曾把 SoundWire 中断线程打崩，RX 中断改走 TX regmap 的修复已提交为内核 `baa7d74668f4`，模块已装上并随这次重启验证不再崩溃。见[通话语音](call-audio.md) |
 | 蓝牙 | 2026-11-12 实机：自动设置 public address 后适配器开启、扫描正常且 Wi-Fi 稳定；完整重启、配对与 A2DP 未测，见 [蓝牙说明](bluetooth.md) |
 | 振动反馈 | 2026-11-14 实机：PM8350B 开机自动加载，标准 FF 短振、20 次重复播放、提前停止、feedbackd / Plasma D-Bus 接口、模块重载及最后一次正常重启通过；用户确认三次短振清楚。首次实验的 worker 嵌套锁问题已修正。完整镜像、深度睡眠和长时间负载未测，见[振动反馈](haptics.md) |
-| USB 调试 gadget | 2026-11-13 驱动修复已刷入 b 槽并重启：USB2 随启动自动 high-speed，连续 3 次同口拔插和 USB3→USB2 换口均自动恢复，USB3 为 super-speed；USB2 双向各 64 MiB 哈希一致，无需恢复脚本。修复覆盖充电检测 PHY override 释放和同为 device 时的 PHY 恢复；保留此前 LPM 实验属性，其移除后的表现、完全断电启动及 OTG / PD Hub 回归未测。22:34–22:36 用户未动线时曾有 SCP/USB SSH 中断并自动恢复，根因未定；只读排查无重启或重新枚举证据，随后双通道观测 3 分钟、上下行各 512 MiB 及原文件 SCP 复测均通过，不能据此证明长期稳定，见 [USB 调试通道](usb-debug.md)和[断连排查记录](../artifacts/usb-disconnect-20261113/README.md) |
+| USB 调试 gadget | 2026-11-13 驱动修复已刷入 b 槽并重启：USB2 随启动自动 high-speed，连续 3 次同口拔插和 USB3→USB2 换口均自动恢复，USB3 为 super-speed；USB2 双向各 64 MiB 哈希一致，无需恢复脚本。修复覆盖充电检测 PHY override 释放和同为 device 时的 PHY 恢复；保留此前 LPM 实验属性，其移除后的表现、完全断电启动及 OTG / PD Hub 回归未测。22:34–22:36 用户未动线时曾有 SCP/USB SSH 中断并自动恢复，根因未定；只读排查无重启或重新枚举证据，随后双通道观测 3 分钟、上下行各 512 MiB 及原文件 SCP 复测均通过，不能据此证明长期稳定。gadget 用户空间已接进镜像打包，新镜像未构建、未刷入，见 [USB 调试通道](usb-debug.md)和[断连排查记录](../artifacts/usb-disconnect-20261113/README.md) |
 | 中文字体 | 2026-11-12 已在手机补装 `noto-fonts-cjk` 并刷新字体缓存，Qt/Pango 简繁中文与混排渲染通过，Pango 缺失字形为 0；已加入镜像软件清单，新完整镜像未构建，见 [字体说明](fonts.md) |
 | 浏览器 | 2026-11-12 已在手机补装 Angelfish `26.08.3-1`，签名验证、Plasma Mobile / Wayland 启动及 HTTPS 测试网页加载通过；人手触摸、软键盘、GPU 加速、视频和长时间稳定性未测，尚未接入镜像清单，见[浏览器说明](browser.md) |
 | 根分区定位 | 改用文件系统 UUID，实机连续 3 次重启通过；原失败启动的早期日志缺失，UFS 偶发初始化问题仍未排除。单独更新 boot 须使用手机当前根 UUID，见[刷机说明](flashing.md) |

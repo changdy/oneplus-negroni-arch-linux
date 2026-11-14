@@ -7,7 +7,7 @@
 | **USB 网络 SSH（首选）** | `ssh oneplus@10.55.0.1` | NCM 网卡 `usb0`，`10.55.0.1/24` | 日常调试、传文件、刷分区 |
 | USB 串口 | Windows `COM3`，115200 8N1 | ACM `ttyGS0` + `serial-getty@ttyGS0` | 网络全挂时的救援 shell |
 
-> **2026-11-13 USB2 驱动修复已部署。** 当前手机在 USB2 口可随启动、拔插自动恢复 `high-speed` 和 USB SSH；USB3 口仍为 `super-speed`。全新镜像仍需先安装本页的 gadget 服务。详见文末“USB2 驱动部署与验证”。
+> **2026-11-13 USB2 驱动修复已部署。** 当前手机在 USB2 口可随启动、拔插自动恢复 `high-speed` 和 USB SSH；USB3 口仍为 `super-speed`。gadget 服务已接进镜像打包，带它的新镜像未构建、未刷入。详见文末“USB2 驱动部署与验证”。
 
 ## 电脑侧使用
 
@@ -50,7 +50,7 @@ scp images/7.3/boot.img oneplus@10.55.0.1:~/
 
 ## 手机侧组成
 
-文件存档在 [config/usb-debug/](../config/usb-debug/)。2026-11-12 在手机上**手动安装**，**尚未接入镜像构建**：全新刷入的镜像没有这条通道，需要按下面步骤补装（可以先通过 Wi-Fi SSH 操作）。
+文件存档在 [config/usb-debug/](../config/usb-debug/)。2026-11-12 在手机上手动安装。2026-11-14 接进镜像打包：`configure-usb-debug.sh` 安装下表文件和 NM 连接 [usb-debug.nmconnection](../config/usb-debug/usb-debug.nmconnection)（从手机原样取回），并启用两个服务，`prepare-rootfs.sh` 安装 `dnsmasq`。仓库里三份 gadget 文件与手机上的 SHA-256 一致。带这条通道的新镜像未构建、未刷入；在那之前刷入的旧镜像仍要按下面步骤补装（可以先通过 Wi-Fi SSH 操作）。
 
 | 手机路径 | 仓库文件 | 作用 |
 | --- | --- | --- |

@@ -1,0 +1,17 @@
+[connection]
+id=usb-debug
+uuid=a19e898f-1020-4d5d-b1c2-ac151c140266
+type=ethernet
+interface-name=usb0
+
+[ethernet]
+
+[ipv4]
+address1=10.55.0.1/24
+method=shared
+
+[ipv6]
+addr-gen-mode=default
+method=link-local
+
+[proxy]

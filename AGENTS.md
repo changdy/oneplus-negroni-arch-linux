@@ -38,7 +38,7 @@ EOS
   2. 请用户检查 Windows NCM 网卡是否仍为 `10.55.0.2/24`（需要管理员，代理通常做不了）；
   3. 串口 `COM3`，115200 8N1，网络全挂时的救援通道；
   4. Wi-Fi SSH（IP 会变，最近为 `192.168.137.143`）。
-- 全新刷入的镜像**还不包含**这条通道（手动安装，尚未接入构建），补装方法见 [docs/usb-debug.md](docs/usb-debug.md)。
+- 这条通道 2026-11-14 已接进镜像打包（`configure-usb-debug.sh`），但带它的新镜像还没构建、没刷入。旧镜像要手动补装，方法见 [docs/usb-debug.md](docs/usb-debug.md)。
 
 完整说明、排错和手机侧组成：**[docs/usb-debug.md](docs/usb-debug.md)**。
 
