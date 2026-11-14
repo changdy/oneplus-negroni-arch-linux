@@ -52,3 +52,15 @@ options nxp_nci_i2c bbclk2=1
 设备树里的 `clocks = <&rpmhcc RPMH_LN_BB_CLK2>`、`nxp,pll-19m2` 和电平触发中断要等内核与 DT 一起刷入后才生效。刷入后不必再靠这两个模块参数。这次没有刷写，也没有重启。
 
 打开时内核仍会打印一行 `unknown rsp opcode 0x3`。那是读取 `0xA011` 的响应，驱动已经收下，不是失败。
+
+## 镜像交付与实验归档（2026-11-15）
+
+`configure-nfc.sh` 除安装时钟回退外，从[实验源码](../artifacts/nfc-20261114/README.md)交叉编译并安装 `nfc-up`、`nfc-live`、`nfc-sniff`、`nfc-emulate` 到 `/usr/local/sbin`。读卡与监听均按需，不新增常驻轮询服务，也不把本机 UID 写入默认镜像。
+
+已有镜像由源文件指纹触发 `update-feature-image.sh nfc`；打包前检查工具源指纹、ARM64 ELF、文件哈希/权限、时钟配置和内核模块。历史安装/重载脚本仍留在实验目录，默认不执行。四个工具已交叉编译，小型 ext4 的安装及缺读卡工具、错误权限拒绝检查通过；新完整镜像未构建、未刷入，外部读卡器、NDEF 和 Classic 扇区认证仍未验证。
+
+```sh
+sudo nfc-live 30  # 手机上限时发现；结束后确认轮询与控制器已关闭
+```
+
+neard 等 NDEF 用户空间在对话中调研过，后续安装会话没有成功安装的完整证据，本轮不标为已交付；它也不能补齐 Classic 扇区认证或门禁模拟。
