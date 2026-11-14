@@ -39,6 +39,7 @@ ssh oneplus@手机IP
 
 | 项目 | 状态与依据 |
 | --- | --- |
+| 内存容量 | 2026-11-12 只读实机核查：12GB 机型当前 `MemTotal` 为 10.3022 GiB，`free -h` 显示 `10Gi`；运行时内存区间比 12 GiB 少 219 MiB，固定预留 1191.875 MiB，内核等其余开销按差额约 327.70 MiB。预留区回收与内存压测未测，见[内存说明](memory.md) |
 | 登录虚拟键盘 | 使用 KWin 启动 Plasma Keyboard；7.2 已确认可输入，7.3-rc2 登录操作尚待单独记录，见[修复记录](archive/keyboard-fix-2026-09-15.md) |
 | GPU 慢亮屏 | 默认启用 `gpu-runtime-active.service`，将 GPU 的 `power/control` 设为 `on`；这是阻止 GPU runtime suspend 的规避方式，可能增加待机耗电。2026-11-11 在 7.3 上设为 `auto` 的 2 次亮屏未复现 1 s 超时，样本不足，暂不移除，见 [GPU 说明](gpu.md) |
 | GPU 3D 加速 | 详见 [GPU 说明](gpu.md)。2026-11-11 实机验证可用，内核与固件无需修改：msm/Adreno 730 绑定，`a730_sqe.fw`、`gmu_gen70000.bin` 和 zap shader 正常加载（0.8 秒时 `failed to load a730_sqe.fw` 仅是 rootfs 挂载前的首次尝试，12 秒时加载成功）。Mesa 26.2.6 的 GL ES 3.2 渲染器为 `FD730`，KWin 使用 OpenGL ES 合成，Xwayland GLX 为直接渲染；`glmark2-es2-wayland --off-screen`（1245×2664，build/texture/phong/refract/terrain）得分 900，压测中 devfreq 由 220 MHz 升至 818 MHz，无 GPU fault 或 hangcheck。Vulkan 需安装 `vulkan-freedreno`（已加入镜像软件清单），Turnip 报告 Vulkan 1.4，`vkcube` 300 帧正常；游戏、视频硬解和长时间负载的温控尚未测试 |
