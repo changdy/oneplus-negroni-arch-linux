@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Sunshine
+GenericName=Game stream host
+Comment=Open the Sunshine web settings
+Exec=xdg-open https://localhost:47990
+Icon=sunshine
+Terminal=false
+Categories=Network;

@@ -1,0 +1,4 @@
+mpv
+qpwgraph
+plasma-systemmonitor
+gwenview

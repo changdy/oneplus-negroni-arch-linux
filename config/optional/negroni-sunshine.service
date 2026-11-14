@@ -1,0 +1,16 @@
+[Unit]
+Description=Sunshine game streaming (opt-in)
+After=graphical-session.target xdg-desktop-portal.service
+PartOf=graphical-session.target
+StartLimitIntervalSec=500
+StartLimitBurst=5
+
+[Service]
+WorkingDirectory=/opt/negroni-sunshine/2026.914.233613
+ExecStartPre=/bin/sleep 5
+ExecStart=/opt/negroni-sunshine/2026.914.233613/usr/bin/sunshine
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=graphical-session.target
