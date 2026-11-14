@@ -32,7 +32,7 @@ SM8450 用 GPR/AudioReach，通话音频由 DSP 里的 VCPM 管理，不能套�
   | `MultiMedia8 InCall`（`hw:0,7`） | 录音 | 原厂录音图 `b00000d0`，抽头是分路器 `4561`（下行）和 `4560`（上行，在放音混入点之后）的端口 3 |
 
   录音的声道由 MUX_DEMUX 的模式决定：1 只录上行，2 只录下行（只有对方的声音），3/4 左声道上行、右声道下行。实测用的是模式 4。
-- **内核**：语音图需要 `config/audio/sm8450-audioreach-voice.patch`（hostless 前端、VCPM 校准共享内存、跨图控制连接、路由修正）。录音和放音没有再改内核：起点在语音图里的跨图连接作为原始的图打开参数下发，后端用不带控件的 DAPM 路由挂接。
+- **内核**：语音图在内核提交 `81637d2a07f3`（hostless 前端、VCPM 校准共享内存、跨图控制连接、路由修正）。录音和放音的起点在语音图里，作为原始的图打开参数下发，后端用不带控件的 DAPM 路由挂接。
 
 ## 文件
 
@@ -44,7 +44,7 @@ SM8450 用 GPR/AudioReach，通话音频由 DSP 里的 VCPM 管理，不能套�
 | [negroni-call-audio.py](../config/audio/voice/negroni-call-audio.py)、[.service](../config/audio/voice/negroni-call-audio.service) | 通话期间自动打开和关闭语音图 |
 | [negroni-voice-test.py](../config/audio/voice/negroni-voice-test.py) | 限时手动打开语音图；服务复用它的 PCM 和 mixer 代码 |
 | [install-test.sh](../config/audio/voice/install-test.sh) | 安装或恢复三个实验内核模块和拓扑，不重启 |
-| [sm8450-audioreach-voice.patch](../config/audio/sm8450-audioreach-voice.patch)、[sm8450-oneplus-negroni-dmic.patch](../config/audio/sm8450-oneplus-negroni-dmic.patch) | 内核改动，仅以补丁形式保存 |
+| [sm8450-audioreach-voice.patch](../config/audio/sm8450-audioreach-voice.patch)、[sm8450-oneplus-negroni-dmic.patch](../config/audio/sm8450-oneplus-negroni-dmic.patch) | 语音图内核改动已进入内核提交 `81637d2a07f3`；补丁文件仍保留对照。DMIC 偏置试验没有进入该提交 |
 | [sm8450-oneplus-negroni-dmic34-va.patch](../config/audio/sm8450-oneplus-negroni-dmic34-va.patch) | 2026-11-13—14 增量诊断候选：修正 VA CPU DAI、补齐 DMIC4，已刷入 B 槽并重启；VA 录音可以打开但仍无信号，DT 改动尚未接入正式源码/构建 |
 
 原厂 ACDB、提取出的图和校准、生成的拓扑、内核模块和原始日志都在本地 `logs/call-audio-20261112/`，不纳入 Git。校准来自手机自己的 `~/android-ro/odm_b/etc/acdbdata/acdb_cal.acdb`，SHA-256 `da0cd92a94e77d6f7894de44f4afe4c701715ba46c6cf9bbe0b45fe1ea1ab63a`。许可见[来源与许可](licensing.md)。
@@ -78,9 +78,9 @@ bash scripts/build-voice-topology.sh ...同上四个参数...
 
 ## 安装与使用
 
-拓扑在 `/usr/lib/firmware/qcom/sm8450/OnePlus-10-Pro-tplg.bin`，三个实验模块在 `/usr/lib/modules/7.3.0-sm8450+/kernel/sound/soc/qcom/qdsp6/`。都只改根文件系统，不刷分区，但**换拓扑或模块后必须重启**（见下文“不能热更新”）。
+镜像里的 `/usr/lib/firmware/qcom/sm8450/OnePlus-10-Pro-tplg.bin` 就是上表那份通话语音 + 录音 + 放音拓扑（`5fb6fba6…`）。`scripts/build-audio-topology.sh` 只生成桌面拓扑，不能单独再现这个文件。`configure-audio.sh` 会安装这份拓扑，并把通话服务装到 `/usr/local/libexec/negroni-voice/`、设为开机自启。2026-11-14 这次只把打包路径接上，没有构建新镜像，也没有刷入手机。手机上已有的服务和拓扑保持原样。换拓扑或语音模块后必须重启（见下文“不能热更新”）。
 
-通话音频服务装在 `/usr/local/libexec/negroni-voice/`，已设为开机自启：
+通话音频服务的行为：
 
 - 有通话处于 `ringing-out` 或 `active` 时打开 MM5/MM6，没有时关闭并恢复改动过的 mixer 值；来电振铃阶段不打开。
 - 打开前把桌面声音服务（PipeWire/PulseAudio）的声卡 profile 切到 `off`，关闭后切回。否则通话期间桌面打开的媒体流会让扬声器 PCM 卡死，麦克风输入也会从 PipeWire 中消失。副作用是通话期间桌面提示音不响。

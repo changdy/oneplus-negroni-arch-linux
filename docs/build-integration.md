@@ -19,7 +19,7 @@ A/B 启动成功标记已接入全新 rootfs 和内核更新。单独修改服�
 
 Wi-Fi 默认关闭省电、采用设备和连接固定的本地 MAC，国家域按当前部署地点设为 CN。新 rootfs 与旧镜像续建均安装 `iw`、`wireless-regdb` 和签名；配置内容变更触发镜像更新，封装前检查依赖和配置一致性，见 [Wi-Fi 默认设置](wifi.md)。
 
-音频：新 rootfs 由 `configure-audio.sh` 安装 AudioReach 拓扑 `/usr/lib/firmware/qcom/sm8450/OnePlus-10-Pro-tplg.bin` 及 ALSA UCM（`conf.d/sm8450/OnePlus-10-Pro.conf`、`OnePlus/negroni/HiFi.conf`）；已有镜像在 `audio-sources.sha256` 失效时由 `update-audio-image.sh` 补装。封装前 `verify-audio-image.py` 核对文件与源码一致及 16 个 `alsa-ucm-conf` 共用片段存在；`check.sh` 只做源码一致性检查。拓扑二进制随仓库提供，可用 `scripts/build-audio-topology.sh` 从 `config/audio/topology/` 重新生成。声卡还需要内核 `ead3411b6e6` 的设备树，见[音频说明](audio.md)。
+音频：新 rootfs 由 `configure-audio.sh` 安装 AudioReach 拓扑 `/usr/lib/firmware/qcom/sm8450/OnePlus-10-Pro-tplg.bin`、ALSA UCM（`conf.d/sm8450/OnePlus-10-Pro.conf`、`OnePlus/negroni/HiFi.conf`），以及开机启用的 `negroni-call-audio.service`。随仓库提供的拓扑是 2026-11-14 实机用的通话语音 + 录音 + 放音文件（SHA-256 `5fb6fba6…`），不是 `scripts/build-audio-topology.sh` 单独生成的桌面拓扑。已有镜像在 `audio-sources.sha256` 失效时由 `update-audio-image.sh` 补装。封装前 `verify-audio-image.py` 核对文件与源码一致、服务已启用，以及 UCM 引用的 `alsa-ucm-conf` 共用片段存在；`check.sh` 只做源码一致性检查。声卡还需要内核 `ead3411b6e6` 的设备树和 `81637d2a07f3` 的语音图，见[音频说明](audio.md)和[通话语音](call-audio.md)。这次只接入打包路径，新镜像未构建、未刷入。
 
 固件加载器、Plasma 快捷设置和电话/portal 元数据修复通过 `configure-runtime-fixes.sh` 接入全新 rootfs；已有镜像由 `build.sh` 根据源文件指纹触发增量更新，封装前校验文件、权限、运行依赖和安装清单。加载器修正 A/B 蓝牙路径、固件分组与目录链接；快捷设置修正尺寸未就绪时的分页计算，并移除模块的 qrc 优先声明，使修复后的 QML 实际生效。电话组件的三个真实总线名与 autostart 共用一个 systemd 用户服务；四个后台组件的隐藏应用描述安装到 `/usr/local/share/applications`，供 portal 识别。
 
@@ -40,7 +40,7 @@ VoLTE 由 `configure-volte.sh` 安装:电信在 LTE 上没有电路域语音,基
 
 IMS 承载自动恢复由同一个脚本安装:`config/volte/negroni-ims-recovery.py` 到 `/usr/local/libexec/`、配置到 `/etc/negroni-ims-recovery.conf`、`negroni-ims-recovery.service` 到 systemd 并随 ModemManager 启用。该服务只查询 ModemManager 的承载状态,不改 81voltd 二进制;连续丢失 IMS 承载时先重启 81voltd,仍失败且数据承载在线时才有上限地重启 ModemManager,细节与限制见[基带说明](modem.md#ims-承载自动恢复2026-11-13)。源文件指纹与上述文件一起记录,`verify-volte-image.py` 封装前核对内容、权限和两个启用链接。全新 rootfs 由 `finalize-rootfs.sh` 调用 `configure-volte.sh` 安装;`build.sh` 以 `volte-sources.sha256` 指纹在已有镜像续建时触发 `update-volte-image.sh`,之后重新封装。恢复服务已在手机上部署,两级动作、开机自愈与拨号均完成实机验证(见[基带说明](modem.md#ims-承载自动恢复2026-11-13));全新完整镜像仍未重建。
 
-VoLTE 已知限制:只在设备上验证过拨出电话能到达振铃/接通状态,通话音频没有接通(内核缺少语音通话的音频通路),来电和短信未测试。关闭移动数据时 NetworkManager 会断开所有承载,此后 ModemManager 1.24.2 在重新连接时大概率段错误(4 轮开关崩溃 4 次),随后自动重启并在约 20 秒内恢复数据和 IMS;根因在 ModemManager 的复用链路处理,尚未定位。
+VoLTE 已知限制:2026-11-12 只验证过拨出电话能到达振铃/接通状态，当时通话音频没有接通。2026-11-14 语音图已经由对端听过，并已接入 `configure-audio.sh`，见[通话语音](call-audio.md)。来电和短信未测试。关闭移动数据时 NetworkManager 会断开所有承载,此后 ModemManager 1.24.2 在重新连接时大概率段错误(4 轮开关崩溃 4 次),随后自动重启并在约 20 秒内恢复数据和 IMS;根因在 ModemManager 的复用链路处理,尚未定位。
 
 Docker 内核支持已接入每次构建：`configure-docker-kernel.sh` 在基础配置上合并 `config/kernel/docker.config`，随后运行 `olddefconfig` 和必需项检查。已有 `.config` 同样会更新。正常 Kbuild 生成的 nftables 兼容、IPv4/IPv6 FIB 和 NAT 模块通过内核产物指纹进入 rootfs；打包前核对镜像内核、模块哈希、依赖索引和自动加载别名，结果写入构建报告。镜像中的 Docker 软件按需安装，见[Docker 内核支持](docker.md)。
 

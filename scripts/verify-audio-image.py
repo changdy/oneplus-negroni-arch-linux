@@ -11,10 +11,16 @@ PROJECT = Path(__file__).resolve().parents[1]
 TOPOLOGY = "/usr/lib/firmware/qcom/sm8450/OnePlus-10-Pro-tplg.bin"
 CARD_UCM = "/usr/share/alsa/ucm2/conf.d/sm8450/OnePlus-10-Pro.conf"
 VERB_UCM = "/usr/share/alsa/ucm2/OnePlus/negroni/HiFi.conf"
+CALL_SERVICE = "/etc/systemd/system/negroni-call-audio.service"
+CALL_SCRIPT = "/usr/local/libexec/negroni-voice/negroni-call-audio.py"
+CALL_HELPER = "/usr/local/libexec/negroni-voice/negroni-voice-test.py"
 FILES = {
     TOPOLOGY: "config/audio/firmware/OnePlus-10-Pro-tplg.bin",
     CARD_UCM: "config/audio/ucm2/conf.d/sm8450/OnePlus-10-Pro.conf",
     VERB_UCM: "config/audio/ucm2/OnePlus/negroni/HiFi.conf",
+    CALL_SERVICE: "config/audio/voice/negroni-call-audio.service",
+    CALL_SCRIPT: "config/audio/voice/negroni-call-audio.py",
+    CALL_HELPER: "config/audio/voice/negroni-voice-test.py",
 }
 UCM_ROOT = "/usr/share/alsa/ucm2"
 
@@ -44,6 +50,12 @@ def check_sources():
     for device in ("Speaker", "Headphones", "Mic1", "Mic2"):
         if f'SectionDevice."{device}"' not in verb:
             raise RuntimeError(f"UCM device {device} is missing")
+    service = (PROJECT / FILES[CALL_SERVICE]).read_text()
+    script = (PROJECT / FILES[CALL_SCRIPT]).read_text()
+    if "negroni-call-audio.py" not in service or "WantedBy=multi-user.target" not in service:
+        raise RuntimeError("call-audio service is not installed for multi-user boot")
+    if 'with_name("negroni-voice-test.py")' not in script:
+        raise RuntimeError("call-audio service does not use negroni-voice-test.py")
     return ucm_includes()
 
 
@@ -75,15 +87,19 @@ def verify(image_dir, log_dir):
     for target in dependencies:
         if not debugfs(f"cat {target}"):
             raise RuntimeError(f"missing alsa-ucm-conf fragment: {target}")
+    wants = debugfs("ls -p /etc/systemd/system/multi-user.target.wants").decode()
+    if "/negroni-call-audio.service/" not in wants:
+        raise RuntimeError("negroni-call-audio.service is not enabled")
 
     verification = {
         "image": str(image),
         "files_match_sources": True,
         "installed_files_sha256": hashes,
         "ucm_dependencies_present": dependencies,
-        "requires_kernel_dt": "linux ead3411b6e6 (audio-routing, Tertiary MI2S speakers)",
+        "call_audio_enabled": True,
+        "requires_kernel_dt": "linux ead3411b6e6 (audio-routing, Tertiary MI2S speakers); 81637d2a07f3 (voice graphs)",
         "scope": "Offline file check; card probe needs the matching vendor_boot DTB",
-        "hardware_tested": "2026-11-12 NE2210: speakers audible; 2026-11-14 TX/VA capture: no sustained microphone signal",
+        "hardware_tested": "2026-11-12 NE2210: speakers audible; 2026-11-14 microphone captured a 1 kHz tone; 2026-11-14 VoLTE uplink heard by the far end",
     }
     report.write_text(json.dumps(verification, indent=2) + "\n")
     print("Audio image verified: topology and UCM match sources, alsa-ucm-conf fragments present")

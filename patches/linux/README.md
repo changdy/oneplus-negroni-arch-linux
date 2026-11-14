@@ -1,6 +1,6 @@
 # 7.3 设备修复与源码恢复
 
-当前 `linux` 子模块固定到 `7.3` 修复提交 `baa7d74668f4428b0b47199d216eec1a713dcb3b`。修复从重新同步的上游 `476a4a8984395a77b6b6508f849dfb7b786d86b3` 直接修改，新增提交均只有一个父提交；没有 merge 或 cherry-pick `7.3-rc2`。之前的本地合并版本不再作为固定内核。
+当前 `linux` 子模块固定到 `7.3` 修复提交 `81637d2a07f3603b99d981571b321668f673ea81`。修复从重新同步的上游 `476a4a8984395a77b6b6508f849dfb7b786d86b3` 直接修改，新增提交均只有一个父提交；没有 merge 或 cherry-pick `7.3-rc2`。之前的本地合并版本不再作为固定内核。
 
 新增提交为 `835c18d2739`（电池驱动及限充）、`3ca85b51d20`（CPU 参数）和 `1eaec99b04a`（补齐触觉驱动 trace 头文件）。
 
@@ -26,7 +26,9 @@ LPASS 录音状态修复 `463023bf84b1` 改为按 TX/VA 通道 mask 的实际 bi
 
 相机 C-PHY 与 GDSC 修复 `d1ca2f4d48c2` 让 SM8450 接受 C-PHY 端点并按原厂 2.1.0 寄存器打开 trio，PHY 走 gen2 路径，CAMCC 使用 shared RCG 且 GDSC 保留触发器状态。连续 DMA 与 CSID 初始 RUP 一并纳入，因为通过 58 次启停的模块就是这套组合。构建镜像 `boot.img` SHA-256 `070cef14d8078fa09f0281a3cb1ddb4d7b2c2f8cb899c8fff9fd234185369d93`。17:34 写入 `boot_b` 并重启为内核 `#6`，17:35 四轮四摄启停 16/16 出帧，没有硬重启。只提交 CAMCC 和 CAMSS，音频与未提交设备树没有混入。bundle 保留原两个前置提交与历史 rc2 引用，见[相机说明](../../docs/camera.md)。
 
-WCD9385 中断修复 `baa7d74668f4` 让没有寄存器映射的 RX SoundWire 设备改用 TX 的映射清中断状态，共享回调在映射缺失时直接返回。RX 告警原先对空映射调用 `regmap_read()`，控制器中断线程退出后，停流和 mixer 更新停在不可中断睡眠。2026-11-14 装上 `snd-soc-wcd-common`、`snd-soc-wcd938x` 和 `snd-soc-wcd938x-sdw` 并重启后，该 oops 没有再出现；VoLTE 拨出接通，对端听过本机麦克风并反馈听着还可以。没有回声消除，完整镜像未重建。只提交 wcd938x 与 wcd-common，相机、AudioReach 和未提交设备树没有混入。bundle 保留原两个前置提交与历史 rc2 引用，见[通话语音](../../docs/call-audio.md)。
+WCD9385 中断修复 `baa7d74668f4` 让没有寄存器映射的 RX SoundWire 设备改用 TX 的映射清中断状态，共享回调在映射缺失时直接返回。RX 告警原先对空映射调用 `regmap_read()`，控制器中断线程退出后，停流和 mixer 更新停在不可中断睡眠。2026-11-14 装上 `snd-soc-wcd-common`、`snd-soc-wcd938x` 和 `snd-soc-wcd938x-sdw` 并重启后，该 oops 没有再出现；VoLTE 拨出接通，对端听过本机麦克风并反馈听着还可以。没有回声消除。只提交 wcd938x 与 wcd-common，相机、AudioReach 和未提交设备树没有混入。bundle 保留原两个前置提交与历史 rc2 引用，见[通话语音](../../docs/call-audio.md)。
+
+AudioReach 通话语音 `81637d2a07f3` 打开 Negroni 的 hostless 语音图：VCPM 校准共享内存、跨图控制连接和路由修正。2026-11-14 对端听过本机麦克风，听筒/免提切换用户确认可以。没有回声消除。父仓库把实机拓扑 `5fb6fba6…` 和 `negroni-call-audio.service` 接进 `configure-audio.sh`。打包路径已接入，新镜像未构建、未刷入。只提交 qdsp6，失败的 DMIC 偏置试验没有混入。bundle 保留原两个前置提交与历史 rc2 引用。
 
 ## 重做范围
 

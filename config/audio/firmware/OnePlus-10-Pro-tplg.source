@@ -1,4 +1,6 @@
 audioreach-topology d6bb205aca5f4b8fa6b2f44cf8b5f6a081cbf037
 source config/audio/topology/SM8450-OnePlus-10-Pro.m4
-build bash scripts/build-audio-topology.sh AUDIOREACH_TOPOLOGY_CHECKOUT OUTPUT_DIRECTORY
-sha256 c31dd1f420c99a4222cc739c5f8f3f7b5ede1121ea41253d8d7303824d418faa
+desktop bash scripts/build-audio-topology.sh AUDIOREACH_TOPOLOGY_CHECKOUT OUTPUT_DIRECTORY
+call bash scripts/build-voice-topology.sh AUDIOREACH_CHECKOUT RX_DIR TX_DIR OUTPUT_BIN
+shipped logs/call-audio-20261112/vcpm-why/OnePlus-10-Pro-incall4-call-tplg.bin
+sha256 5fb6fba602ed054da1319f06104c374289f9d38ab8955220bd8d7312f64e15a3
