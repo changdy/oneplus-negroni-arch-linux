@@ -8,8 +8,12 @@ import subprocess
 import sys
 
 PROJECT = Path(__file__).resolve().parents[1]
-UNITS = ("hexagonrpcd-sdsp.service", "negroni-gyro.service")
+UNITS = ("hexagonrpcd-sdsp.service", "negroni-gyro.service", "negroni-smem-sensor.service")
 FILES = {
+    "/etc/udev/rules.d/81-negroni-ssc.rules": ("config/sensors/81-negroni-ssc.rules", "0644"),
+    "/usr/lib/negroni/smem-sensor.bin": ("config/sensors/smem-sensor.bin", "0644"),
+    "/usr/local/sbin/negroni-smem-sensor": ("config/sensors/negroni-smem-sensor", "0755"),
+    "/etc/systemd/system/negroni-smem-sensor.service": ("config/systemd/negroni-smem-sensor.service", "0644"),
     "/usr/local/sbin/negroni-gyro": ("config/sensors/negroni-gyro", "0755"),
     "/usr/share/dbus-1/system.d/org.negroni.Gyroscope.conf": (
         "config/sensors/org.negroni.Gyroscope.conf", "0644"),
@@ -49,6 +53,15 @@ def verify(image_dir, log_dir):
             raise RuntimeError(f"{target} must be regular, root-owned, mode {mode}")
         checksums[target] = hashlib.sha256(installed).hexdigest()
     debugfs("stat /usr/lib/libssc.so.2")
+    proxy_path = "/usr/lib/iio-sensor-proxy"
+    # Match configure-sensors.sh, which supports both distribution locations.
+    try:
+        proxy = debugfs(f"cat {proxy_path}")
+    except RuntimeError:
+        proxy_path = "/usr/libexec/iio-sensor-proxy"
+        proxy = debugfs(f"cat {proxy_path}")
+    if proxy != (PROJECT / "config/sensors/iio-sensor-proxy").read_bytes():
+        raise RuntimeError(f"image/source mismatch: {proxy_path}")
     debugfs("stat /usr/local/bin/hexagonrpcd")
     debugfs("stat /usr/local/lib/libhexagonrpc.so.0.5")
     links = {}

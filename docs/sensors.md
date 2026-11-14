@@ -6,7 +6,7 @@
 
 ## 已在手机上接通的部分
 
-udev 规则、SMEM 描述和换过的 `iio-sensor-proxy` 已接入镜像打包。`prepare-rootfs.sh` 安装发行版 `iio-sensor-proxy`，`configure-sensors.sh` 再换成手机上这份（SHA-256 `babc9af3…`），对应补丁是 [iio-sensor-proxy-3.9-negroni.patch](../config/sensors/iio-sensor-proxy-3.9-negroni.patch)。`hexagonrpc` 0.5.0 和传感器文件也已接入：`prepare-rootfs.sh` 从 `xec` 源安装 `hexagonrpc`；`configure-sensors.sh` 安装 65 份原厂传感器 JSON 和改过的 `sns_reg.conf`（[来源与改动](../config/sensors/qcom.source)），以及开机启用的 `hexagonrpcd-sdsp.service`。注册表是工厂校准，不进 Git。开机时 `negroni-sensor-files.service` 从 `msm-firmware-loader` 挂载的本机 persist 拷贝注册表，把 alsps 的总线和中断改成 2 / 14，补上 `socinfo`，组装到 `/run/negroni-sensors` 再交给 `hexagonrpcd`。2026-11-14 23 时在手机上把这个脚本指向 `/tmp` 试跑，生成的配置、`sns_reg.conf`、329 个注册表文件和 `socinfo` 与手机正在服务的 `/usr/share/qcom` 一致（alsps 只有 JSON 空白不同）。`hexagonrpcd` 改服务 `/run/negroni-sensors` 之后的实机启动未测。桌面 `autoRotation=Always` 写在用户自己的 `kwinoutputconfig.json` 里，仍只在本机。打包路径已接入，新镜像未构建、未刷入。
+udev 规则、SMEM 描述和换过的 `iio-sensor-proxy` 已接入镜像打包。`prepare-rootfs.sh` 安装发行版 `iio-sensor-proxy`，`configure-sensors.sh` 再换成手机上这份（SHA-256 `babc9af3…`），对应补丁是 [iio-sensor-proxy-3.9-negroni.patch](../config/sensors/iio-sensor-proxy-3.9-negroni.patch)。`hexagonrpc` 0.5.0 和传感器文件也已接入：`prepare-rootfs.sh` 从 `xec` 源安装 `hexagonrpc`；`configure-sensors.sh` 安装 65 份原厂传感器 JSON 和改过的 `sns_reg.conf`（[来源与改动](../config/sensors/qcom.source)），以及开机启用的 `hexagonrpcd-sdsp.service`。注册表是工厂校准，不进 Git。开机时 `negroni-sensor-files.service` 从 `msm-firmware-loader` 挂载的本机 persist 拷贝注册表，把 alsps 的总线和中断改成 2 / 14，补上 `socinfo`，组装到 `/run/negroni-sensors` 再交给 `hexagonrpcd`。2026-11-14 23 时在手机上把这个脚本指向 `/tmp` 试跑，生成的配置、`sns_reg.conf`、329 个注册表文件和 `socinfo` 与手机正在服务的 `/usr/share/qcom` 一致（alsps 只有 JSON 空白不同）。`hexagonrpcd` 改服务 `/run/negroni-sensors` 之后的实机启动未测。桌面 `autoRotation=Always` 原先只在本机；2026-11-15 增加首次登录默认设置，见下节。打包路径已接入，新镜像未构建、未刷入。
 
 - 安装了 `hexagonrpc` 0.5.0，并用 `hexagonrpcd-sdsp.service` 向 `/dev/fastrpc-sdsp` 提供传感器文件。虚拟文件系统只映射 `/vendor/etc/sensors/config`、`/persist/sensors/registry/registry` 和 `/sys/devices/soc0`，没有 `/odm`。因此把原厂 `sns_reg_config` 的配置目录改成 `/vendor/etc/sensors/config`，并把 ODM 的 `waipio_qrd_*.json` 放进 `/usr/share/qcom/sensors/config`。`socinfo` 写成 `hw_platform=QRD`、`soc_id=457`。
 - SLPI 重启后会打开 `waipio_qrd_alsps.json`、`alsps_platform.config`、`icm4x6xx_0_platform.config` 和 `mmc56x3x_0_platform.config`。注册表写入被只读文件系统拒绝，已有校准文件仍可读。
@@ -14,7 +14,7 @@ udev 规则、SMEM 描述和换过的 `iio-sensor-proxy` 已接入镜像打包�
 - `iio-sensor-proxy` 3.9 已安装。发行版 udev 只给 SSC 登记光线和磁力计，本机另加 `/etc/udev/rules.d/81-negroni-ssc.rules`（仓库副本 [81-negroni-ssc.rules](../config/sensors/81-negroni-ssc.rules)），把 `ssc-accel` 和 `ssc-proximity` 加到 `fastrpc-sdsp*`，并把 `ACCEL_MOUNT_MATRIX` 设为 `-1, 0, 0; 0, -1, 0; 0, 0, 1`。系统总线上 `HasAccelerometer=true`。`configure-sensors.sh` 会安装这条规则。
 - 从 SDDM 图形会话的 cgroup 里认领加速度计成功。平放时 `AccelerometerOrientation` 为 `undefined`，这是倾斜不够时的正常结果，不是认领失败。SSH 会话没有 seat，polkit 会拒绝认领。
 - `~/.config/kwinoutputconfig.json` 里 DSI-1 的 `autoRotation` 已从 `InTabletMode` 改为 `Always`。2026-11-14 18:16 登录后的 KWin 已认领加速度计，`kscreen-doctor` 报告 `Auto Rotate Policy: always`。手机平放朝上，方向保持 `undefined`，屏幕保持横向 965×432。
-- 竖持时加速度约为 X 1.3、Y 9.5、Z 2.2 m/s²，但 `AccelerometerOrientation` 仍停在 `undefined`，画面不转。原因是 `iio-sensor-proxy` 在 KWin 认领加速度计时还没打开采样，认领被记下后没有人再调用 `driver_set_polling`。本机已换上自行编译的 3.9（`/usr/lib/iio-sensor-proxy`，原文件备份为 `iio-sensor-proxy.stock`）：传感器在拥有 D-Bus 名之前打开，已有认领会补上采样。发行版软件包和镜像都还是原版。修好后同一时刻的读数能对上方向。单位矩阵下 X 8.49、Y 0.01、Z 4.59 m/s² 被报成 `left-up`。
+- 竖持时加速度约为 X 1.3、Y 9.5、Z 2.2 m/s²，但 `AccelerometerOrientation` 仍停在 `undefined`，画面不转。原因是 `iio-sensor-proxy` 在 KWin 认领加速度计时还没打开采样，认领被记下后没有人再调用 `driver_set_polling`。本机已换上自行编译的 3.9（`/usr/lib/iio-sensor-proxy`，原文件备份为 `iio-sensor-proxy.stock`）：传感器在拥有 D-Bus 名之前打开，已有认领会补上采样。这是当时部署状态；镜像安装器现在已换入这份代理，打包前按内容核对。修好后同一时刻的读数能对上方向。单位矩阵下 X 8.49、Y 0.01、Z 4.59 m/s² 被报成 `left-up`。
 - KWin 在输出 DPMS 不是 On 时直接停用自动旋转。18:57 内核 `card0-DSI-1` 的 dpms 为 `Off`，策略虽然显示 `always`，方向变化也不会改画面。打开 DPMS 后，`left-up` 被应用到旋转 2（横向 965×432）。当时背光只有 1/4095，已调到约 30%（1229/4095），否则画面几乎是黑的。
 - 19:01 用户确认会跟着转，但上下左右都反了。当时屏幕后倾，左边框在下、右边框在上，原始读数仍是 X 约 +8.49，方向 `left-up`、旋转 2。这是绕屏幕法线差了 180°。加上上述安装矩阵并重启代理后，同一姿势变为 `right-up`，`kscreen-doctor` 旋转值从 2 变为 8，几何尺寸仍是横向 965×432。20:20 用户确认修正后的画面方向正确。
 
@@ -43,3 +43,9 @@ ICM-4x6xx 的角速度和加速度计走同一条 SLPI 通道。2026-11-14 22:51
 普通用户可以读 `/run/negroni/gyro`，一行三个数，单位 rad/s。系统总线 `org.negroni.Gyroscope` 的 `GetAngularVelocity` 返回同样三个数。22:52 这台手机上文件和 D-Bus 都能读到，加速度计同时仍约 Z 9.80 m/s²。用手转动来核对三个轴的方向还没有做。
 
 全新 rootfs 和已有镜像的下一次构建都会装上这个程序并启用服务，`hexagonrpc` 和开机组装的注册表也随同一脚本进镜像。已有镜像里没有 `hexagonrpc` 软件包时，`configure-sensors.sh` 会报错停止。新镜像未构建、未刷入。
+
+## 默认旋转策略与交付核对（2026-11-15）
+
+`configure-desktop.sh` 安装 KDE 首次登录入口，`negroni-desktop-defaults.py` 通过 KScreen 把内屏策略设为 `always`，记录用户级标记，不复制本机输出 ID；用户配置中明确锁定为 `Never` 时保留该选择。新入口未在手机执行，KScreen 查询已只读核对为 DSI-1、policy 2（Always）。登录界面行为仍未单独验证。
+
+`verify-sensors-image.py` 现在同时检查安装矩阵、SMEM 数据、写入程序、光线距离服务开机链接和修正后的代理内容，避免只装陀螺仪却漏掉其它传感器修复。全部 Kbuild 模块另由 `verify-kernel-modules-image.py` 按构建输出逐文件核对。小型 ext4 安装和缺服务/旧代理拒绝检查通过；新完整镜像启动、SLPI 新目录、转动轴向与耗电未测。
