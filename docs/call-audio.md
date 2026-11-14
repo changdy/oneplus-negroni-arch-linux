@@ -1,6 +1,6 @@
 # 通话语音（AudioReach，实验）
 
-状态日期：2026-11-12。设备 NE2210，内核 `7.3.0-sm8450+`，中国电信 VoLTE。这里只写当前结论、用法和已知问题；当天的完整调试过程见[调试记录](archive/call-audio-bringup-2026-11-12.md)，整理过的依据见[研究记录](../artifacts/call-audio-research-20261112/README.md)。
+状态日期：2026-11-14。设备 NE2210，内核 `7.3.0-sm8450+`，中国电信 VoLTE。这里只写当前结论、用法和已知问题；通话调试过程见[2026-11-12 调试记录](archive/call-audio-bringup-2026-11-12.md)，整理过的依据见[研究记录](../artifacts/call-audio-research-20261112/README.md)，新增麦克风实机对照见[原厂 DMIC 路由与共享时钟](../artifacts/mic-clock-20261113/README.md)。
 
 ## 现状
 
@@ -44,6 +44,7 @@ SM8450 用 GPR/AudioReach，通话音频由 DSP 里的 VCPM 管理，不能套�
 | [negroni-voice-test.py](../config/audio/voice/negroni-voice-test.py) | 限时手动打开语音图；服务复用它的 PCM 和 mixer 代码 |
 | [install-test.sh](../config/audio/voice/install-test.sh) | 安装或恢复三个实验内核模块和拓扑，不重启 |
 | [sm8450-audioreach-voice.patch](../config/audio/sm8450-audioreach-voice.patch)、[sm8450-oneplus-negroni-dmic.patch](../config/audio/sm8450-oneplus-negroni-dmic.patch) | 内核改动，仅以补丁形式保存 |
+| [sm8450-oneplus-negroni-dmic34-va.patch](../config/audio/sm8450-oneplus-negroni-dmic34-va.patch) | 2026-11-13—14 增量诊断候选：修正 VA CPU DAI、补齐 DMIC4，已刷入 B 槽并重启；VA 录音可以打开但仍无信号，DT 改动尚未接入正式源码/构建 |
 
 原厂 ACDB、提取出的图和校准、生成的拓扑、内核模块和原始日志都在本地 `logs/call-audio-20261112/`，不纳入 Git。校准来自手机自己的 `~/android-ro/odm_b/etc/acdbdata/acdb_cal.acdb`，SHA-256 `da0cd92a94e77d6f7894de44f4afe4c701715ba46c6cf9bbe0b45fe1ea1ab63a`。许可见[来源与许可](licensing.md)。
 
@@ -103,13 +104,25 @@ aplay   -D hw:0,6 --period-size=1920 --buffer-size=7680 clip.wav
 ## 已知问题
 
 - **麦克风无信号**。原厂用 DMIC3/DMIC4，不是最初假定的 ADC1。DMIC3 的引脚、MIC BIAS3、2.4 MHz 时钟已按 OnePlus 下游源码配置并刷入 `vendor_boot_b`，寄存器读值符合预期，但稳定段录音仍为零，只有启动瞬态。`MICB3_TEST_CTL_2` 的两次试验一次无效、一次无结论。
+  - 2026-11-12 晚用限时诊断模块直接读 LPI 引脚电平（脚本和源码在本地 `logs/mic-20261112/`），观察到 **GPIO8 没有软件可见的时钟翻转**，尚无物理波形测量，不能单凭该采样确定直接根因：
+    - 录音期间 GPIO8（`dmic2_clk`）两万次采样零翻转；同样方法读 SoundWire 时钟脚 GPIO0 约一半为 1、翻转上万次。把 GPIO8 临时改成普通 GPIO 输出，读回能跟随高低电平，所以读回可信。
+    - VA 宏硬件寄存器直读 `0x000=1`、`0x004=1`、`0x080=2`、`0x088=5`（使能、四分频），不是 regmap 缓存假象。改二分频、十六分频、重新使能，或把 GPIO8 切到其余四个复用功能后，软件采样仍无翻转。
+    - 数据脚 GPIO9 在当时试验中完全跟随上下拉，未观察到麦克风主动输出。保持 `dmic2_data` 功能只加上拉时，录音立刻出现大幅跳变，说明“数据脚 → TX 宏解码器 → 录音”这一段是通的。
+    - 置配置寄存器 bit 11、去掉时钟脚输出使能位，都无效。录音同时让 MIC BIAS2/MIC BIAS4 上电也无效。
+    - 临时申请 `VA_CORE_MCLK` 成功但仍无时钟。**随后申请 `VA_CORE_2X_MCLK` 和 `TX_CORE_NPL_MCLK` 超时（−110），ADSP 的 `audio_process` 崩溃（`PRM:0xba`），内核在 ADSP 重启路径上 oops，手机卡死，只能强制重启。不要再做申请额外 q6prm 时钟的试验。**
+  - DMIC4 的设备树原先未配齐：它在另一组引脚（GPIO12/13，`dmic3_clk`/`dmic3_data`）。2026-11-13 对照本机原厂 DTBO 的量产候选 0/11，更正其偏置为 **MIC BIAS1**（旧记录误写为 BIAS4）。临时添加引脚复用、`TX DMIC4 -> VA DMIC4`、MIC BIAS1 与 VA_MCLK 依赖后，VA `0x08c=5`、MICB1=`0x50`，DAPM 显示对应 widget 均为 On；两轮 12 秒录音的第一秒之后仍全零，GPIO8/12 各两万次采样均无翻转。上述临时试验已恢复；后续同样的引脚/依赖已随 VA CPU DAI 候选部署到 B 槽并重启，仍无信号。
+  - 原厂 `lpass_cdc_dmic_clk_enable` 已由本机模块反汇编确认：按 DMIC 对维护 TX/VA 共享引用计数，操作 VA DMIC_CFG 和 `0x084/088/08c/090` 的分频、使能。函数本身不申请 PRM 时钟。补齐试验中现有 TX_CORE_MCLK、FS generator 和两个 DMIC 门控均已使能，仍不能恢复采集；不能把“主线缺少共享函数”直接当成全部根因。细节和数值见[2026-11-13 记录](../artifacts/mic-clock-20261113/README.md)。
+  - `VA Capture` 的 CPU DAI 原先与 TX 重复，现已在运行 DT 改为 `VA_CODEC_DMA_TX_0` 并重启验证：可以正常完成独立 VA 录音，12 秒稳定段仍全零。完整分区备份与回滚材料保留。
+  - 2026-11-14 已修正 TX/VA 多通道 mixer 的重复计数/关闭遗漏，以及 TX 只静音最后一个解码器的问题；内核提交 `463023bf84b1`，对应模块已安装并重启验证。UCM 的 Mic1 改为 DMIC3/4、两路 0 dB，真实 UCM 启停和 11 个控件还原均通过；新 TX 12 秒、VA 6 秒录音稳定段仍全零。
+  - 逐路弱上下拉试验确认 GPIO9 对应左声道、GPIO13 对应右声道，两个数据输入到 PCM 的对应关系有效。BOB 实际请求到 3.320 V 并配合原厂 MICBIAS 初始化顺序仍无信号，电压/寄存器已恢复；此前精确 3.296 V 请求在写入前失败，不能作为有效电压对照。全部整理结果见[续测记录](../artifacts/mic-clock-20261113/README.md)。
+  - 未查明：VA 宏分频寄存器正确但 GPIO 软件采样没有时钟翻转的原因。下一步对照原厂正常采集时的核心时钟参数、GFMUX、FS generator 与偏置时序，并测量 GPIO8/12 物理波形；当前证据尚不能确定根因在 DSP、主机时钟配置还是供电。物理时钟、偏置电压、原厂 Android 下采集和 TX/VA 并发均未测。
 - **重启后 IMS 承载经常不自动建立**，拨号返回 `InvalidArgument`，见[基带说明](modem.md)。
 - **通话之外打不开 `hw:0,6`/`hw:0,7`**。桌面声音服务探测它们时，内核会记录 `set config … rejected` 或 `Failed to Start Graph`。普通播放和录音不受影响。
 - **录音和放音必须先于语音图关闭**，目前没有任何保护；语音图先关闭时 DSP 的行为没有测过。
-- **`TX_AIF1_CAP Mixer DEC0` 还原失败**：关闭语音图时该控件停在 `on`，手动设回 `off` 也无效，不打电话也能复现，原因未查。桌面 profile 切回后 UCM 本来也会把它设为 `on`，所以通话前后状态一致。
+- **多通道 mixer 还原问题已修正**：2026-11-14 更新 TX/VA 模块并重启后，两路 UCM mixer 均能关闭，完整还原通过。新驱动下的实际通话建立/挂断回归未测，不能据此宣称通话流程的全部还原问题已验证。
 - **扬声器没有保护**，桌面音量可能是 100%；通话下行不受桌面音量影响。
 - **不能热更新**：unbind/bind 或卸载 `qcom-apm` 会丢失 GPR port 1；单独重绑声卡时 WCD TX SoundWire 设备无法重新上线。换模块或拓扑只能重启。
-- **内核改动没有走完流程**：只有补丁文件，没有在 `linux/` 中提交，gitlink 和 `local-7.3.bundle` 未更新；WSL 内核树里还混有相机会话未提交的改动。
+- **语音图和 DMIC 设备树实验仍未走完内核流程**：这些改动仍只保留补丁和测试部署，未纳入固定源码；WSL 内核树里还混有相机会话未提交的改动。TX/VA 通道状态修正已独立提交，gitlink 和 `local-7.3.bundle` 已更新，不能据此认为其他实验也已接入构建。
 - **没有接入镜像构建**，全新刷入的系统不包含以上任何内容。
 - 运行中有两类未评估的 DSP 消息：mailbox 的 `intent set param … failed result 4`，以及 EVS 解码器的 `unsupported bandwidth(-1)`。
 

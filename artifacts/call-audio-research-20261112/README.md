@@ -57,6 +57,8 @@
 
 因此只切换 mixer 到 DMIC3 仍不足以保证实际采集。此次 [DT 实验补丁](../../config/audio/sm8450-oneplus-negroni-dmic.patch) 启用 `dmic23_default`，将 DMIC3 bias 修正为 BIAS3，并以 `TX DMIC3 -> VA DMIC3` DAPM 依赖触发 VA 寄存器门控，将 VA DMIC rate 暂设为 2.4 MHz。它是单一 TX 路径的诊断方案；独立 TX/VA 并发的完整时钟仲裁仍未实现，DMIC4 的项目差异也未在本次推断。
 
+2026-11-13 追加：本机原厂 DTBO 的量产候选 0/11 均将 DMIC4 接 MIC BIAS1；原厂模块反汇编确认了上述共享函数。实机临时补齐 DMIC4 引脚、偏置、VA 门控和 VA_MCLK 后稳定录音仍全零，已恢复，详见[后续记录](../mic-clock-20261113/README.md)。
+
 ## 本次待测候选标识
 
 截至 2026-11-12 14:33:44 的部署/重启节点，以下组合的麦克风、回环和通话效果均 **NOT YET TESTED（未测）**。

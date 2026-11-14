@@ -5,7 +5,7 @@
 # Backends:
 #   RX_CODEC_DMA_RX_0  -> WCD9385 headphone (3.5 mm via USB-C adapter)
 #   TERTIARY_MI2S_RX   -> 2x TFA9874 speaker amps (I2S on mi2s2, data on SD1)
-#   TX_CODEC_DMA_TX_3  -> WCD9385 analog microphones / headset mic
+#   TX_CODEC_DMA_TX_3  -> LPASS DMIC3/4 / WCD9385 headset mic
 #   VA_CODEC_DMA_TX_0  -> VA macro microphones
 include(`audioreach/audioreach.m4')
 include(`audioreach/stream-subgraph.m4')
@@ -49,7 +49,7 @@ DEVICE_SG_ADD(audioreach/subgraph-device-codec-dma-capture.m4, `VA_CODEC_DMA_TX_
 	LPAIF_INTF_TYPE_VA, CODEC_INTF_IDX_TX0, 0, DATA_FORMAT_FIXED_POINT,
 	0x00004008, 0x00004008, 0x00006080)
 dnl
-dnl WCD microphones / headset mic
+dnl LPASS digital microphones / WCD headset mic
 DEVICE_SG_ADD(audioreach/subgraph-device-codec-dma-capture.m4, `TX_CODEC_DMA_TX_3', TX_CODEC_DMA_TX_3,
 	`S16_LE', 48000, 48000, 1, 2,
 	LPAIF_INTF_TYPE_RXTX, CODEC_INTF_IDX_TX3, 0, DATA_FORMAT_FIXED_POINT,

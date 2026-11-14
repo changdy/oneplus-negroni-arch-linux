@@ -1,0 +1,62 @@
+--- a/arch/arm64/boot/dts/qcom/sm8450-oneplus-negroni.dts
++++ b/arch/arm64/boot/dts/qcom/sm8450-oneplus-negroni.dts
+@@ -1487,11 +1487,16 @@
+ 			"VA DMIC1", "MIC BIAS3",
+ 			"VA DMIC2", "MIC BIAS1",
+ 			"VA DMIC3", "MIC BIAS3",
++			"VA DMIC4", "MIC BIAS1",
+ 			"TX DMIC0", "MIC BIAS3",
+ 			"TX DMIC1", "MIC BIAS3",
+ 			"TX DMIC2", "MIC BIAS1",
+ 			"TX DMIC3", "MIC BIAS3",
+ 			"TX DMIC3", "VA DMIC3",
++			"TX DMIC3", "VA_MCLK",
++			"TX DMIC4", "MIC BIAS1",
++			"TX DMIC4", "VA DMIC4",
++			"TX DMIC4", "VA_MCLK",
+ 			"TX SWR_INPUT0", "ADC1_OUTPUT",
+ 			"TX SWR_INPUT1", "ADC2_OUTPUT",
+ 			"TX SWR_INPUT0", "ADC3_OUTPUT",
+@@ -1550,7 +1555,7 @@
+ 		link-name = "VA Capture";
+
+ 		cpu {
+-			sound-dai = <&q6apmbedai TX_CODEC_DMA_TX_3>;
++			sound-dai = <&q6apmbedai VA_CODEC_DMA_TX_0>;
+ 		};
+
+ 		codec {
+@@ -1586,7 +1591,7 @@
+ };
+
+ &vamacro {
+-	pinctrl-0 = <&dmic23_default>;
++	pinctrl-0 = <&dmic23_default &dmic45_default>;
+ 	pinctrl-names = "default";
+ 	vdd-micb-supply = <&pm8350_s10>;
+ 	qcom,dmic-sample-rate = <2400000>;
+@@ -1764,3 +1769,24 @@
+ };
+
+
++
++/* DMIC4/5 share GPIO12/13; stock selects DMIC4 from this pair. */
++&lpass_tlmm {
++	dmic45_default: dmic45-default-state {
++		clk-pins {
++			pins = "gpio12";
++			function = "dmic3_clk";
++			drive-strength = <8>;
++			bias-disable;
++			output-high;
++		};
++
++		data-pins {
++			pins = "gpio13";
++			function = "dmic3_data";
++			drive-strength = <8>;
++			bias-disable;
++			input-enable;
++		};
++	};
++};

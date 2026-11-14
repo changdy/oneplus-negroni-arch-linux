@@ -1,0 +1,1076 @@
+{
+  "date": "2026-11-13",
+  "device": "OnePlus 10 Pro NE2210",
+  "running_kernel": "7.3.0-sm8450+",
+  "stock_inputs": [
+    {
+      "path": "downloads/stock-drivers-20261113/vendor_dlkm_b/lib/modules/lpass_cdc_dlkm.ko",
+      "size_bytes": 122280,
+      "sha256": "4a9ae7d81cc1f02914951da83fd9430283c4b7c115c38cc08ec6a1b4caa06213"
+    },
+    {
+      "path": "downloads/stock-drivers-20261113/vendor_dlkm_b/lib/modules/lpass_cdc_tx_macro_dlkm.ko",
+      "size_bytes": 148288,
+      "sha256": "aafe9b9ab47a9d70235148803be9487f67ed8bd4f323205f4c4a15a3ee59a307"
+    },
+    {
+      "path": "downloads/stock-drivers-20261113/vendor_dlkm_b/lib/modules/lpass_cdc_va_macro_dlkm.ko",
+      "size_bytes": 123984,
+      "sha256": "99ce09475a1043452313f79875fc3dcf10b69a356dc1ca17fb29abd5bf2b75e1"
+    },
+    {
+      "path": "odm_b/etc/mixer_paths.xml",
+      "sha256": "93c04a6809ab673f7838009cfbc0b50a7bc59f9a5a4a8798b86bcfd94b7ab8ad"
+    }
+  ],
+  "dtbo_production_candidates": [
+    {
+      "dtbo_a_index": 0,
+      "dmic3_bias": "MIC BIAS3",
+      "dmic4_bias": "MIC BIAS1"
+    },
+    {
+      "dtbo_a_index": 11,
+      "dmic3_bias": "MIC BIAS3",
+      "dmic4_bias": "MIC BIAS1"
+    }
+  ],
+  "stock_function": {
+    "name": "lpass_cdc_dmic_clk_enable",
+    "module": "downloads/stock-drivers-20261113/vendor_dlkm_b/lib/modules/lpass_cdc_dlkm.ko",
+    "text_offset_hex": "0x237c",
+    "size_bytes": 788,
+    "tx_mode": 0,
+    "va_mode": 1,
+    "dmic_pair_ctl_offsets_hex": [
+      "0x084",
+      "0x088",
+      "0x08c",
+      "0x090"
+    ],
+    "config_offset_hex": "0x094",
+    "enable_mask_hex": "0x01",
+    "divider_mask_hex": "0x0e",
+    "reset_mask_hex": "0x80",
+    "direct_prm_clock_request": false
+  },
+  "capture_results": [
+    {
+      "tag": "baseline",
+      "sample_rate_hz": 48000,
+      "channels": 2,
+      "duration_seconds": 7.0,
+      "ignored_start_seconds": 1,
+      "channel_statistics": [
+        {
+          "channel": 0,
+          "stable_nonzero_samples": 0,
+          "stable_dc_removed_rms": 0.0,
+          "stable_peak_abs": 0
+        },
+        {
+          "channel": 1,
+          "stable_nonzero_samples": 0,
+          "stable_dc_removed_rms": 0.0,
+          "stable_peak_abs": 0
+        }
+      ]
+    },
+    {
+      "tag": "routes",
+      "sample_rate_hz": 48000,
+      "channels": 2,
+      "duration_seconds": 12.0,
+      "ignored_start_seconds": 1,
+      "channel_statistics": [
+        {
+          "channel": 0,
+          "stable_nonzero_samples": 0,
+          "stable_dc_removed_rms": 0.0,
+          "stable_peak_abs": 0
+        },
+        {
+          "channel": 1,
+          "stable_nonzero_samples": 0,
+          "stable_dc_removed_rms": 0.0,
+          "stable_peak_abs": 0
+        }
+      ]
+    },
+    {
+      "tag": "routes2",
+      "sample_rate_hz": 48000,
+      "channels": 2,
+      "duration_seconds": 12.0,
+      "ignored_start_seconds": 1,
+      "channel_statistics": [
+        {
+          "channel": 0,
+          "stable_nonzero_samples": 0,
+          "stable_dc_removed_rms": 0.0,
+          "stable_peak_abs": 0
+        },
+        {
+          "channel": 1,
+          "stable_nonzero_samples": 0,
+          "stable_dc_removed_rms": 0.0,
+          "stable_peak_abs": 0
+        }
+      ]
+    }
+  ],
+  "enabled_snapshot": {
+    "va_registers_hex": {
+      "000": "1",
+      "004": "1",
+      "080": "2",
+      "088": "5",
+      "08c": "5",
+      "094": "0"
+    },
+    "wcd_micb1_hex": "50",
+    "wcd_micb3_hex": "50",
+    "va_gfmux_hex": "0",
+    "gpio_config_hex": {
+      "8": "6c4",
+      "9": "4c4",
+      "12": "6c4",
+      "13": "4c4"
+    },
+    "samples_per_pin": 20000,
+    "ones": {
+      "0": 10221,
+      "8": 0,
+      "9": 0,
+      "12": 0,
+      "13": 0
+    },
+    "transitions": {
+      "0": 11073,
+      "8": 0,
+      "9": 0,
+      "12": 0,
+      "13": 0
+    },
+    "clock_framework": {
+      "TX_CORE_MCLK": {
+        "rate_hz": 19200000,
+        "enable_count": 1,
+        "prepare_count": 1
+      },
+      "RX_CORE_TX_MCLK": {
+        "rate_hz": 19200000,
+        "enable_count": 2,
+        "prepare_count": 2
+      },
+      "RX_CORE_MCLK2_2X_MCLK": {
+        "rate_hz": 19200000,
+        "enable_count": 6,
+        "prepare_count": 6
+      },
+      "fsgen": {
+        "enable_count": 3,
+        "prepare_count": 3
+      }
+    }
+  },
+  "restoration": {
+    "mixer_controls_compared": 9,
+    "mixer_values_equal": true,
+    "gpio12_and_gpio13_config_hex": "401",
+    "dmic4_va_08c_hex_while_capture_active": "0",
+    "micb1_and_micb3_hex_after_capture": "10",
+    "capture_pcm_closed": true,
+    "diagnostic_modules_resident": false,
+    "partition_writes": false,
+    "reboot": false,
+    "extra_prm_clock_votes": false,
+    "persistent_config_changed": false
+  },
+  "limits": [
+    "Software pad readback is not an oscilloscope measurement.",
+    "No physical MICBIAS voltage measurement.",
+    "No stock Android recording or exact overlay selection verified.",
+    "A-slot DTBO and B-slot modules are not proven to be from the same update.",
+    "TX/VA concurrent arbitration, VA backend fix, new call, speaker and reboot regressions not tested."
+  ],
+  "continued_tests": {
+    "capture_results": [
+      {
+        "tag": "f3baseline",
+        "sample_rate_hz": 48000,
+        "channels": 2,
+        "duration_seconds": 12.0,
+        "ignored_start_seconds": 2,
+        "channel_statistics": [
+          {
+            "channel": 0,
+            "stable_nonzero_samples": 0,
+            "stable_dc_removed_rms": 0.0,
+            "stable_peak_abs": 0
+          },
+          {
+            "channel": 1,
+            "stable_nonzero_samples": 0,
+            "stable_dc_removed_rms": 0.0,
+            "stable_peak_abs": 0
+          }
+        ]
+      },
+      {
+        "tag": "sequence",
+        "sample_rate_hz": 48000,
+        "channels": 2,
+        "duration_seconds": 12.0,
+        "ignored_start_seconds": 2,
+        "channel_statistics": [
+          {
+            "channel": 0,
+            "stable_nonzero_samples": 0,
+            "stable_dc_removed_rms": 0.0,
+            "stable_peak_abs": 0
+          },
+          {
+            "channel": 1,
+            "stable_nonzero_samples": 0,
+            "stable_dc_removed_rms": 0.0,
+            "stable_peak_abs": 0
+          }
+        ]
+      },
+      {
+        "tag": "supply",
+        "sample_rate_hz": 48000,
+        "channels": 2,
+        "duration_seconds": 12.0,
+        "ignored_start_seconds": 2,
+        "channel_statistics": [
+          {
+            "channel": 0,
+            "stable_nonzero_samples": 0,
+            "stable_dc_removed_rms": 0.0,
+            "stable_peak_abs": 0
+          },
+          {
+            "channel": 1,
+            "stable_nonzero_samples": 0,
+            "stable_dc_removed_rms": 0.0,
+            "stable_peak_abs": 0
+          }
+        ]
+      }
+    ],
+    "dsp_f3": {
+      "duration_seconds": 20,
+      "messages": 1937,
+      "distinct_hashes": 378,
+      "matched_hashes": 375,
+      "requested_clock_ids_hex": [
+        "0x30c",
+        "0x318",
+        "0x312"
+      ],
+      "clock_frequency_hz": 19200000,
+      "clock_attribute": 1,
+      "clock_root": 0,
+      "codec_dma_type": 1,
+      "codec_dma_interface_index": 4,
+      "active_channels_mask_hex": "0x3",
+      "sample_rate_hz": 48000,
+      "bit_width": 16,
+      "channels": 2,
+      "interface_open_succeeded": true
+    },
+    "bias_sequence": {
+      "bias1_and_bias3_disabled_before_test_bits": true,
+      "test_ctl2_offsets_hex": [
+        "0x306c",
+        "0x306f",
+        "0x3072",
+        "0x3075"
+      ],
+      "test_ctl2_actual_values_before_reenable": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "enabled_micb1_and_micb3_hex": "50",
+      "all_six_registers_restored_and_verified": true,
+      "pdm_reset_pulsed": true,
+      "pdm_registers_restored_and_verified": true
+    },
+    "extra_supply_route": {
+      "vdd_micb_dapm_on_verified": true,
+      "result": "No sustained microphone signal"
+    },
+    "partition_write_or_reboot": false
+  },
+  "last_updated": "2026-11-14",
+  "deployed_candidate": {
+    "status": "Flashed and rebooted; independent VA capture now opens, microphone signal still absent",
+    "partition": "vendor_boot_b",
+    "partition_size_bytes": 201326592,
+    "backup_sha256": "b6186469f626c4d732f8f6960d727d84a7e54883df8759407a9fa6a3aaa8d67f",
+    "candidate_sha256": "c86b6e9a1f861047f9bd71cb40af2e8f508216f600ce94cfd2cc551491233ce8",
+    "dtb_sha256": "d233078afbbe2ffa0aa6b98dd7fca04155b037a64828daff80309501066399da",
+    "dtb_changed_properties": 14,
+    "all_non_dtb_partition_bytes_preserved_except_header_dtb_size": true,
+    "source_dts_compiled": true,
+    "kernel_working_tree_changed": false,
+    "purpose": "Correct duplicate TX backend on VA Capture and complete DMIC4 pin/bias/clock dependencies; test independent VA capture",
+    "readback_sha256": "c86b6e9a1f861047f9bd71cb40af2e8f508216f600ce94cfd2cc551491233ce8",
+    "live_va_capture_cpu_dai": 110,
+    "live_va_pinctrl_phandles": [
+      205,
+      624
+    ],
+    "slot_b": {
+      "active": 1,
+      "successful": 1,
+      "bootable": 1
+    },
+    "rollback_executed": false
+  },
+  "followup_20261114": {
+    "capture_results": [
+      {
+        "file_name": "bob.wav",
+        "source_log_directory": "logs/mic-20261113",
+        "sha256": "6484bdf8a9d7d0505184ce4dc18cac8f1cbc11a89053460703f472f8a7501419",
+        "sample_rate_hz": 48000,
+        "channels": 2,
+        "duration_seconds": 12.0,
+        "ignored_start_seconds": 1,
+        "channel_statistics": [
+          {
+            "channel": 0,
+            "stable_nonzero_samples": 0,
+            "stable_dc_removed_rms": 0.0,
+            "stable_peak_abs": 0,
+            "per_second_dc_removed_rms": [
+              482.37,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "channel": 1,
+            "stable_nonzero_samples": 0,
+            "stable_dc_removed_rms": 0.0,
+            "stable_peak_abs": 0,
+            "per_second_dc_removed_rms": [
+              482.369,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        ]
+      },
+      {
+        "file_name": "postboot-tx.wav",
+        "source_log_directory": "logs/mic-20261113",
+        "sha256": "b856c6db0fdeec1878b0ea9993c35d98baea7f3a516aaead81f71ed59204e4f2",
+        "sample_rate_hz": 48000,
+        "channels": 2,
+        "duration_seconds": 12.0,
+        "ignored_start_seconds": 1,
+        "channel_statistics": [
+          {
+            "channel": 0,
+            "stable_nonzero_samples": 0,
+            "stable_dc_removed_rms": 0.0,
+            "stable_peak_abs": 0,
+            "per_second_dc_removed_rms": [
+              482.369,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "channel": 1,
+            "stable_nonzero_samples": 0,
+            "stable_dc_removed_rms": 0.0,
+            "stable_peak_abs": 0,
+            "per_second_dc_removed_rms": [
+              482.369,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        ]
+      },
+      {
+        "file_name": "va-capture.wav",
+        "source_log_directory": "logs/mic-20261113",
+        "sha256": "330c877ddb5cfdb5daa51523a166a0a0500f2b5a58b0dd5e8b0d92ccfdd1f9fe",
+        "sample_rate_hz": 48000,
+        "channels": 2,
+        "duration_seconds": 12.0,
+        "ignored_start_seconds": 1,
+        "channel_statistics": [
+          {
+            "channel": 0,
+            "stable_nonzero_samples": 0,
+            "stable_dc_removed_rms": 0.0,
+            "stable_peak_abs": 0,
+            "per_second_dc_removed_rms": [
+              1.557,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "channel": 1,
+            "stable_nonzero_samples": 0,
+            "stable_dc_removed_rms": 0.0,
+            "stable_peak_abs": 0,
+            "per_second_dc_removed_rms": [
+              0.315,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        ]
+      },
+      {
+        "file_name": "bob-softclock.wav",
+        "source_log_directory": "logs/mic-20261114",
+        "sha256": "2d2ab0005145e6f4db609b5b10ac3cb2f76b73fd75e6d83494becd50472002ec",
+        "sample_rate_hz": 48000,
+        "channels": 2,
+        "duration_seconds": 12.0,
+        "ignored_start_seconds": 1,
+        "channel_statistics": [
+          {
+            "channel": 0,
+            "stable_nonzero_samples": 0,
+            "stable_dc_removed_rms": 0.0,
+            "stable_peak_abs": 0,
+            "per_second_dc_removed_rms": [
+              482.369,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "channel": 1,
+            "stable_nonzero_samples": 0,
+            "stable_dc_removed_rms": 0.0,
+            "stable_peak_abs": 0,
+            "per_second_dc_removed_rms": [
+              482.369,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        ]
+      },
+      {
+        "file_name": "bob.wav",
+        "source_log_directory": "logs/mic-20261114",
+        "sha256": "37a418f6a9bcc919ba36a956e7c220b88feac608440490b4d62bb928612162ef",
+        "sample_rate_hz": 48000,
+        "channels": 2,
+        "duration_seconds": 12.0,
+        "ignored_start_seconds": 1,
+        "channel_statistics": [
+          {
+            "channel": 0,
+            "stable_nonzero_samples": 0,
+            "stable_dc_removed_rms": 0.0,
+            "stable_peak_abs": 0,
+            "per_second_dc_removed_rms": [
+              482.369,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "channel": 1,
+            "stable_nonzero_samples": 0,
+            "stable_dc_removed_rms": 0.0,
+            "stable_peak_abs": 0,
+            "per_second_dc_removed_rms": [
+              482.369,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        ]
+      },
+      {
+        "file_name": "channel-pulse.wav",
+        "source_log_directory": "logs/mic-20261114",
+        "sha256": "c9bc4cdeefaa40fa6867e0f44f287fae9c626f0a8c518147ffd90e43516c3297",
+        "sample_rate_hz": 48000,
+        "channels": 2,
+        "duration_seconds": 12.0,
+        "ignored_start_seconds": 1,
+        "channel_statistics": [
+          {
+            "channel": 0,
+            "stable_nonzero_samples": 88193,
+            "stable_dc_removed_rms": 7459.3584105991295,
+            "stable_peak_abs": 32768,
+            "per_second_dc_removed_rms": [
+              482.37,
+              12170.328,
+              21368.631,
+              284.004,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "channel": 1,
+            "stable_nonzero_samples": 88088,
+            "stable_dc_removed_rms": 7459.259362617371,
+            "stable_peak_abs": 32768,
+            "per_second_dc_removed_rms": [
+              482.369,
+              0.0,
+              0.0,
+              4339.336,
+              22119.877,
+              10161.97,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        ]
+      },
+      {
+        "file_name": "data-pulse.wav",
+        "source_log_directory": "logs/mic-20261114",
+        "sha256": "dc0f6097015e38542fae064ac60bc351d84f9d6e87ee401498e5aa69568e95dc",
+        "sample_rate_hz": 48000,
+        "channels": 2,
+        "duration_seconds": 12.0,
+        "ignored_start_seconds": 1,
+        "channel_statistics": [
+          {
+            "channel": 0,
+            "stable_nonzero_samples": 148300,
+            "stable_dc_removed_rms": 10547.321578548595,
+            "stable_peak_abs": 32768,
+            "per_second_dc_removed_rms": [
+              482.369,
+              10010.021,
+              22130.167,
+              21872.835,
+              12212.365,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "channel": 1,
+            "stable_nonzero_samples": 148300,
+            "stable_dc_removed_rms": 10547.47979259027,
+            "stable_peak_abs": 32768,
+            "per_second_dc_removed_rms": [
+              482.369,
+              10009.978,
+              22130.751,
+              21872.884,
+              12212.735,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        ]
+      },
+      {
+        "file_name": "softclock.wav",
+        "source_log_directory": "logs/mic-20261114",
+        "sha256": "f2a0b38bdfd8af2ef7024d8373d6c96b1e2330eaef8327182fd6136df103b07d",
+        "sample_rate_hz": 48000,
+        "channels": 2,
+        "duration_seconds": 12.0,
+        "ignored_start_seconds": 1,
+        "channel_statistics": [
+          {
+            "channel": 0,
+            "stable_nonzero_samples": 0,
+            "stable_dc_removed_rms": 0.0,
+            "stable_peak_abs": 0,
+            "per_second_dc_removed_rms": [
+              482.369,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "channel": 1,
+            "stable_nonzero_samples": 0,
+            "stable_dc_removed_rms": 0.0,
+            "stable_peak_abs": 0,
+            "per_second_dc_removed_rms": [
+              482.369,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        ]
+      },
+      {
+        "file_name": "ucm-dmic34.wav",
+        "source_log_directory": "logs/mic-20261114",
+        "sha256": "4cc739c361af1ca3bfa3353d0c48a7499883899b21a666f634eeaf7fbaaf54ea",
+        "sample_rate_hz": 48000,
+        "channels": 2,
+        "duration_seconds": 12.0,
+        "ignored_start_seconds": 1,
+        "channel_statistics": [
+          {
+            "channel": 0,
+            "stable_nonzero_samples": 0,
+            "stable_dc_removed_rms": 0.0,
+            "stable_peak_abs": 0,
+            "per_second_dc_removed_rms": [
+              482.369,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "channel": 1,
+            "stable_nonzero_samples": 0,
+            "stable_dc_removed_rms": 0.0,
+            "stable_peak_abs": 0,
+            "per_second_dc_removed_rms": [
+              482.369,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        ]
+      },
+      {
+        "file_name": "va-DMIC2-DMIC3.wav",
+        "source_log_directory": "logs/mic-20261114",
+        "sha256": "5fbe2e17a05b4957aae36013c8a6d58bbd0555113aed32bacd81aeafcc4405ee",
+        "sample_rate_hz": 48000,
+        "channels": 2,
+        "duration_seconds": 6.0,
+        "ignored_start_seconds": 1,
+        "channel_statistics": [
+          {
+            "channel": 0,
+            "stable_nonzero_samples": 0,
+            "stable_dc_removed_rms": 0.0,
+            "stable_peak_abs": 0,
+            "per_second_dc_removed_rms": [
+              0.057,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "channel": 1,
+            "stable_nonzero_samples": 0,
+            "stable_dc_removed_rms": 0.0,
+            "stable_peak_abs": 0,
+            "per_second_dc_removed_rms": [
+              0.059,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        ]
+      },
+      {
+        "file_name": "va-DMIC3-DMIC4.wav",
+        "source_log_directory": "logs/mic-20261114",
+        "sha256": "0de62a12c53beb3c23aa178dab258ddc3fc21a7da2162486aaa2187733eaa23c",
+        "sample_rate_hz": 48000,
+        "channels": 2,
+        "duration_seconds": 6.0,
+        "ignored_start_seconds": 1,
+        "channel_statistics": [
+          {
+            "channel": 0,
+            "stable_nonzero_samples": 0,
+            "stable_dc_removed_rms": 0.0,
+            "stable_peak_abs": 0,
+            "per_second_dc_removed_rms": [
+              7.241,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "channel": 1,
+            "stable_nonzero_samples": 0,
+            "stable_dc_removed_rms": 0.0,
+            "stable_peak_abs": 0,
+            "per_second_dc_removed_rms": [
+              0.898,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        ]
+      },
+      {
+        "file_name": "va-DMIC4-DMIC5.wav",
+        "source_log_directory": "logs/mic-20261114",
+        "sha256": "3beac0d43de5533e49645dabebae2154742cb1e9bddef73eaee9e334a417410d",
+        "sample_rate_hz": 48000,
+        "channels": 2,
+        "duration_seconds": 6.0,
+        "ignored_start_seconds": 1,
+        "channel_statistics": [
+          {
+            "channel": 0,
+            "stable_nonzero_samples": 0,
+            "stable_dc_removed_rms": 0.0,
+            "stable_peak_abs": 0,
+            "per_second_dc_removed_rms": [
+              0.183,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "channel": 1,
+            "stable_nonzero_samples": 0,
+            "stable_dc_removed_rms": 0.0,
+            "stable_peak_abs": 0,
+            "per_second_dc_removed_rms": [
+              3.439,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        ]
+      }
+    ],
+    "bob_comparison": {
+      "previous_exact_3296000_request": "Returned -EINVAL before voltage write; not a valid voltage comparison",
+      "requested_band_uv": [
+        3296000,
+        3328000
+      ],
+      "regulator_api_actual_uv": 3320000,
+      "original_and_restored_uv": 3032000,
+      "stock_bias_test_bits_and_enable_sequence_verified": true,
+      "all_six_registers_restored": true,
+      "microphone_terminal_voltage_measured": false
+    },
+    "individual_data_pull_test": {
+      "gpio9": "PCM channel 0 responds during GPIO9 pull pulses",
+      "gpio13": "PCM channel 1 responds during GPIO13 pull pulses",
+      "cycles_each": 6,
+      "half_period_ms": 100,
+      "pin_configuration_restored": true,
+      "acoustic_signal": false
+    },
+    "software_clock_test": {
+      "under_stock_bias_test_bits_and_bob_3320000_uv": true,
+      "pins": [
+        8,
+        12
+      ],
+      "average_loop_rates_hz": [
+        754229,
+        771419,
+        939044,
+        939195,
+        771009,
+        771363,
+        938715,
+        939118
+      ],
+      "samples_per_phase": 6250,
+      "data_ones": 0,
+      "data_transitions": 0,
+      "clock_muxes_restored": true,
+      "physical_waveform_measured": false,
+      "scope": "CPU loop rate; does not establish continuous clock timing or microphone electrical compliance"
+    },
+    "capture_driver_fix": {
+      "kernel_commit": "463023bf84b1a26722c7a03c5f005c85a17a30fe",
+      "changes": [
+        "TX and VA mixer channel membership idempotency",
+        "TX mute all selected channels"
+      ],
+      "module_install": {
+        "snd-soc-lpass-tx-macro.ko": {
+          "before_sha256": "969ea30399d475e70bddb6ab3c7778af32603673ab588e57dc6b6a5570f284c6",
+          "after_sha256": "596522fe155dcbd44a2fb278f5d2a60234438dd4ac41b6e731709f037a453e79",
+          "srcversion": ""
+        },
+        "snd-soc-lpass-va-macro.ko": {
+          "before_sha256": "cb81d3cb13fbca840b58998d7fcc5f0b49714d94d659e718abc01301ed8f1e19",
+          "after_sha256": "43192a5b71949cef463fbd374aa2b105a27be31157078869064103e1881d471c",
+          "srcversion": ""
+        }
+      },
+      "loaded_modules": {
+        "snd_soc_lpass_tx_macro": {
+          "loaded_note_matches_installed": true,
+          "note_sha256": "8a7612493e593acfc935c7e506ed732e9eb46d82ab81299cf4e6d6a1b1a37f10"
+        },
+        "snd_soc_lpass_va_macro": {
+          "loaded_note_matches_installed": true,
+          "note_sha256": "8a5473f5bfc732d2ff8b093d362a6210252accb9c66c59edb851fb7c35a3c114"
+        }
+      },
+      "reboot_verified": true,
+      "startup_partition_rewritten_for_module_update": false,
+      "real_callback_regression_passed": true,
+      "original_tx_and_va_each_fail_runtime_assertions": true,
+      "bundle_imported_sources_match_and_pass_regression_without_source_alternates": true
+    },
+    "ucm": {
+      "internal_capture_route": "DEC0 DMIC3, DEC1 DMIC4, 0 dB each",
+      "sha256": "9fd93db92e18e2633f734d7e5718f5ab56aef283ffb24fdf293ae1b3d94e8923",
+      "real_alsa_ucm_test": {
+        "before": {
+          "TX DEC0 MUX": "0",
+          "TX DMIC MUX0": "4",
+          "TX_AIF1_CAP Mixer DEC0": "on",
+          "TX_DEC0 Volume": "84",
+          "TX DEC1 MUX": "0",
+          "TX DMIC MUX1": "5",
+          "TX_AIF1_CAP Mixer DEC1": "on",
+          "TX_DEC1 Volume": "84",
+          "MultiMedia3 Mixer TX_CODEC_DMA_TX_3": "on,off",
+          "RX_CODEC_DMA_RX_0 Audio Mixer MultiMedia1": "on,off",
+          "TERTIARY_MI2S_RX Audio Mixer MultiMedia2": "on,off"
+        },
+        "enabled": {
+          "TX DEC0 MUX": "0",
+          "TX DMIC MUX0": "4",
+          "TX_AIF1_CAP Mixer DEC0": "on",
+          "TX_DEC0 Volume": "84",
+          "TX DEC1 MUX": "0",
+          "TX DMIC MUX1": "5",
+          "TX_AIF1_CAP Mixer DEC1": "on",
+          "TX_DEC1 Volume": "84",
+          "MultiMedia3 Mixer TX_CODEC_DMA_TX_3": "on,off",
+          "RX_CODEC_DMA_RX_0 Audio Mixer MultiMedia1": "on,off",
+          "TERTIARY_MI2S_RX Audio Mixer MultiMedia2": "on,off"
+        },
+        "disabled": {
+          "TX DEC0 MUX": "0",
+          "TX DMIC MUX0": "0",
+          "TX_AIF1_CAP Mixer DEC0": "off",
+          "TX_DEC0 Volume": "84",
+          "TX DEC1 MUX": "0",
+          "TX DMIC MUX1": "0",
+          "TX_AIF1_CAP Mixer DEC1": "off",
+          "TX_DEC1 Volume": "84",
+          "MultiMedia3 Mixer TX_CODEC_DMA_TX_3": "on,off",
+          "RX_CODEC_DMA_RX_0 Audio Mixer MultiMedia1": "on,off",
+          "TERTIARY_MI2S_RX Audio Mixer MultiMedia2": "on,off"
+        },
+        "restored": {
+          "TX DEC0 MUX": "0",
+          "TX DMIC MUX0": "4",
+          "TX_AIF1_CAP Mixer DEC0": "on",
+          "TX_DEC0 Volume": "84",
+          "TX DEC1 MUX": "0",
+          "TX DMIC MUX1": "5",
+          "TX_AIF1_CAP Mixer DEC1": "on",
+          "TX_DEC1 Volume": "84",
+          "MultiMedia3 Mixer TX_CODEC_DMA_TX_3": "on,off",
+          "RX_CODEC_DMA_RX_0 Audio Mixer MultiMedia1": "on,off",
+          "TERTIARY_MI2S_RX Audio Mixer MultiMedia2": "on,off"
+        },
+        "capture": [
+          {
+            "channel": 0,
+            "stable_nonzero": 0,
+            "stable_rms": 0.0,
+            "stable_peak": 0
+          },
+          {
+            "channel": 1,
+            "stable_nonzero": 0,
+            "stable_rms": 0.0,
+            "stable_peak": 0
+          }
+        ]
+      },
+      "desktop_session_after_reboot": "SDDM greeter; oneplus Plasma session not logged in; PipeWire Mic1 switching not verified"
+    },
+    "outcome": "Software route and multi-channel state defects fixed; sustained TX and VA microphone samples still zero",
+    "new_call_or_speaker_or_headset_acoustic_regression": false,
+    "raw_logs_tracked": false,
+    "final_cleanup": {
+      "all_pcm_closed": true,
+      "diagnostic_modules": [],
+      "audio_helper_processes": [],
+      "kernel_audio_failures": [],
+      "micb1_and_micb3_hex": "10",
+      "call_audio_and_modemmanager_active": true
+    }
+  }
+}

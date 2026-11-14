@@ -75,7 +75,7 @@ tone)
     alsaucm -c "$card" set _verb HiFi set _disdev Headphones set _enadev Speaker 2>&1 | tee -a "$log" || true
     speaker-test -D "hw:$card,1" -c 2 -r 48000 -F S16_LE -t sine -l 1 2>&1 | tee -a "$log" || true
     alsaucm -c "$card" set _verb HiFi set _enadev Mic1 2>&1 | tee -a "$log" || true
-    arecord -D "hw:$card,2" -c 1 -r 48000 -f S16_LE -d 3 "$here/mic-test.wav" 2>&1 | tee -a "$log" || true
+    arecord -D "hw:$card,2" -c 2 -r 48000 -f S16_LE -d 6 "$here/mic-test.wav" 2>&1 | tee -a "$log" || true
     ls -l "$here/mic-test.wav" 2>/dev/null | tee -a "$log" || true
     diag
     ;;

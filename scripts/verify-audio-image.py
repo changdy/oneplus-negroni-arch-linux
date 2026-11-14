@@ -83,7 +83,7 @@ def verify(image_dir, log_dir):
         "ucm_dependencies_present": dependencies,
         "requires_kernel_dt": "linux ead3411b6e6 (audio-routing, Tertiary MI2S speakers)",
         "scope": "Offline file check; card probe needs the matching vendor_boot DTB",
-        "hardware_tested": "2026-11-12 NE2210: speakers audible, internal mic records",
+        "hardware_tested": "2026-11-12 NE2210: speakers audible; 2026-11-14 TX/VA capture: no sustained microphone signal",
     }
     report.write_text(json.dumps(verification, indent=2) + "\n")
     print("Audio image verified: topology and UCM match sources, alsa-ucm-conf fragments present")

@@ -72,6 +72,8 @@ if [[ $with_kernel == true ]]; then
     python3 -B tests/test-charge-limit-driver.py
     printf 'Running USB2 PHY and role recovery driver checks...\n'
     python3 -B tests/test-usb2-driver.py
+    printf 'Running LPASS capture mixer regression checks...\n'
+    python3 -B tests/test-lpass-capture.py
     printf 'Checking Docker configuration in fresh and existing kernel outputs...\n'
     python3 -B tests/test-docker-config.py
 fi

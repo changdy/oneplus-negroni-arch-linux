@@ -1,6 +1,6 @@
 # 7.3 设备修复与源码恢复
 
-当前 `linux` 子模块固定到 `7.3` 修复提交 `f8350cc1e221ce4cb22beec8a9eeae7a5ad77a2d`。修复从重新同步的上游 `476a4a8984395a77b6b6508f849dfb7b786d86b3` 直接修改，新增提交均只有一个父提交；没有 merge 或 cherry-pick `7.3-rc2`。之前的本地合并版本不再作为固定内核。
+当前 `linux` 子模块固定到 `7.3` 修复提交 `463023bf84b1a26722c7a03c5f005c85a17a30fe`。修复从重新同步的上游 `476a4a8984395a77b6b6508f849dfb7b786d86b3` 直接修改，新增提交均只有一个父提交；没有 merge 或 cherry-pick `7.3-rc2`。之前的本地合并版本不再作为固定内核。
 
 新增提交为 `835c18d2739`（电池驱动及限充）、`3ca85b51d20`（CPU 参数）和 `1eaec99b04a`（补齐触觉驱动 trace 头文件）。
 
@@ -16,9 +16,11 @@ USB 失电恢复修复 `23a6b6d834e` 在完整关闭 DWC3 时通知 xHCI 重建�
 
 QRTR 握手修复 `984f1b07caa` 解决基带启动约 40 秒后 `DOG detects stalled initialization` 的循环崩溃。上游 `544d85de4dc2` 之后，内核自己的 HELLO 发出前会以 `-EAGAIN` 拒绝其他包；基带的 HELLO 先到时，名称服务回复的 NEW_SERVER 通告被拒且不再重发，基带因此找不到 rmtfs。修复记录远端已发过 HELLO，待本端 HELLO 发出后把它重新交给名称服务再通告一次，并在通告失败时打印目标与错误码。2026-11-11 实机验证：启动时基带（节点 0）与 WCN6855（节点 7）仍会触发该竞争，重放后均恢复，基带不再崩溃；日志中的 `failed to announce new service ... -11` 属预期。该实现按上游未合入补丁的思路自行编写，上游合入正式修复后应替换。源码恢复 bundle 已包含该提交。
 
-音频设备树修复 `ead3411b6e6` 修正声卡始终不生成的问题：`audio-routing` 引用了主线 LPASS 宏与 WCD938x 驱动中不存在的 widget（如 `VA AMIC1`、`Digital Mic0`、`WCD_TX_OUTPUT`），路由失败会使 ASoC 放弃整张卡且只在 debug 级别记录，现改用 `sm8450-hdk` 的路由（去掉 WSA 扬声器项）。TFA9874 扬声器链路由 `TERTIARY_TDM_RX_0` 改为 `TERTIARY_MI2S_RX`（同一组 mi2s2 引脚，16 bit 立体声 I²S）并投票 Tertiary MI2S 位时钟，因为 7.3 的 q6apm TDM 端口需要 SM8450 ADSP 不具备的 AUDIO_IF 模块。还需配套的 AudioReach 拓扑与 UCM，见[音频说明](../../docs/audio.md)。2026-11-12 实机验证：扬声器出声、内置麦克风录音正常。源码恢复 bundle 已包含该提交。
+音频设备树修复 `ead3411b6e6` 修正声卡始终不生成的问题：`audio-routing` 引用了主线 LPASS 宏与 WCD938x 驱动中不存在的 widget（如 `VA AMIC1`、`Digital Mic0`、`WCD_TX_OUTPUT`），路由失败会使 ASoC 放弃整张卡且只在 debug 级别记录，现改用 `sm8450-hdk` 的路由（去掉 WSA 扬声器项）。TFA9874 扬声器链路由 `TERTIARY_TDM_RX_0` 改为 `TERTIARY_MI2S_RX`（同一组 mi2s2 引脚，16 bit 立体声 I²S）并投票 Tertiary MI2S 位时钟，因为 7.3 的 q6apm TDM 端口需要 SM8450 ADSP 不具备的 AUDIO_IF 模块。还需配套的 AudioReach 拓扑与 UCM，见[音频说明](../../docs/audio.md)。2026-11-12 实机验证扬声器出声；早期内置麦克风的非零样本后来确认只是启动瞬态，2026-11-13 原厂路由与门控对照后稳定段仍全零，麦克风不可用，见[调试记录](../../artifacts/mic-clock-20261113/README.md)。源码恢复 bundle 已包含该提交。
 
 USB2 gadget 修复 `f8350cc1e221` 释放 HS PHY 的充电检测 datapath override，并在控制器仍为 device 时重新设置 USB2 PHY 模式，补上重复 DEVICE 请求被提前跳过的恢复路径。2026-11-13 已刷入 b 槽并重启：USB2 随启动、连续 3 次同口拔插、USB3→USB2 换口均自动恢复，USB2 双向各 64 MiB SHA-256 一致，无需用户空间恢复脚本。实机保留既有 LPM 实验属性；完全断电启动、去掉 LPM 属性及 OTG / PD Hub / 挂起回归未测，见 [USB 调试记录](../../docs/usb-debug.md)。bundle 保留原两个前置提交及历史 rc2 引用。浅克隆重建时可用临时 bare 仓库共享对象，`GIT_SHALLOW_FILE` 指向只包含两个前置提交的边界文件，生成并验证 bundle；不要修改工作树的 shallow 边界。
+
+LPASS 录音状态修复 `463023bf84b1` 改为按 TX/VA 通道 mask 的实际 bit 判断 mixer 是否变化，避免双路关闭遗漏与重复写导致的计数失真，并对全部已选 TX 通道执行数字静音。2026-11-14 两模块独立构建、安装并重启，运行模块 build-id 与文件匹配，真实 UCM 双路启停/还原通过；原 TX/VA 的真实回调均不能通过新增回归。内置麦克风 UCM 同时改为原厂 DMIC3/4，但稳定录音仍全零，不能算麦克风已修复。VA CPU DAI/DMIC4 DT 候选只部署到测试分区，尚未应用到内核源码；其他未提交相机、语音图和 DT 改动没有混入此提交。恢复 bundle 已更新，见[实机记录](../../artifacts/mic-clock-20261113/README.md)。
 
 ## 重做范围
 
