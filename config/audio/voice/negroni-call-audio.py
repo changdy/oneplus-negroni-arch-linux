@@ -13,11 +13,22 @@ PipeWire/PulseAudio card profile is switched to "off" and put back afterwards,
 because a media stream opened on the shared speaker back end during a call
 stalls and the microphone source disappears. Remaining clients get a short
 time to release the card first (the ringtone).
+
+While the graphs are open, /run/negroni-call-audio.route selects the output.
+"speaker" (the default) leaves both TFA9874 amplifiers enabled. "earpiece"
+clears the amplifier-enable bit on the right-hand chip (I2C 0x35) so only the
+left-hand chip (0x34) plays. Stock Android uses that same chip, with a
+receiver DSP profile this driver does not load, as the handset. The driver
+turns both amplifiers on when the stream starts and off when it stops, so the
+switch is applied after the graphs start and does not persist into later
+media playback.
 """
 
 import argparse
+import ctypes
 import importlib.util
 import json
+import os
 from pathlib import Path
 import re
 import signal
@@ -28,10 +39,18 @@ import time
 
 HELPER = Path(__file__).resolve().with_name("negroni-voice-test.py")
 VOICE_STATES = frozenset(("ringing-out", "active"))
+OUTPUTS = frozenset(("speaker", "earpiece"))
 CALL_PATH = re.compile(r"/org/freedesktop/ModemManager1/Call/\d+")
 STATE_LINE = re.compile(r"^call\.properties\.state\s*:\s*(\S+)", re.M)
 WATCH = ("dbus-monitor", "--system",
   "type='signal',sender='org.freedesktop.ModemManager1'")
+ROUTE_FILE = Path("/run/negroni-call-audio.route")
+# Stock handset is TFA chip selector 1 (left, 0x34, receiver profile).
+# Speakerphone is selector 3 (both chips). SYS_CTRL0 bit 3 is the amp enable.
+TFA_BUS = "/dev/i2c-2"
+TFA_LEFT, TFA_RIGHT = 0x34, 0x35
+TFA_SYS_CTRL0 = 0x00
+TFA_AMPE = 1 << 3
 
 
 def load_helper(path=HELPER):
@@ -61,14 +80,128 @@ def wants_voice(states):
     return any(state in VOICE_STATES for state in states)
 
 
+class LinuxI2C:
+    """Big-endian 8/16-bit register access, matching the tfa987x regmap."""
+
+    def __init__(self, path):
+        self.fd = os.open(path, os.O_RDWR)
+        self._msg, self._data, self._ioctl = self._layouts()
+
+    def close(self):
+        os.close(self.fd)
+
+    @staticmethod
+    def _layouts():
+        class Msg(ctypes.Structure):
+            _fields_ = [("addr", ctypes.c_uint16), ("flags", ctypes.c_uint16),
+                        ("len", ctypes.c_uint16), ("buf", ctypes.c_void_p)]
+
+        class Data(ctypes.Structure):
+            _fields_ = [("msgs", ctypes.c_void_p), ("nmsgs", ctypes.c_uint32)]
+
+        if ctypes.sizeof(Msg) != 16:
+            raise OSError(f"unexpected i2c_msg size {ctypes.sizeof(Msg)}")
+        ioctl = ctypes.CDLL("libc.so.6", use_errno=True).ioctl
+        ioctl.argtypes = [ctypes.c_int, ctypes.c_ulong, ctypes.c_void_p]
+        ioctl.restype = ctypes.c_int
+        return Msg, Data, ioctl
+
+    def _xfer(self, addr, outgoing, incoming):
+        """Send `outgoing` then, when `incoming` is not None, read that many bytes."""
+        write_buf = ctypes.create_string_buffer(len(outgoing))
+        write_buf.raw = outgoing
+        count = 2 if incoming is not None else 1
+        msgs = (self._msg * count)()
+        msgs[0].addr, msgs[0].flags, msgs[0].len = addr, 0, len(outgoing)
+        msgs[0].buf = ctypes.addressof(write_buf)
+        read_buf = None
+        if incoming is not None:
+            read_buf = ctypes.create_string_buffer(incoming)
+            msgs[1].addr, msgs[1].flags, msgs[1].len = addr, 1, incoming
+            msgs[1].buf = ctypes.addressof(read_buf)
+        data = self._data(ctypes.addressof(msgs), count)
+        if self._ioctl(self.fd, 0x0707, ctypes.byref(data)) < 0:
+            error = ctypes.get_errno()
+            raise OSError(error, os.strerror(error))
+        return None if read_buf is None else read_buf.raw
+
+    def read(self, addr, reg):
+        raw = self._xfer(addr, bytes([reg]), 2)
+        return (raw[0] << 8) | raw[1]
+
+    def write(self, addr, reg, value):
+        self._xfer(addr, bytes((reg, value >> 8, value & 0xFF)), None)
+
+
+class AmpRoute:
+    """Enable both TFA9874 amps, or only the left one used as the earpiece."""
+
+    def __init__(self, bus, left=TFA_LEFT, right=TFA_RIGHT):
+        self.bus, self.left, self.right = bus, left, right
+
+    def apply(self, mode):
+        if mode not in OUTPUTS:
+            raise ValueError(mode)
+        self._enable(self.left, True)
+        self._enable(self.right, mode == "speaker")
+
+    def _enable(self, addr, enabled):
+        value = self.bus.read(addr, TFA_SYS_CTRL0)
+        updated = (value | TFA_AMPE) if enabled else (value & ~TFA_AMPE)
+        if updated != value:
+            self.bus.write(addr, TFA_SYS_CTRL0, updated)
+
+
+def read_route(path, current="speaker"):
+    """Return a valid output name from `path`, or `current` when it is unusable."""
+    try:
+        text = path.read_text(encoding="utf-8").strip().lower()
+    except OSError:
+        return current
+    return text if text in OUTPUTS else current
+
+
+def publish_route_file(path):
+    """Create the route file so a user in the audio group can switch outputs."""
+    if not path.exists():
+        path.write_text("speaker\n", encoding="utf-8")
+    try:
+        os.chmod(path, 0o664)
+        import grp
+        os.chown(path, 0, grp.getgrnam("audio").gr_gid)
+    except (AttributeError, ImportError, KeyError, OSError, PermissionError):
+        pass
+
+
+def open_amp_route(path=TFA_BUS):
+    try:
+        return AmpRoute(LinuxI2C(path))
+    except OSError as exc:
+        log(f"earpiece switch unavailable: {exc}")
+        return None
+
+
 class Session:
     """One opened pair of voice graphs; close() restores the mixer."""
 
-    def __init__(self, voice, alsa, mixer, card, rx, tx, routes=None):
+    def __init__(self, voice, alsa, mixer, card, rx, tx, routes=None, output=None):
         self.alsa = alsa
         self.opened = []
         self.transaction = voice.MixerTransaction(mixer, voice.ROUTES if routes is None else routes)
         self.card, self.rx, self.tx = card, rx, tx
+        self.output = output
+        # The driver enables both amplifiers as the stream starts.
+        self.route = "speaker"
+
+    def set_route(self, route):
+        """Switch the playing amplifiers. The route is recorded only after it sticks."""
+        if route not in OUTPUTS:
+            raise ValueError(route)
+        if self.output is None:
+            raise RuntimeError("amplifier route is unavailable")
+        if self.opened:
+            self.output.apply(route)
+        self.route = route
 
     def open(self):
         self.transaction.apply()
@@ -98,7 +231,7 @@ def card_busy(card, proc=Path("/proc/asound")):
     return [str(path) for path in statuses if path.read_text().strip() != "closed"]
 
 
-def make_session(voice, busy=card_busy, wait=time.sleep, idle_timeout=8.0):
+def make_session(voice, busy=card_busy, wait=time.sleep, idle_timeout=8.0, output=None):
     card, rx, tx = voice.find_pcms()
     waited = 0.0
     while busy(card) and waited < idle_timeout:
@@ -107,7 +240,7 @@ def make_session(voice, busy=card_busy, wait=time.sleep, idle_timeout=8.0):
     still = busy(card)
     if still:
         log(f"card still busy after {idle_timeout:g}s, opening anyway: {still}")
-    return Session(voice, voice.Alsa(), voice.Mixer(card), card, rx, tx)
+    return Session(voice, voice.Alsa(), voice.Mixer(card), card, rx, tx, output=output)
 
 
 CARD_BLOCK = re.compile(r"^Card #", re.M)
@@ -205,7 +338,8 @@ class Desktop:
 
 
 class Daemon:
-    def __init__(self, states, factory, wait, retry_delay=2.0, poll=1.0, desktop=None):
+    def __init__(self, states, factory, wait, retry_delay=2.0, poll=1.0, desktop=None,
+                 route_path=None):
         self.states = states
         self.factory = factory
         self.wait = wait
@@ -213,6 +347,8 @@ class Daemon:
         self.poll = poll
         self.session = None
         self.desktop = desktop
+        self.route_path = route_path
+        self.route_error = None
 
     def close(self):
         session, self.session = self.session, None
@@ -236,6 +372,25 @@ class Daemon:
         log("voice graphs open")
         return True
 
+    def apply_route(self):
+        """Follow the route file without reopening the voice graphs."""
+        if self.session is None or self.route_path is None:
+            return
+        route = read_route(self.route_path, self.session.route)
+        if route == self.session.route:
+            self.route_error = None
+            return
+        try:
+            self.session.set_route(route)
+        except Exception as exc:
+            message = f"could not switch call output to {route}: {exc}"
+            if message != self.route_error:
+                log(message)
+                self.route_error = message
+            return
+        self.route_error = None
+        log(f"call output: {route}")
+
     def step(self):
         """Reconcile with the current calls; return seconds until the next look,
         or None when idle and only a ModemManager signal needs to wake us."""
@@ -244,6 +399,7 @@ class Daemon:
             return None
         if self.session is None and not self.open():
             return self.retry_delay
+        self.apply_route()
         return self.poll
 
     def run(self, stopped, wake):
@@ -280,7 +436,19 @@ def watch_signals(wake, stopped, command=WATCH):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--once", action="store_true", help="print call states and exit")
+    parser.add_argument("--route", choices=sorted(OUTPUTS),
+                        help="ask the running service to use this output")
     args = parser.parse_args()
+    if args.route:
+        try:
+            if not ROUTE_FILE.exists():
+                publish_route_file(ROUTE_FILE)
+            ROUTE_FILE.write_text(args.route + "\n", encoding="utf-8")
+        except OSError as exc:
+            print(f"cannot write {ROUTE_FILE}: {exc}", file=sys.stderr)
+            return 1
+        print(f"call output requested: {args.route}")
+        return 0
     if args.once:
         states = call_states()
         print(f"calls: {states}; voice wanted: {wants_voice(states)}")
@@ -297,8 +465,11 @@ def main():
     threading.Thread(target=watch_signals, args=(wake, stopped), daemon=True).start()
     desktop = Desktop(voice.find_pcms()[0])
     desktop.recover()
-    daemon = Daemon(call_states, lambda: make_session(voice), stopped.wait, desktop=desktop)
-    log("waiting for calls")
+    publish_route_file(ROUTE_FILE)
+    output = open_amp_route()
+    daemon = Daemon(call_states, lambda: make_session(voice, output=output), stopped.wait,
+                    desktop=desktop, route_path=ROUTE_FILE)
+    log(f"waiting for calls; output file {ROUTE_FILE}")
     daemon.run(stopped, wake)
     return 0
 

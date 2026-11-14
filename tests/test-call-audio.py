@@ -231,5 +231,103 @@ class DesktopTest(unittest.TestCase):
         self.assertEqual(alsa.operations[-2:], [("close", "tx"), ("close", "rx")])
 
 
+class FakeBus:
+    def __init__(self):
+        self.regs = {(0x34, 0): 0x0018, (0x35, 0): 0x0019}
+        self.writes = []
+
+    def read(self, addr, reg):
+        return self.regs[(addr, reg)]
+
+    def write(self, addr, reg, value):
+        self.writes.append((addr, reg, value))
+        self.regs[(addr, reg)] = value
+
+
+class RouteTest(unittest.TestCase):
+    def test_earpiece_clears_only_the_right_amplifier_enable(self):
+        bus = FakeBus()
+        daemon.AmpRoute(bus).apply("earpiece")
+        self.assertEqual(bus.regs[(0x34, 0)], 0x0018)
+        self.assertEqual(bus.regs[(0x35, 0)], 0x0011)
+        self.assertEqual(bus.writes, [(0x35, 0, 0x0011)])
+
+    def test_speaker_enables_both_and_a_repeat_writes_nothing(self):
+        bus = FakeBus()
+        bus.regs[(0x35, 0)] = 0x0011
+        route = daemon.AmpRoute(bus)
+        route.apply("speaker")
+        self.assertEqual(bus.regs[(0x34, 0)], 0x0018)
+        self.assertEqual(bus.regs[(0x35, 0)], 0x0019)
+        self.assertEqual(bus.writes, [(0x35, 0, 0x0019)])
+        route.apply("speaker")
+        self.assertEqual(bus.writes, [(0x35, 0, 0x0019)])
+
+    def test_route_file_keeps_the_current_choice_when_unusable(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "route"
+            self.assertEqual(daemon.read_route(path, "speaker"), "speaker")
+            path.write_text(" Earpiece \n", encoding="utf-8")
+            self.assertEqual(daemon.read_route(path), "earpiece")
+            path.write_text("headphones\n", encoding="utf-8")
+            self.assertEqual(daemon.read_route(path, "earpiece"), "earpiece")
+
+    def test_daemon_switches_output_without_reopening_the_graphs(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "route"
+            path.write_text("earpiece\n", encoding="utf-8")
+            applied = []
+            alsa, mixer = FakeAlsa(), FakeMixer()
+
+            class Output:
+                def apply(self, mode):
+                    applied.append(mode)
+
+            def factory():
+                return daemon.Session(voice, alsa, mixer, 0, 4, 5, routes=ROUTES, output=Output())
+
+            states = ["active"]
+            subject = daemon.Daemon(lambda: states, factory, lambda _: None, route_path=path)
+            self.assertEqual(subject.step(), 1.0)
+            self.assertEqual(applied, ["earpiece"])
+            self.assertEqual(subject.session.route, "earpiece")
+            self.assertEqual(subject.step(), 1.0)
+            self.assertEqual(applied, ["earpiece"])
+            path.write_text("speaker\n", encoding="utf-8")
+            subject.step()
+            self.assertEqual(applied, ["earpiece", "speaker"])
+            self.assertEqual(len([op for op in alsa.operations if op[0] == "open"]), 2)
+
+    def test_failed_switch_keeps_the_graphs_and_retries(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "route"
+            path.write_text("earpiece\n", encoding="utf-8")
+
+            class Output:
+                def __init__(self):
+                    self.fail = True
+
+                def apply(self, mode):
+                    if self.fail:
+                        raise OSError("i2c busy")
+
+            output = Output()
+            opened = []
+
+            def factory():
+                opened.append("open")
+                return daemon.Session(voice, FakeAlsa(), FakeMixer(), 0, 4, 5,
+                                      routes=ROUTES, output=output)
+
+            states = ["active"]
+            subject = daemon.Daemon(lambda: states, factory, lambda _: None, route_path=path)
+            subject.step()
+            self.assertEqual(subject.session.route, "speaker")
+            output.fail = False
+            subject.step()
+            self.assertEqual(subject.session.route, "earpiece")
+            self.assertEqual(opened, ["open"])
+
+
 if __name__ == "__main__":
     unittest.main()
