@@ -1,0 +1,227 @@
+/dts-v1/;
+/plugin/;
+#include <dt-bindings/clock/qcom,sm8450-camcc.h>
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/media/video-interfaces.h>
+#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+
+&apps_rsc {
+    regulators-imx615-test {
+        compatible = "qcom,pm8010-rpmh-regulators";
+        qcom,pmic-id = "i";
+        negroni,temporary-camera;
+        front_l2i: ldo2 {
+            regulator-name = "pm8010i_l2_camera_test";
+            regulator-min-microvolt = <1056000>;
+            regulator-max-microvolt = <1056000>;
+            regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+        };
+        front_l4i: ldo4 {
+            regulator-name = "pm8010i_l4_camera_test";
+            /* Closest selectable PM8010 voltage below stock nominal 2.9 V. */
+            regulator-min-microvolt = <2896000>;
+            regulator-max-microvolt = <2896000>;
+            regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+        };
+        main_l1i: ldo1 {
+            regulator-name = "pm8010i_l1_camera_test";
+            regulator-min-microvolt = <1104000>;
+            regulator-max-microvolt = <1104000>;
+        };
+        main_l3i: ldo3 {
+            regulator-name = "pm8010i_l3_camera_test";
+            regulator-min-microvolt = <2800000>;
+            regulator-max-microvolt = <2800000>;
+        };
+        main_l5i: ldo5 {
+            regulator-name = "pm8010i_l5_camera_test";
+            regulator-min-microvolt = <1800000>;
+            regulator-max-microvolt = <1800000>;
+        };
+        main_l7i: ldo7 {
+            regulator-name = "pm8010i_l7_camera_test";
+            regulator-min-microvolt = <2800000>;
+            regulator-max-microvolt = <2800000>;
+        };
+    };
+    regulators-extra-camera-test {
+        compatible = "qcom,pm8010-rpmh-regulators";
+        qcom,pmic-id = "j";
+        negroni,temporary-camera;
+        tele_l2j: ldo2 {
+            regulator-name = "pm8010j_l2_camera_test";
+            regulator-min-microvolt = <1200000>;
+            regulator-max-microvolt = <1200000>;
+        };
+        tele_l4j: ldo4 {
+            regulator-name = "pm8010j_l4_camera_test";
+            regulator-min-microvolt = <2800000>;
+            regulator-max-microvolt = <2800000>;
+        };
+        tele_l7j: ldo7 {
+            regulator-name = "pm8010j_l7_camera_test";
+            regulator-min-microvolt = <2800000>;
+            regulator-max-microvolt = <2800000>;
+        };
+    };
+};
+
+&tlmm {
+    main_mclk_test: main-mclk-camera-test-state {
+        pins = "gpio100";
+        function = "cam_mclk";
+        drive-strength = <2>;
+        bias-disable;
+    };
+    main_reset_test: main-reset-camera-test-state {
+        pins = "gpio120";
+        function = "gpio";
+        drive-strength = <2>;
+        bias-disable;
+    };
+    tele_mclk_test: tele-mclk-camera-test-state {
+        pins = "gpio102";
+        function = "cam_mclk";
+        drive-strength = <2>;
+        bias-disable;
+    };
+    tele_reset_test: tele-reset-camera-test-state {
+        pins = "gpio25";
+        function = "gpio";
+        drive-strength = <2>;
+        bias-disable;
+    };
+    front_mclk_test: front-mclk-camera-test-state {
+        pins = "gpio103";
+        function = "cam_mclk";
+        drive-strength = <2>;
+        bias-disable;
+    };
+    front_reset_test: front-reset-camera-test-state {
+        pins = "gpio118";
+        function = "gpio";
+        drive-strength = <2>;
+        bias-disable;
+    };
+};
+
+&cci1 { status = "okay"; };
+
+&cci0_i2c0 {
+    #address-cells = <1>;
+    #size-cells = <0>;
+    camera@1a {
+        compatible = "sony,imx789";
+        reg = <0x1a>;
+        vdda-supply = <&main_l3i>;
+        vddd-supply = <&main_l1i>;
+        vddio-supply = <&pm8350c_l2>;
+        vaf-supply = <&main_l7i>;
+        custom1-supply = <&main_l5i>;
+        clocks = <&camcc CAM_CC_MCLK0_CLK>;
+        assigned-clocks = <&camcc CAM_CC_MCLK0_CLK>;
+        assigned-clock-rates = <19200000>;
+        reset-gpios = <&tlmm 120 GPIO_ACTIVE_LOW>;
+        pinctrl-names = "default";
+        pinctrl-0 = <&main_mclk_test &main_reset_test>;
+        orientation = <1>;
+        rotation = <270>;
+        port {
+            main_camera_test_ep: endpoint {
+                data-lanes = <0 1 2>;
+                bus-type = <MEDIA_BUS_TYPE_CSI2_CPHY>;
+                link-frequencies = /bits/ 64 <823200000>;
+                remote-endpoint = <&main_csiphy_test_ep>;
+            };
+        };
+    };
+};
+
+&cci1_i2c0 {
+    #address-cells = <1>;
+    #size-cells = <0>;
+    status = "okay";
+    camera@36 {
+        compatible = "ovti,ov08a10";
+        reg = <0x36>;
+        vdda-supply = <&tele_l4j>;
+        vddd-supply = <&tele_l2j>;
+        vddio-supply = <&pm8350c_l2>;
+        vaf-supply = <&tele_l7j>;
+        clocks = <&camcc CAM_CC_MCLK2_CLK>;
+        assigned-clocks = <&camcc CAM_CC_MCLK2_CLK>;
+        assigned-clock-rates = <19200000>;
+        reset-gpios = <&tlmm 25 GPIO_ACTIVE_LOW>;
+        pinctrl-names = "default";
+        pinctrl-0 = <&tele_mclk_test &tele_reset_test>;
+        orientation = <1>;
+        rotation = <90>;
+        port {
+            tele_camera_test_ep: endpoint {
+                data-lanes = <1 2>;
+                link-frequencies = /bits/ 64 <800000000>;
+                remote-endpoint = <&tele_csiphy_test_ep>;
+            };
+        };
+    };
+};
+
+&cci1_i2c1 {
+    #address-cells = <1>;
+    #size-cells = <0>;
+    status = "okay";
+    camera@10 {
+        compatible = "sony,imx615";
+        reg = <0x10>;
+        vdda-supply = <&front_l4i>;
+        vddd-supply = <&front_l2i>;
+        vddio-supply = <&pm8350c_l2>;
+        clocks = <&camcc CAM_CC_MCLK3_CLK>;
+        assigned-clocks = <&camcc CAM_CC_MCLK3_CLK>;
+        assigned-clock-rates = <19200000>;
+        reset-gpios = <&tlmm 118 GPIO_ACTIVE_LOW>;
+        pinctrl-names = "default";
+        pinctrl-0 = <&front_mclk_test &front_reset_test>;
+        orientation = <0>;
+        rotation = <90>;
+        port {
+            front_camera_test_ep: endpoint {
+                data-lanes = <1 2 3 4>;
+                link-frequencies = /bits/ 64 <334400000>;
+                remote-endpoint = <&front_csiphy_test_ep>;
+            };
+        };
+    };
+};
+
+&camss {
+    ports {
+        #address-cells = <1>;
+        #size-cells = <0>;
+        port@1 {
+            reg = <1>;
+            main_csiphy_test_ep: endpoint {
+                data-lanes = <0 1 2>;
+                bus-type = <MEDIA_BUS_TYPE_CSI2_CPHY>;
+                qcom,cphy-settle-count = <28>;
+                remote-endpoint = <&main_camera_test_ep>;
+            };
+        };
+        port@0 {
+            reg = <0>;
+            tele_csiphy_test_ep: endpoint {
+                data-lanes = <0 1>;
+                bus-type = <MEDIA_BUS_TYPE_CSI2_DPHY>;
+                remote-endpoint = <&tele_camera_test_ep>;
+            };
+        };
+        port@5 {
+            reg = <5>;
+            front_csiphy_test_ep: endpoint {
+                data-lanes = <0 1 2 3>;
+                bus-type = <MEDIA_BUS_TYPE_CSI2_DPHY>;
+                remote-endpoint = <&front_camera_test_ep>;
+            };
+        };
+    };
+};

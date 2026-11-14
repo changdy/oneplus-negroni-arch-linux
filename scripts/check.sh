@@ -51,6 +51,12 @@ python3 -B tests/test-gnss-assist.py
 printf 'Running experimental USB2 recovery guard checks...\n'
 python3 -B tests/test-usb2-recover.py
 
+printf 'Running offline camera module parser checks...\n'
+python3 -B tests/test-camera-sensormodule.py
+
+printf 'Running software camera meter checks...\n'
+python3 -B tests/test-camera-meter.py
+
 printf 'Running IMS bearer recovery tests...\n'
 python3 -B tests/test-ims-recovery.py
 

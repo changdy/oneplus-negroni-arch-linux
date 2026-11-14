@@ -1,0 +1,935 @@
+diff --git a/drivers/clk/qcom/camcc-sm8450.c b/drivers/clk/qcom/camcc-sm8450.c
+index 4025db23d1..77b9d7efe3 100644
+--- a/drivers/clk/qcom/camcc-sm8450.c
++++ b/drivers/clk/qcom/camcc-sm8450.c
+@@ -834,7 +834,7 @@ static struct clk_rcg2 cam_cc_bps_clk_src = {
+ 		.parent_data = cam_cc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -856,7 +856,7 @@ static struct clk_rcg2 cam_cc_camnoc_axi_clk_src = {
+ 		.parent_data = cam_cc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -877,7 +877,7 @@ static struct clk_rcg2 cam_cc_cci_0_clk_src = {
+ 		.parent_data = cam_cc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -892,7 +892,7 @@ static struct clk_rcg2 cam_cc_cci_1_clk_src = {
+ 		.parent_data = cam_cc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -914,7 +914,7 @@ static struct clk_rcg2 cam_cc_cphy_rx_clk_src = {
+ 		.parent_data = cam_cc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -935,7 +935,7 @@ static struct clk_rcg2 cam_cc_csi0phytimer_clk_src = {
+ 		.parent_data = cam_cc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -950,7 +950,7 @@ static struct clk_rcg2 cam_cc_csi1phytimer_clk_src = {
+ 		.parent_data = cam_cc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -965,7 +965,7 @@ static struct clk_rcg2 cam_cc_csi2phytimer_clk_src = {
+ 		.parent_data = cam_cc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -980,7 +980,7 @@ static struct clk_rcg2 cam_cc_csi3phytimer_clk_src = {
+ 		.parent_data = cam_cc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -995,7 +995,7 @@ static struct clk_rcg2 cam_cc_csi4phytimer_clk_src = {
+ 		.parent_data = cam_cc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1010,7 +1010,7 @@ static struct clk_rcg2 cam_cc_csi5phytimer_clk_src = {
+ 		.parent_data = cam_cc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1031,7 +1031,7 @@ static struct clk_rcg2 cam_cc_csid_clk_src = {
+ 		.parent_data = cam_cc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1055,7 +1055,7 @@ static struct clk_rcg2 cam_cc_fast_ahb_clk_src = {
+ 		.parent_data = cam_cc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1078,7 +1078,7 @@ static struct clk_rcg2 cam_cc_icp_clk_src = {
+ 		.parent_data = cam_cc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1102,7 +1102,7 @@ static struct clk_rcg2 cam_cc_ife_0_clk_src = {
+ 		.parent_data = cam_cc_parent_data_2,
+ 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_2),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1126,7 +1126,7 @@ static struct clk_rcg2 cam_cc_ife_1_clk_src = {
+ 		.parent_data = cam_cc_parent_data_3,
+ 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_3),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1149,7 +1149,7 @@ static struct clk_rcg2 cam_cc_ife_2_clk_src = {
+ 		.parent_data = cam_cc_parent_data_4,
+ 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_4),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1170,7 +1170,7 @@ static struct clk_rcg2 cam_cc_ife_lite_clk_src = {
+ 		.parent_data = cam_cc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1185,7 +1185,7 @@ static struct clk_rcg2 cam_cc_ife_lite_csid_clk_src = {
+ 		.parent_data = cam_cc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1208,7 +1208,7 @@ static struct clk_rcg2 cam_cc_ipe_nps_clk_src = {
+ 		.parent_data = cam_cc_parent_data_5,
+ 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_5),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1223,7 +1223,7 @@ static struct clk_rcg2 cam_cc_jpeg_clk_src = {
+ 		.parent_data = cam_cc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1245,7 +1245,7 @@ static struct clk_rcg2 cam_cc_mclk0_clk_src = {
+ 		.parent_data = cam_cc_parent_data_1,
+ 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_1),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1260,7 +1260,7 @@ static struct clk_rcg2 cam_cc_mclk1_clk_src = {
+ 		.parent_data = cam_cc_parent_data_1,
+ 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_1),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1275,7 +1275,7 @@ static struct clk_rcg2 cam_cc_mclk2_clk_src = {
+ 		.parent_data = cam_cc_parent_data_1,
+ 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_1),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1290,7 +1290,7 @@ static struct clk_rcg2 cam_cc_mclk3_clk_src = {
+ 		.parent_data = cam_cc_parent_data_1,
+ 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_1),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1305,7 +1305,7 @@ static struct clk_rcg2 cam_cc_mclk4_clk_src = {
+ 		.parent_data = cam_cc_parent_data_1,
+ 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_1),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1320,7 +1320,7 @@ static struct clk_rcg2 cam_cc_mclk5_clk_src = {
+ 		.parent_data = cam_cc_parent_data_1,
+ 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_1),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1335,7 +1335,7 @@ static struct clk_rcg2 cam_cc_mclk6_clk_src = {
+ 		.parent_data = cam_cc_parent_data_1,
+ 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_1),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1350,7 +1350,7 @@ static struct clk_rcg2 cam_cc_mclk7_clk_src = {
+ 		.parent_data = cam_cc_parent_data_1,
+ 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_1),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1373,7 +1373,7 @@ static struct clk_rcg2 cam_cc_qdss_debug_clk_src = {
+ 		.parent_data = cam_cc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1396,7 +1396,7 @@ static struct clk_rcg2 cam_cc_sfe_0_clk_src = {
+ 		.parent_data = cam_cc_parent_data_6,
+ 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_6),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1419,7 +1419,7 @@ static struct clk_rcg2 cam_cc_sfe_1_clk_src = {
+ 		.parent_data = cam_cc_parent_data_7,
+ 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_7),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1460,7 +1460,7 @@ static struct clk_rcg2 cam_cc_slow_ahb_clk_src = {
+ 		.parent_data = cam_cc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -1480,7 +1480,7 @@ static struct clk_rcg2 cam_cc_xo_clk_src = {
+ 		.parent_data = cam_cc_parent_data_9_ao,
+ 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_9_ao),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+ 
+@@ -2930,90 +2930,117 @@ static struct gdsc titan_top_gdsc;
+ 
+ static struct gdsc bps_gdsc = {
+ 	.gdscr = 0x10004,
++	.en_rest_wait_val = 0x2,
++	.en_few_wait_val = 0x2,
++	.clk_dis_wait_val = 0xf,
+ 	.pd = {
+ 		.name = "bps_gdsc",
+ 	},
+-	.flags = HW_CTRL | POLL_CFG_GDSCR,
++	.flags = HW_CTRL | POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+ 	.parent = &titan_top_gdsc.pd,
+ 	.pwrsts = PWRSTS_OFF_ON,
+ };
+ 
+ static struct gdsc ipe_0_gdsc = {
+ 	.gdscr = 0x10078,
++	.en_rest_wait_val = 0x2,
++	.en_few_wait_val = 0x2,
++	.clk_dis_wait_val = 0xf,
+ 	.pd = {
+ 		.name = "ipe_0_gdsc",
+ 	},
+-	.flags = HW_CTRL | POLL_CFG_GDSCR,
++	.flags = HW_CTRL | POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+ 	.parent = &titan_top_gdsc.pd,
+ 	.pwrsts = PWRSTS_OFF_ON,
+ };
+ 
+ static struct gdsc sbi_gdsc = {
+ 	.gdscr = 0x100d0,
++	.en_rest_wait_val = 0x2,
++	.en_few_wait_val = 0x2,
++	.clk_dis_wait_val = 0xf,
+ 	.pd = {
+ 		.name = "sbi_gdsc",
+ 	},
+-	.flags = POLL_CFG_GDSCR,
++	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+ 	.parent = &titan_top_gdsc.pd,
+ 	.pwrsts = PWRSTS_OFF_ON,
+ };
+ 
+ static struct gdsc ife_0_gdsc = {
+ 	.gdscr = 0x11004,
++	.en_rest_wait_val = 0x2,
++	.en_few_wait_val = 0x2,
++	.clk_dis_wait_val = 0xf,
+ 	.pd = {
+ 		.name = "ife_0_gdsc",
+ 	},
+-	.flags = POLL_CFG_GDSCR,
++	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+ 	.parent = &titan_top_gdsc.pd,
+ 	.pwrsts = PWRSTS_OFF_ON,
+ };
+ 
+ static struct gdsc ife_1_gdsc = {
+ 	.gdscr = 0x12004,
++	.en_rest_wait_val = 0x2,
++	.en_few_wait_val = 0x2,
++	.clk_dis_wait_val = 0xf,
+ 	.pd = {
+ 		.name = "ife_1_gdsc",
+ 	},
+-	.flags = POLL_CFG_GDSCR,
++	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+ 	.parent = &titan_top_gdsc.pd,
+ 	.pwrsts = PWRSTS_OFF_ON,
+ };
+ 
+ static struct gdsc ife_2_gdsc = {
+ 	.gdscr = 0x12050,
++	.en_rest_wait_val = 0x2,
++	.en_few_wait_val = 0x2,
++	.clk_dis_wait_val = 0xf,
+ 	.pd = {
+ 		.name = "ife_2_gdsc",
+ 	},
+-	.flags = POLL_CFG_GDSCR,
++	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+ 	.parent = &titan_top_gdsc.pd,
+ 	.pwrsts = PWRSTS_OFF_ON,
+ };
+ 
+ static struct gdsc sfe_0_gdsc = {
+ 	.gdscr = 0x13050,
++	.en_rest_wait_val = 0x2,
++	.en_few_wait_val = 0x2,
++	.clk_dis_wait_val = 0xf,
+ 	.pd = {
+ 		.name = "sfe_0_gdsc",
+ 	},
+-	.flags = POLL_CFG_GDSCR,
++	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+ 	.parent = &titan_top_gdsc.pd,
+ 	.pwrsts = PWRSTS_OFF_ON,
+ };
+ 
+ static struct gdsc sfe_1_gdsc = {
+ 	.gdscr = 0x13098,
++	.en_rest_wait_val = 0x2,
++	.en_few_wait_val = 0x2,
++	.clk_dis_wait_val = 0xf,
+ 	.pd = {
+ 		.name = "sfe_1_gdsc",
+ 	},
+-	.flags = POLL_CFG_GDSCR,
++	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+ 	.parent = &titan_top_gdsc.pd,
+ 	.pwrsts = PWRSTS_OFF_ON,
+ };
+ 
+ static struct gdsc titan_top_gdsc = {
+ 	.gdscr = 0x131dc,
++	.en_rest_wait_val = 0x2,
++	.en_few_wait_val = 0x2,
++	.clk_dis_wait_val = 0xf,
+ 	.pd = {
+ 		.name = "titan_top_gdsc",
+ 	},
+-	.flags = POLL_CFG_GDSCR,
++	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+ 	.pwrsts = PWRSTS_OFF_ON,
+ };
+ 
+diff --git a/drivers/media/platform/qcom/camss/Kconfig b/drivers/media/platform/qcom/camss/Kconfig
+index 4eda48cb1a..d19228128c 100644
+--- a/drivers/media/platform/qcom/camss/Kconfig
++++ b/drivers/media/platform/qcom/camss/Kconfig
+@@ -5,5 +5,5 @@ config VIDEO_QCOM_CAMSS
+ 	depends on (ARCH_QCOM && IOMMU_DMA) || COMPILE_TEST
+ 	select MEDIA_CONTROLLER
+ 	select VIDEO_V4L2_SUBDEV_API
+-	select VIDEOBUF2_DMA_SG
++	select VIDEOBUF2_DMA_CONTIG
+ 	select V4L2_FWNODE
+diff --git a/drivers/media/platform/qcom/camss/camss-csid-680.c b/drivers/media/platform/qcom/camss/camss-csid-680.c
+index 345a67c8fb..7c02dae02d 100644
+--- a/drivers/media/platform/qcom/camss/camss-csid-680.c
++++ b/drivers/media/platform/qcom/camss/camss-csid-680.c
+@@ -192,6 +192,8 @@ static void __csid_configure_rx(struct csid_device *csid,
+ 	camss = csid->camss;
+ 	val = (phy->lane_cnt - 1) << CSI2_RX_CFG0_NUM_ACTIVE_LANES;
+ 	val |= phy->lane_assign << CSI2_RX_CFG0_DL0_INPUT_SEL;
++	if (phy->cphy)
++		val |= BIT(CSI2_RX_CFG0_PHY_TYPE_SEL);
+ 
+ 	if (camss->tpg && csid->tpg_linked &&
+ 	    camss->tpg[phy->csiphy_id].testgen.mode != TPG_PAYLOAD_MODE_DISABLED) {
+@@ -307,6 +309,7 @@ static void csid_configure_stream(struct csid_device *csid, u8 enable)
+ 		if (csid->phy.en_vc & BIT(i)) {
+ 			__csid_configure_rdi_stream(csid, enable, i, 0);
+ 			__csid_configure_rx(csid, &csid->phy, 0);
++			csid_reg_update(csid, i);
+ 			__csid_ctrl_rdi(csid, enable, i);
+ 		}
+ 	}
+diff --git a/drivers/media/platform/qcom/camss/camss-csid-gen3.c b/drivers/media/platform/qcom/camss/camss-csid-gen3.c
+index 0fdbf75fb2..830c9c818d 100644
+--- a/drivers/media/platform/qcom/camss/camss-csid-gen3.c
++++ b/drivers/media/platform/qcom/camss/camss-csid-gen3.c
+@@ -219,6 +219,8 @@ static void __csid_configure_rdi_stream(struct csid_device *csid, u8 enable, u8
+ 	writel(val, csid->base + CSID_RDI_CFG0(port));
+ }
+ 
++static void csid_subdev_reg_update(struct csid_device *csid, int port_id, bool is_clear);
++
+ static void csid_configure_stream(struct csid_device *csid, u8 enable)
+ {
+ 	u8 i;
+@@ -230,6 +232,7 @@ static void csid_configure_stream(struct csid_device *csid, u8 enable)
+ 		if (csid->phy.en_vc & BIT(i)) {
+ 			__csid_configure_rdi_stream(csid, enable, i, 0);
+ 			__csid_configure_rx(csid, &csid->phy, 0);
++			csid_subdev_reg_update(csid, i, false);
+ 			__csid_ctrl_rdi(csid, enable, i);
+ 		}
+ }
+diff --git a/drivers/media/platform/qcom/camss/camss-csid.c b/drivers/media/platform/qcom/camss/camss-csid.c
+index 48459b46a9..7fac81875a 100644
+--- a/drivers/media/platform/qcom/camss/camss-csid.c
++++ b/drivers/media/platform/qcom/camss/camss-csid.c
+@@ -777,6 +777,13 @@ static int csid_set_stream(struct v4l2_subdev *sd, int enable)
+ 			return -ENOLINK;
+ 	}
+ 
++	if (!enable && csid->camss->res->version == CAMSS_8450)
++		dev_info(csid->camss->dev,
++			 "camtrace csid%u stop rx=%#x packets=%u ecc=%#x crc=%#x rdi=%#x irq=%#x\n",
++			 csid->id, readl(csid->base + 0x200), readl(csid->base + 0x240),
++			 readl(csid->base + 0x244), readl(csid->base + 0x248),
++			 readl(csid->base + 0x500), readl(csid->base + 0xec));
++
+ 	if (csid->phy.need_vc_update) {
+ 		csid->res->hw_ops->configure_stream(csid, enable);
+ 		csid->phy.need_vc_update = false;
+@@ -1290,6 +1297,7 @@ static int csid_link_setup(struct media_entity *entity,
+ 			csid->phy.csiphy_id = csiphy->id;
+ 
+ 			lane_cfg = &csiphy->cfg.csi2->lane_cfg;
++			csid->phy.cphy = lane_cfg->cphy;
+ 			csid->phy.lane_cnt = lane_cfg->num_data;
+ 			csid->phy.lane_assign = csid_get_lane_assign(lane_cfg, lane_cfg->num_data);
+ 			csid->tpg_linked = false;
+diff --git a/drivers/media/platform/qcom/camss/camss-csid.h b/drivers/media/platform/qcom/camss/camss-csid.h
+index 5296b10f6b..1fbffff704 100644
+--- a/drivers/media/platform/qcom/camss/camss-csid.h
++++ b/drivers/media/platform/qcom/camss/camss-csid.h
+@@ -65,6 +65,7 @@ struct csid_testgen_config {
+ };
+ 
+ struct csid_phy_config {
++	bool cphy;
+ 	u8 csiphy_id;
+ 	u8 lane_cnt;
+ 	u32 lane_assign;
+diff --git a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+index 66adfb541a..17d148ce61 100644
+--- a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
++++ b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+@@ -1257,6 +1257,7 @@ static bool csiphy_is_gen2(u32 version)
+ 	case CAMSS_8280XP:
+ 	case CAMSS_8300:
+ 	case CAMSS_845:
++	case CAMSS_8450:
+ 	case CAMSS_8550:
+ 	case CAMSS_8650:
+ 	case CAMSS_8775P:
+@@ -1268,6 +1269,40 @@ static bool csiphy_is_gen2(u32 version)
+ 	return ret;
+ }
+ 
++#include "camss-csiphy-sm8450-cphy.h"
++
++static void csiphy_sm8450_cphy_enable(struct csiphy_device *csiphy,
++				      struct csiphy_lanes_cfg *lanes)
++{
++	unsigned int i;
++	u32 mask = 0;
++
++	for (i = 0; i < lanes->num_data; i++)
++		mask |= BIT(2 * lanes->data[i].pos + 1);
++	writel(mask, csiphy->base + 0x1014);
++	writel(0, csiphy->base + 0x1084);
++	writel(1, csiphy->base + 0x1018);
++	writel(0x7a, csiphy->base + 0x101c);
++	writel(0x0e, csiphy->base + 0x1000);
++	usleep_range(3048, 3100);
++	for (i = 0; i < ARRAY_SIZE(rate_regs_sm8450_cphy); i++) {
++		const struct csiphy_lane_regs *r = &rate_regs_sm8450_cphy[i];
++		writel(r->reg_data, csiphy->base + r->reg_addr);
++	}
++	for (i = 0; i < ARRAY_SIZE(lane_regs_sm8450_cphy); i++) {
++		const struct csiphy_lane_regs *r = &lane_regs_sm8450_cphy[i];
++		u32 val = r->csiphy_param_type == CSIPHY_SETTLE_CNT_LOWER_BYTE ?
++			lanes->settle_count : r->reg_data;
++		writel(val, csiphy->base + r->reg_addr);
++		if (r->delay_us)
++			udelay(r->delay_us);
++	}
++	for (i = 11; i < 22; i++)
++		writel(0, csiphy->base + 0x1000 + 4 * i);
++	dev_info(csiphy->camss->dev, "camtrace C-PHY%u mask=%#x settle=%u enabled\n",
++		 csiphy->id, mask, lanes->settle_count);
++}
++
+ static void csiphy_lanes_enable(struct csiphy_device *csiphy,
+ 				struct csiphy_config *cfg,
+ 				s64 link_freq, u8 lane_mask)
+@@ -1278,6 +1313,11 @@ static void csiphy_lanes_enable(struct csiphy_device *csiphy,
+ 	u8 val;
+ 	int i;
+ 
++	if (c->cphy) {
++		csiphy_sm8450_cphy_enable(csiphy, c);
++		return;
++	}
++
+ 	settle_cnt = csiphy_settle_cnt_calc(link_freq, csiphy->timer_clk_rate);
+ 
+ 	val = CSIPHY_3PH_CMN_CSI_COMMON_CTRL5_CLK_ENABLE;
+diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.h b/drivers/media/platform/qcom/camss/camss-csiphy.h
+index 9d9657b82f..fd2bd67813 100644
+--- a/drivers/media/platform/qcom/camss/camss-csiphy.h
++++ b/drivers/media/platform/qcom/camss/camss-csiphy.h
+@@ -35,6 +35,8 @@ struct csiphy_lane {
+  * @clk:      clock lane configuration (only for D-PHY)
+  */
+ struct csiphy_lanes_cfg {
++	bool cphy;
++	u32 settle_count;
+ 	int num_data;
+ 	struct csiphy_lane *data;
+ 	struct csiphy_lane clk;
+diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/media/platform/qcom/camss/camss-vfe.c
+index b86f9ad8fd..33cb2f5ec1 100644
+--- a/drivers/media/platform/qcom/camss/camss-vfe.c
++++ b/drivers/media/platform/qcom/camss/camss-vfe.c
+@@ -503,6 +503,27 @@ void vfe_buf_done(struct vfe_device *vfe, int wm)
+ 	spin_unlock_irqrestore(&vfe->output_lock, flags);
+ }
+ 
++/* CSID 680 and later latch the first buffers after RX configuration.
++ * Based on Hangxiang Ma's 20261011-kaanapali-camss-v21-4 patch.
++ */
++static bool vfe_upstream_csid_has_reg_update(struct vfe_line *line)
++{
++	struct vfe_device *vfe = to_vfe(line);
++	struct camss *camss = vfe->camss;
++	struct media_pad *remote;
++	unsigned int i;
++
++	remote = media_pad_remote_pad_first(&line->pads[MSM_VFE_PAD_SINK]);
++	if (!remote || !is_media_entity_v4l2_subdev(remote->entity))
++		return false;
++	for (i = 0; i < camss->res->csid_num; i++) {
++		struct csid_device *csid = &camss->csid[i];
++		if (&csid->subdev.entity == remote->entity)
++			return !!csid->res->hw_ops->reg_update;
++	}
++	return false;
++}
++
+ int vfe_enable_output_v2(struct vfe_line *line)
+ {
+ 	struct vfe_device *vfe = to_vfe(line);
+@@ -512,6 +533,7 @@ int vfe_enable_output_v2(struct vfe_line *line)
+ 	unsigned long flags;
+ 	unsigned int frame_skip = 0;
+ 	unsigned int i;
++	bool rup_in_csid = vfe_upstream_csid_has_reg_update(line);
+ 
+ 	sensor_pad = camss_find_sensor_pad(&line->subdev.entity);
+ 	if (sensor_pad) {
+@@ -553,7 +575,8 @@ int vfe_enable_output_v2(struct vfe_line *line)
+ 		output->gen2.active_num++;
+ 		ops->vfe_wm_update(vfe, output->wm_idx[0],
+ 				   output->buf[i]->addr[0], line);
+-		ops->reg_update(vfe, line->id);
++		if (!rup_in_csid)
++			ops->reg_update(vfe, line->id);
+ 	}
+ 
+ 	spin_unlock_irqrestore(&vfe->output_lock, flags);
+diff --git a/drivers/media/platform/qcom/camss/camss-video.c b/drivers/media/platform/qcom/camss/camss-video.c
+index 0852eb6f13..2d4caa7b31 100644
+--- a/drivers/media/platform/qcom/camss/camss-video.c
++++ b/drivers/media/platform/qcom/camss/camss-video.c
+@@ -13,11 +13,15 @@
+ #include <media/v4l2-device.h>
+ #include <media/v4l2-ioctl.h>
+ #include <media/v4l2-mc.h>
+-#include <media/videobuf2-dma-sg.h>
++#include <media/videobuf2-dma-contig.h>
+ 
+ #include "camss-video.h"
+ #include "camss.h"
+ 
++static bool trace_stream;
++module_param(trace_stream, bool, 0644);
++MODULE_PARM_DESC(trace_stream, "Log pipeline stream transitions and DMA buffers");
++
+ #define CAMSS_FRAME_MIN_WIDTH		1
+ #define CAMSS_FRAME_MAX_WIDTH		8191
+ #define CAMSS_FRAME_MIN_HEIGHT		1
+@@ -154,15 +158,15 @@ static int video_buf_init(struct vb2_buffer *vb)
+ 						   vb);
+ 	const struct v4l2_pix_format_mplane *format =
+ 						&video->active_fmt.fmt.pix_mp;
+-	struct sg_table *sgt;
+ 	unsigned int i;
+ 
+ 	for (i = 0; i < format->num_planes; i++) {
+-		sgt = vb2_dma_sg_plane_desc(vb, i);
+-		if (!sgt)
+-			return -EFAULT;
+-
+-		buffer->addr[i] = sg_dma_address(sgt->sgl);
++		buffer->addr[i] = vb2_dma_contig_plane_dma_addr(vb, i);
++		if (trace_stream)
++			dev_info(video->camss->dev,
++				 "camtrace %s buffer %u plane %u dma=%pad size=%lu\n",
++				 video->vdev.name, vb->index, i, &buffer->addr[i],
++				 vb2_plane_size(vb, i));
+ 	}
+ 
+ 	if (format->pixelformat == V4L2_PIX_FMT_NV12 ||
+@@ -281,7 +285,13 @@ static int video_start_streaming(struct vb2_queue *q, unsigned int count)
+ 		entity = pad->entity;
+ 		subdev = media_entity_to_v4l2_subdev(entity);
+ 
++		if (trace_stream)
++			dev_info(video->camss->dev, "camtrace %s stream 1 begin\n",
++				 subdev->name);
+ 		ret = v4l2_subdev_call(subdev, video, s_stream, 1);
++		if (trace_stream)
++			dev_info(video->camss->dev, "camtrace %s stream 1 end %d\n",
++				 subdev->name, ret);
+ 		if (ret < 0 && ret != -ENOIOCTLCMD)
+ 			goto error;
+ 	}
+@@ -319,7 +329,13 @@ static void video_stop_streaming(struct vb2_queue *q)
+ 		entity = pad->entity;
+ 		subdev = media_entity_to_v4l2_subdev(entity);
+ 
++		if (trace_stream)
++			dev_info(video->camss->dev, "camtrace %s stream 0 begin\n",
++				 subdev->name);
+ 		ret = v4l2_subdev_call(subdev, video, s_stream, 0);
++		if (trace_stream)
++			dev_info(video->camss->dev, "camtrace %s stream 0 end %d\n",
++				 subdev->name, ret);
+ 
+ 		if (ret) {
+ 			dev_err(video->camss->dev, "Video pipeline stop failed: %d\n", ret);
+@@ -699,7 +715,7 @@ int msm_video_register(struct camss_video *video, struct v4l2_device *v4l2_dev,
+ 
+ 	q = &video->vb2_q;
+ 	q->drv_priv = video;
+-	q->mem_ops = &vb2_dma_sg_memops;
++	q->mem_ops = &vb2_dma_contig_memops;
+ 	q->ops = &msm_video_vb2_q_ops;
+ 	q->type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
+ 	q->io_modes = VB2_DMABUF | VB2_MMAP | VB2_READ;
+diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
+index 77c81ea7d6..e0e9d6adb8 100644
+--- a/drivers/media/platform/qcom/camss/camss.c
++++ b/drivers/media/platform/qcom/camss/camss.c
+@@ -5063,10 +5063,11 @@ static const struct parent_dev_ops vfe_parent_dev_ops = {
+  *
+  * Return 0 on success or a negative error code on failure
+  */
+-static int camss_parse_endpoint_node(struct device *dev,
++static int camss_parse_endpoint_node(struct camss *camss,
+ 				     struct fwnode_handle *ep,
+ 				     struct camss_async_subdev *csd)
+ {
++	struct device *dev = camss->dev;
+ 	struct csiphy_lanes_cfg *lncfg = &csd->interface.csi2.lane_cfg;
+ 	struct v4l2_mbus_config_mipi_csi2 *mipi_csi2;
+ 	struct v4l2_fwnode_endpoint vep = { { 0 } };
+@@ -5081,7 +5082,8 @@ static int camss_parse_endpoint_node(struct device *dev,
+ 	 * Most SoCs support both D-PHY and C-PHY standards, but currently only
+ 	 * D-PHY is supported in the driver.
+ 	 */
+-	if (vep.bus_type != V4L2_MBUS_CSI2_DPHY) {
++	if (vep.bus_type != V4L2_MBUS_CSI2_DPHY &&
++	    !(vep.bus_type == V4L2_MBUS_CSI2_CPHY && camss->res->version == CAMSS_8450)) {
+ 		dev_err(dev, "Unsupported bus type %d\n", vep.bus_type);
+ 		return -EINVAL;
+ 	}
+@@ -5092,6 +5094,13 @@ static int camss_parse_endpoint_node(struct device *dev,
+ 	lncfg->clk.pos = mipi_csi2->clock_lane;
+ 	lncfg->clk.pol = mipi_csi2->lane_polarities[0];
+ 	lncfg->num_data = mipi_csi2->num_data_lanes;
++	lncfg->cphy = vep.bus_type == V4L2_MBUS_CSI2_CPHY;
++	if (lncfg->cphy) {
++		if (lncfg->num_data != 3 ||
++		    fwnode_property_read_u32(ep, "qcom,cphy-settle-count", &lncfg->settle_count) ||
++		    !lncfg->settle_count || lncfg->settle_count > 255)
++			return -EINVAL;
++	}
+ 
+ 	lncfg->data = devm_kcalloc(dev,
+ 				   lncfg->num_data, sizeof(*lncfg->data),
+@@ -5129,7 +5138,7 @@ static int camss_parse_ports(struct camss *camss)
+ 			goto err_cleanup;
+ 		}
+ 
+-		ret = camss_parse_endpoint_node(dev, ep, csd);
++		ret = camss_parse_endpoint_node(camss, ep, csd);
+ 		if (ret < 0)
+ 			goto err_cleanup;
+ 	}
+diff --git a/drivers/media/platform/qcom/camss/camss-csiphy-sm8450-cphy.h b/drivers/media/platform/qcom/camss/camss-csiphy-sm8450-cphy.h
+new file mode 100644
+index 0000000000..b1f3ca3917
+--- /dev/null
++++ b/drivers/media/platform/qcom/camss/camss-csiphy-sm8450-cphy.h
+@@ -0,0 +1,143 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/* Copyright (c) 2020-2021, The Linux Foundation. All rights reserved.
++ * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
++ * Adapted from OnePlusOSS SM8450 877203a7cf9b79973d44a9db716490f95d820110,
++ * cam_csiphy_2_1_0_hwreg.h. Experimental 3-trio C-PHY, <= 1.2 Gsym/s.
++ */
++static const struct csiphy_lane_regs lane_regs_sm8450_cphy[] = {
++	{0x0268, 0xF1, 0x64, CSIPHY_DEFAULT_PARAMS},
++	{0x0294, 0x08, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x02F4, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x02F8, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x02FC, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x02F0, 0x00, 0x02, CSIPHY_DEFAULT_PARAMS},
++	{0x02F0, 0xEF, 0x64, CSIPHY_DEFAULT_PARAMS},
++	{0x0294, 0x09, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0204, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x020C, 0x10, 0x00, CSIPHY_SETTLE_CNT_LOWER_BYTE},
++	{0x0208, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0210, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x02E4, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x02E8, 0x7F, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x02EC, 0x7F, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0218, 0x3E, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x021C, 0x41, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0220, 0x41, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0224, 0x7F, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0228, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x022C, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0264, 0x01, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0244, 0xB2, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0310, 0x35, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x02BC, 0xD0, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0270, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0230, 0x94, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0234, 0x31, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0238, 0x60, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x023C, 0xA6, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0258, 0x10, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0254, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x025C, 0x04, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0248, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x024C, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0240, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0260, 0xA8, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0668, 0xF1, 0x64, CSIPHY_DEFAULT_PARAMS},
++	{0x0694, 0x08, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x06F4, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x06F8, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x06FC, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x06F0, 0x00, 0x02, CSIPHY_DEFAULT_PARAMS},
++	{0x06F0, 0xEF, 0x64, CSIPHY_DEFAULT_PARAMS},
++	{0x0694, 0x09, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0604, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x060C, 0x10, 0x00, CSIPHY_SETTLE_CNT_LOWER_BYTE},
++	{0x0608, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0610, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x06E4, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x06E8, 0x7F, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x06EC, 0x7F, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0618, 0x3E, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x061C, 0x41, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0620, 0x41, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0624, 0x7F, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0628, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x062C, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0664, 0x01, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0644, 0xB2, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0710, 0x35, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x06BC, 0xD0, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0670, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0630, 0x94, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0634, 0x31, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0638, 0x60, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x063C, 0xA6, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0658, 0x10, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0654, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x065C, 0x04, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0648, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x064C, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0640, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0660, 0xA8, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0A68, 0xF1, 0x64, CSIPHY_DEFAULT_PARAMS},
++	{0x0A94, 0x08, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0AF4, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0AF8, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0AFC, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0AF0, 0x00, 0x02, CSIPHY_DEFAULT_PARAMS},
++	{0x0AF0, 0xEF, 0x64, CSIPHY_DEFAULT_PARAMS},
++	{0x0A94, 0x09, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0A04, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0A0C, 0x10, 0x00, CSIPHY_SETTLE_CNT_LOWER_BYTE},
++	{0x0A08, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0A10, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0AE4, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0AE8, 0x7F, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0AEC, 0x7F, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0A18, 0x3E, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0A1C, 0x41, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0A20, 0x41, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0A24, 0x7F, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0A28, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0A2C, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0A64, 0x01, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0A44, 0xB2, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0B10, 0x35, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0ABC, 0xD0, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0A70, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0A30, 0x94, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0A34, 0x31, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0A38, 0x60, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0A3C, 0xA6, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0A58, 0x10, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0A54, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0A5C, 0x04, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0A48, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0A4C, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0A40, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0A60, 0xA8, 0x64, CSIPHY_DEFAULT_PARAMS},
++};
++static const struct csiphy_lane_regs rate_regs_sm8450_cphy[] = {
++	{0x0274, 0x07, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0278, 0x70, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0288, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x028C, 0x11, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x026C, 0x10, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0290, 0x03, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0214, 0x10, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0674, 0x07, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0678, 0x70, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0688, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x068C, 0x11, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x066C, 0x10, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0690, 0x03, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0614, 0x10, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0A74, 0x07, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0A78, 0x70, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0A88, 0x00, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0A8C, 0x11, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0A6C, 0x10, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0A90, 0x03, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x0A14, 0x10, 0x00, CSIPHY_DEFAULT_PARAMS},
++	{0x108C, 0x0C, 0x00, CSIPHY_DEFAULT_PARAMS},
++};

@@ -1,0 +1,135 @@
+--- a/drivers/media/platform/qcom/camss/camss-csid-680.c
++++ b/drivers/media/platform/qcom/camss/camss-csid-680.c
+@@ -22,6 +22,7 @@
+ #define		CSID_TOP_IO_PATH_CFG0_SBI_2			GENMASK(3, 1)
+ #define		CSID_TOP_IO_PATH_CFG0_OUTPUT_IFE_EN		BIT(8)
+ #define		CSID_TOP_IO_PATH_CFG0_SFE_OFFLINE_EN		BIT(12)
++#define CSID_TOP_DUAL_CSID_CFG0(csid)				(0xc + 0x4 * (csid))
+ 
+ #define CSID_RESET_CMD						0x10
+ #define		CSID_RESET_CMD_HW_RESET				BIT(0)
+@@ -224,13 +225,39 @@
+ 	writel(val, csid->base + CSID_RDI_CTRL(rdi));
+ }
+ 
+-static void __csid_configure_top(struct csid_device *csid)
++static void __csid_configure_top(struct csid_device *csid, u8 enable)
+ {
+ 	u32 val;
+ 
+-	val = CSID_TOP_IO_PATH_CFG0_OUTPUT_IFE_EN | CSID_TOP_IO_PATH_CFG0_INTERNAL_CSID;
++	/*
++	 * Only full CSIDs own top IO path/dual config registers; the offsets
++	 * computed for CSID lite instances alias the dual config of CSID0/1.
++	 * The wrapper keeps its state across sessions, so restore the reset
++	 * values on stream off.
++	 */
++	if (csid_is_lite(csid))
++		return;
++
++	val = CSID_TOP_IO_PATH_CFG0_INTERNAL_CSID;
++	if (enable)
++		val |= CSID_TOP_IO_PATH_CFG0_OUTPUT_IFE_EN;
+ 	writel(val, csid->camss->csid_wrapper_base +
+ 	    CSID_TOP_IO_PATH_CFG0(csid->id));
++	writel(0, csid->camss->csid_wrapper_base +
++	    CSID_TOP_DUAL_CSID_CFG0(csid->id));
++}
++
++static void __csid_disable_rdi_stream(struct csid_device *csid, u8 port)
++{
++	u32 val;
++
++	__csid_ctrl_rdi(csid, 0, port);
++
++	val = readl(csid->base + CSID_RDI_CFG0(port));
++	val &= ~RDI_CFG0_ENABLE;
++	writel(val, csid->base + CSID_RDI_CFG0(port));
++
++	csid_reg_update(csid, port);
+ }
+ 
+ static void __csid_configure_rdi_stream(struct csid_device *csid, u8 enable, u8 port, u8 vc)
+@@ -302,7 +329,15 @@
+ {
+ 	int i;
+ 
+-	__csid_configure_top(csid);
++	if (!enable) {
++		for (i = 0; i < MSM_CSID_MAX_SRC_STREAMS; i++)
++			if (csid->phy.en_vc & BIT(i))
++				__csid_disable_rdi_stream(csid, i);
++		__csid_configure_top(csid, 0);
++		return;
++	}
++
++	__csid_configure_top(csid, 1);
+ 
+ 	/* Loop through all enabled ports and configure a stream for each */
+ 	for (i = 0; i < MSM_CSID_MAX_SRC_STREAMS; i++) {
+--- a/drivers/media/platform/qcom/camss/camss-csid.c
++++ b/drivers/media/platform/qcom/camss/camss-csid.c
+@@ -784,6 +784,20 @@
+ 			 readl(csid->base + 0x244), readl(csid->base + 0x248),
+ 			 readl(csid->base + 0x500), readl(csid->base + 0xec));
+ 
++	/*
++	 * need_vc_update is consumed by stream on, so stream off must not
++	 * depend on it or the RDI paths stay enabled after the PHY stops.
++	 */
++	if (!enable && csid->camss->res->version == CAMSS_8450) {
++		csid->res->hw_ops->configure_stream(csid, 0);
++		csid->phy.need_vc_update = true;
++		dev_info(csid->camss->dev,
++			 "camtrace csid%u stopped rdi=%#x ctrl=%#x\n",
++			 csid->id, readl(csid->base + 0x500),
++			 readl(csid->base + 0x504));
++		return 0;
++	}
++
+ 	if (csid->phy.need_vc_update) {
+ 		csid->res->hw_ops->configure_stream(csid, enable);
+ 		csid->phy.need_vc_update = false;
+--- a/drivers/media/platform/qcom/camss/camss-video.c
++++ b/drivers/media/platform/qcom/camss/camss-video.c
+@@ -257,7 +257,7 @@
+ {
+ 	struct camss_video *video = vb2_get_drv_priv(q);
+ 	struct video_device *vdev = &video->vdev;
+-	struct media_entity *entity;
++	struct media_entity *entity, *failed;
+ 	struct media_pad *pad;
+ 	struct v4l2_subdev *subdev;
+ 	int ret;
+@@ -293,11 +293,30 @@
+ 			dev_info(video->camss->dev, "camtrace %s stream 1 end %d\n",
+ 				 subdev->name, ret);
+ 		if (ret < 0 && ret != -ENOIOCTLCMD)
+-			goto error;
++			goto error_stop;
+ 	}
+ 
+ 	return 0;
+ 
++error_stop:
++	/* Stop the entities started before the failing one, sink first. */
++	failed = entity;
++	entity = &vdev->entity;
++	while (1) {
++		pad = &entity->pads[0];
++		if (!(pad->flags & MEDIA_PAD_FL_SINK))
++			break;
++
++		pad = media_pad_remote_pad_first(pad);
++		if (!pad || !is_media_entity_v4l2_subdev(pad->entity) ||
++		    pad->entity == failed)
++			break;
++
++		entity = pad->entity;
++		subdev = media_entity_to_v4l2_subdev(entity);
++		v4l2_subdev_call(subdev, video, s_stream, 0);
++	}
++
+ error:
+ 	video_device_pipeline_stop(vdev);
+ 

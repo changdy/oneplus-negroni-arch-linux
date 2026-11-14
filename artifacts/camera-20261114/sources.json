@@ -1,0 +1,19 @@
+{
+  "kernel_base": "463023bf84b1a26722c7a03c5f005c85a17a30fe",
+  "stock_source_commit": "877203a7cf9b79973d44a9db716490f95d820110",
+  "stock_source_repository": "https://github.com/OnePlusOSS/android_kernel_modules_and_devicetree_oneplus_sm8450",
+  "files": {
+    "camss-experimental.patch": "26561d27e302c16dd4e83c29a4888898cd547b43afa7777ab09e24f56ae6fc6d",
+    "camss-stream-stop-fix.patch": "07f4dc5638216da9453eddf7256a4ba1c935f3f43bc1659905500955da637743",
+    "drivers/imx615.c": "077a1ca46127e187085ad59fccef4413cc04336a7bd7c5bb0eb6608bdd0d2af9",
+    "drivers/imx789-ftm.h": "e65f4955ac8bc63c16c314912d2b7068a84b2f9d94cd50c0f80ef62e3bdcda97",
+    "drivers/Makefile": "fbed2adfef0d2fd5f3ae44406fa680479bb3e61c33edb26d32834bbe27a6676d",
+    "drivers/negroni_camera_overlay.c": "1b07b5f43bf27c0adbafb907fc84e833463e49681cd86decffee91720ef0f983",
+    "drivers/negroni_extra_sensors.c": "99df4ebd3b9394409f5cbed73c3786ed438d4bdfd0f1b5b12eabbab96d595973",
+    "drivers/negroni_phy_hold.c": "cbff14d134cb61f6221c534154fa46a14fa1949e1f9b0d748e90ac4fd0f9a42c",
+    "drivers/ov08a10-ftm.h": "8b77d0a62d471053dfa994fa53efe7da639bf569e3c2a129d14eea2f9a008809",
+    "negroni-four-camera-test.dts": "f83b85be951d5821afa73141c27fbe7ded7402b1ee6c8be67d383f4a0085600b",
+    "README.md": "abbc22c56b266f9514bc4fd892dc153dfb1e2f98e833cb452d78ab5b315c44b9"
+  },
+  "stock_module_archive_camera_sha256": "1962012bfe4cd6d45e3a6b467c8d20ea2e32afab057acf11d41538f2f098d46e"
+}

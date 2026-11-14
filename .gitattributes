@@ -22,6 +22,9 @@ config/volte/*.patch whitespace=-space-before-tab
 # Preserve upstream unified-diff context lines, including blank context at EOF.
 config/gnss/*.patch text eol=lf whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab
 artifacts/usb2-gadget-20261113/*.patch text eol=lf whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab
+/artifacts/camera-20261114/** text eol=lf
+artifacts/camera-20261113/*.patch text eol=lf whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab
+artifacts/camera-20261114/*.patch whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab
 config/gnss/sources.txt text eol=lf
 *.rules text eol=lf
 *.source text eol=lf

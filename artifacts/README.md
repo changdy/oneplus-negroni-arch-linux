@@ -4,6 +4,7 @@
 
 | 目录 | 内容 |
 | --- | --- |
+| [camera-20261114](camera-20261114/README.md) | 四摄 RAW、IMX789 C-PHY 实验移植、安卓配置交叉核对及未解决的启停硬重启 |
 | [haptics-20261114](haptics-20261114/README.md) | PM8350B 振动自动加载、标准反馈接口、首次锁问题修正及桌面接入验证 |
 | [mic-clock-20261113](mic-clock-20261113/README.md) | 原厂 DMIC3/4 路由、共享时钟反汇编、VA/双通道状态修正；2026-11-14 傍晚去掉复位脚 sleep 状态后 ALSA 录音恢复，内核提交 `67d9e35c9ac0` |
 | [stock-hardware-20261113](stock-hardware-20261113/README.md) | 本机原厂版本、驱动模块与相机/音频/显示资料的只读核查 |
