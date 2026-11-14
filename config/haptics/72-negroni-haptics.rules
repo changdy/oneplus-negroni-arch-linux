@@ -1,0 +1,2 @@
+# PM8350B vibrator: feedbackd discovers it by this tag; logind grants seat access.
+ACTION!="remove", SUBSYSTEM=="input", KERNEL=="event*", ENV{ID_INPUT}=="1", ATTRS{name}=="qcom-hv-haptics", TAG+="uaccess", ENV{FEEDBACKD_TYPE}="vibra"

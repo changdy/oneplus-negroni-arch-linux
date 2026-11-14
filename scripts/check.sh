@@ -74,6 +74,8 @@ if [[ $with_kernel == true ]]; then
     python3 -B tests/test-usb2-driver.py
     printf 'Running LPASS capture mixer regression checks...\n'
     python3 -B tests/test-lpass-capture.py
+    printf 'Running haptics playback regression checks...\n'
+    python3 -B tests/test-haptics-driver.py
     printf 'Checking Docker configuration in fresh and existing kernel outputs...\n'
     python3 -B tests/test-docker-config.py
 fi

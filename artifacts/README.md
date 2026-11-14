@@ -4,6 +4,7 @@
 
 | 目录 | 内容 |
 | --- | --- |
+| [haptics-20261114](haptics-20261114/README.md) | PM8350B 振动自动加载、标准反馈接口、首次锁问题修正及桌面接入验证 |
 | [mic-clock-20261113](mic-clock-20261113/README.md) | 原厂 DMIC3/4 路由、共享时钟反汇编、VA/双通道状态修正与重启实测；麦克风仍无信号 |
 | [charging-status-20260915](charging-status-20260915/README.md) | 电流符号修复及实机拔插验证 |
 | [charge-limit-research-20260916](charge-limit-research-20260916/README.md) | 充电阈值方案、原厂源码与 ABI 依据 |

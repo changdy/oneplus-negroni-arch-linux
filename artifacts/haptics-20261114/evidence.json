@@ -1,0 +1,197 @@
+{
+  "date": "2026-11-14",
+  "device": "OnePlus 10 Pro NE2210",
+  "kernel_release": "7.3.0-sm8450+",
+  "kernel_commit": "f2fc0916795112d8e10f350bf1b27b053bef069e",
+  "original_module_sha256": "47556a9945d3c8871e6a4dd4bf242c8e9173d9beafc858d31fc5d14560216b3a",
+  "installed_module_sha256": "bf501cc39b99510e2b77c8d86992eab620d1c2f3e24d6dc419427a468684353a",
+  "build_id_note_sha256": "a5fb3d4c81430a50ea2e36c820b5d4fb39b299ee097e2938c458a82e09114fb7",
+  "input_capabilities": [
+    "FF_RUMBLE",
+    "FF_CONSTANT",
+    "FF_PERIODIC",
+    "FF_SINE",
+    "FF_GAIN"
+  ],
+  "user_confirmed": "Three clear short vibrations at 150 ms and 50% strength",
+  "passed": [
+    "boot_autoload",
+    "delayed_upload",
+    "automatic_stop",
+    "20_replays_of_one_effect",
+    "explicit_early_stop",
+    "udev_feedbackd_type_and_uaccess",
+    "plasma_haptic_dbus_method",
+    "10_dbus_repeat_requests",
+    "feedbackd_button_pressed_event",
+    "module_unload_proc_cleanup_and_autoload",
+    "dbus_after_module_reload",
+    "no_failed_system_units",
+    "normal_reboot_and_postboot_dbus",
+    "slot_b_active_successful_bootable"
+  ],
+  "register_log_intervals": {
+    "20": [
+      {
+        "programmed_ms": 20,
+        "log_interval_ms": 23.463,
+        "stop": "timer"
+      },
+      {
+        "programmed_ms": 20,
+        "log_interval_ms": 24.256,
+        "stop": "timer"
+      },
+      {
+        "programmed_ms": 20,
+        "log_interval_ms": 24.285,
+        "stop": "timer"
+      },
+      {
+        "programmed_ms": 20,
+        "log_interval_ms": 23.611,
+        "stop": "timer"
+      },
+      {
+        "programmed_ms": 20,
+        "log_interval_ms": 27.649,
+        "stop": "timer"
+      },
+      {
+        "programmed_ms": 20,
+        "log_interval_ms": 24.183,
+        "stop": "timer"
+      },
+      {
+        "programmed_ms": 20,
+        "log_interval_ms": 24.307,
+        "stop": "timer"
+      },
+      {
+        "programmed_ms": 20,
+        "log_interval_ms": 27.747,
+        "stop": "timer"
+      },
+      {
+        "programmed_ms": 20,
+        "log_interval_ms": 24.177,
+        "stop": "timer"
+      },
+      {
+        "programmed_ms": 20,
+        "log_interval_ms": 23.586,
+        "stop": "timer"
+      },
+      {
+        "programmed_ms": 20,
+        "log_interval_ms": 23.725,
+        "stop": "timer"
+      },
+      {
+        "programmed_ms": 20,
+        "log_interval_ms": 24.359,
+        "stop": "timer"
+      },
+      {
+        "programmed_ms": 20,
+        "log_interval_ms": 23.713,
+        "stop": "timer"
+      },
+      {
+        "programmed_ms": 20,
+        "log_interval_ms": 24.209,
+        "stop": "timer"
+      },
+      {
+        "programmed_ms": 20,
+        "log_interval_ms": 24.348,
+        "stop": "timer"
+      },
+      {
+        "programmed_ms": 20,
+        "log_interval_ms": 23.668,
+        "stop": "timer"
+      },
+      {
+        "programmed_ms": 20,
+        "log_interval_ms": 23.803,
+        "stop": "timer"
+      },
+      {
+        "programmed_ms": 20,
+        "log_interval_ms": 23.709,
+        "stop": "timer"
+      },
+      {
+        "programmed_ms": 20,
+        "log_interval_ms": 24.318,
+        "stop": "timer"
+      },
+      {
+        "programmed_ms": 20,
+        "log_interval_ms": 24.275,
+        "stop": "timer"
+      }
+    ],
+    "80": [
+      {
+        "programmed_ms": 80,
+        "log_interval_ms": 85.335,
+        "stop": "timer"
+      },
+      {
+        "programmed_ms": 80,
+        "log_interval_ms": 84.426,
+        "stop": "timer"
+      },
+      {
+        "programmed_ms": 80,
+        "log_interval_ms": 83.828,
+        "stop": "timer"
+      },
+      {
+        "programmed_ms": 80,
+        "log_interval_ms": 84.138,
+        "stop": "timer"
+      },
+      {
+        "programmed_ms": 80,
+        "log_interval_ms": 83.868,
+        "stop": "explicit"
+      }
+    ],
+    "150": [
+      {
+        "programmed_ms": 150,
+        "log_interval_ms": 155.546,
+        "stop": "timer"
+      },
+      {
+        "programmed_ms": 150,
+        "log_interval_ms": 158.861,
+        "stop": "timer"
+      },
+      {
+        "programmed_ms": 150,
+        "log_interval_ms": 155.632,
+        "stop": "timer"
+      }
+    ],
+    "600": [
+      {
+        "programmed_ms": 600,
+        "log_interval_ms": 71.399,
+        "stop": "explicit"
+      }
+    ]
+  },
+  "measurement_limit": "Intervals between kernel register-operation log entries; not an electrical waveform measurement",
+  "not_tested": [
+    "full_rootfs_image",
+    "deep_sleep",
+    "RichTap",
+    "SoundWire",
+    "arbitrary_waveform_envelopes",
+    "long_term_multi_client_load"
+  ]
+}

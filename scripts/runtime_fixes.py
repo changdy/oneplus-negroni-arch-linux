@@ -17,6 +17,7 @@ ORIGINAL_QML_SHA256 = '04efb09e0ed16082294c4c2d7c1c32cc93d4bdab3ffec9b30d0bffa8c
 AUTOSTART = '/etc/xdg/autostart/org.kde.modem.daemon.desktop'
 ORIGINAL_LOADER_SHA256 = 'c68f181a550f662a75091af6e5600953fe950c050ff5398168c2b490977cd459'
 FILES = {
+    '/etc/udev/rules.d/72-negroni-haptics.rules': ('config/haptics/72-negroni-haptics.rules', 0o644),
     QUICK_SETTINGS: ('config/quicksettings/QuickSettings.qml', 0o644),
     LOADER: ('config/firmware-loader/msm-firmware-loader.sh', 0o755),
     '/usr/lib/systemd/user/negroni-modem-daemon.service': ('config/systemd/negroni-modem-daemon.service', 0o644),
@@ -95,7 +96,8 @@ def plan(root):
     changes[AUTOSTART] = (autostart_fixed(auto.read_bytes()), 0o644)
     for executable in ('/usr/lib/modem-daemon', '/usr/bin/systemctl', '/usr/lib/kde-telephony-daemon',
                        '/usr/lib/kactivitymanagerd', '/usr/bin/xembedsniproxy',
-                       '/usr/bin/gmenudbusmenuproxy', '/usr/lib/org_kde_powerdevil', '/usr/bin/btmgmt'):
+                       '/usr/bin/gmenudbusmenuproxy', '/usr/lib/org_kde_powerdevil', '/usr/bin/btmgmt',
+                       '/usr/lib/feedbackd', '/usr/bin/fbcli'):
         if (not (root/executable.lstrip('/')).is_file()
                 or not (root/executable.lstrip('/')).stat().st_mode & 0o111):
             raise RuntimeError('Missing dependency: '+executable)
