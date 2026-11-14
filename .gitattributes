@@ -37,3 +37,5 @@ config/gnss/sources.txt text eol=lf
 config/gnss/runtime/ModemManager binary
 config/gnss/runtime/*.so.* binary
 config/gnss/runtime/SHA256SUMS text eol=lf
+*.desktop text eol=lf
+config/packages/*.txt text eol=lf

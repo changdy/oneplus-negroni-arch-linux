@@ -25,6 +25,7 @@ iw
 wireless-regdb
 noto-fonts-cjk
 feedbackd
+angelfish
 libcamera
 libcamera-ipa
 libcamera-tools

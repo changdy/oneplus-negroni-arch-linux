@@ -33,3 +33,5 @@ fc-match 'sans-serif:lang=zh-cn'
 整理后的结果见 [verification.json](../artifacts/fonts-20261112/verification.json)，样图为 [Qt](../artifacts/fonts-20261112/qt-fonts.png) 和 [Pango](../artifacts/fonts-20261112/pango.png)。原始日志在本地 `logs/fonts-20261112/`，不纳入 Git。
 
 以上是实机生成样图的验证；已有桌面应用逐个重新打开后的显示、物理屏幕显示、新完整镜像安装均未测。系统 fontconfig 当前会选择包含中文字形的 CJK KR 变体，本次未调整地区字形偏好。
+
+2026-11-15 交付检查补充：默认软件清单继续包含 CJK，安装阶段检查 fontconfig 能列出中文 Noto CJK；`verify-desktop-image.py` 同时检查包数据库和实际字体文件。小型 ext4 缺字体拒绝检查通过，新完整镜像字体显示仍未测。

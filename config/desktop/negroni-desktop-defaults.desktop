@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Negroni desktop defaults
+Exec=/usr/bin/python3 /usr/local/libexec/negroni-desktop-defaults.py
+OnlyShowIn=KDE;
+NoDisplay=true
+X-KDE-autostart-phase=2

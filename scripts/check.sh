@@ -29,6 +29,7 @@ paths = sorted(Path("scripts").glob("*.py")) + sorted(Path("tests").glob("*.py")
 paths.append(Path("config/charge-limit/negroni-charge-limit"))
 paths.append(Path("config/cpu-performance/negroni-cpu-performance"))
 paths.extend(sorted(Path("config/audio/voice").glob("*.py")))
+paths.extend(sorted(Path("config/desktop").glob("*.py")))
 paths.append(Path("config/volte/negroni-ims-recovery.py"))
 for path in paths:
     compile(path.read_bytes(), str(path), "exec")

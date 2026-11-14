@@ -6,7 +6,7 @@
 
 当前手机使用 Arch Linux ARM（`aarch64`）与 Plasma Mobile。已补装 KDE 为手机触屏设计的 [Angelfish](https://apps.kde.org/angelfish/) `26.08.3-1`，网页引擎为 `qt6-webengine 6.11.3-2`。
 
-本次只给现有手机补装，尚未修改镜像软件清单。Firefox、Chromium、Falkon 和 Epiphany 也有 ARM64 包，但本次没有安装或验证。
+2026-11-12 先给现有手机补装；2026-11-15 已加入默认软件清单，并由桌面打包检查确认包和程序存在。新完整镜像未构建、未刷入。Firefox、Chromium、Falkon 和 Epiphany 也有 ARM64 包，但本次没有安装或验证。
 
 ## 安装与启动：通过（2026-11-12 实机）
 
