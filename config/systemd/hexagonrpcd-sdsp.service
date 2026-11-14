@@ -1,0 +1,13 @@
+[Unit]
+Description=Serve Qualcomm SDSP sensor files over FastRPC
+Requires=negroni-sensor-files.service
+After=negroni-sensor-files.service
+StartLimitIntervalSec=0
+
+[Service]
+ExecStart=/usr/local/libexec/hexagonrpcd-sdsp-wait
+Restart=always
+RestartSec=0.2
+
+[Install]
+WantedBy=multi-user.target

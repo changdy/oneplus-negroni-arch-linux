@@ -1,0 +1,9 @@
+[Unit]
+Description=Assemble the SLPI sensor files served by hexagonrpcd
+Wants=msm-firmware-loader.service
+After=msm-firmware-loader.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/libexec/negroni-sensor-files

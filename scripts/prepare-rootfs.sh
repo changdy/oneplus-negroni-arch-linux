@@ -61,6 +61,8 @@ mount -o loop "$image_dir/root.img" alarm/mnt
 chroot alarm /bin/bash -euo pipefail <<'CHROOT'
 pacstrap -c /mnt --needed --noconfirm base e2fsprogs util-linux pacman archlinuxarm-keyring systemd-sysvcompat networkmanager iw wireless-regdb openssh python usbutils linux-firmware-realtek msm-firmware-loader msm-modem-uim-selection linux-firmware-oplus-negroni rmtfs-oplus tqftpserv
 pacstrap -c /mnt --needed --noconfirm sddm plasma-mobile plasma-desktop powerdevil bluedevil spacebar qmlkonsole plasma-dialer plasma-settings kscreen plasma-nm modemmanager mkinitcpio sudo qt6-virtualkeyboard iio-sensor-proxy
+# The xec hexagonrpc package installs under /usr/local and also lists /usr/local/share/man, which filesystem owns.
+pacstrap -c /mnt --needed --noconfirm --overwrite /usr/local/share/man hexagonrpc
 systemctl --root=/mnt enable sddm NetworkManager ModemManager msm-modem-uim-selection bluetooth systemd-timesyncd msm-firmware-loader msm-firmware-loader-unpack rmtfs tqftpserv
 CHROOT
 cp alarm/etc/pacman.conf alarm/mnt/etc/pacman.conf

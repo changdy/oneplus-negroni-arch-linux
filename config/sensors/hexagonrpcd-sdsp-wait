@@ -1,0 +1,12 @@
+#!/bin/sh
+# /dev/fastrpc-sdsp exists only while the SLPI runs; systemd restarts this after an SLPI restart.
+export LD_LIBRARY_PATH=/usr/local/lib
+i=0
+while [ $i -lt 200 ]; do
+    if [ -e /dev/fastrpc-sdsp ]; then
+        exec /usr/local/bin/hexagonrpcd -f /dev/fastrpc-sdsp -d sdsp -s -R /run/negroni-sensors
+    fi
+    sleep 0.05
+    i=$((i + 1))
+done
+exit 1

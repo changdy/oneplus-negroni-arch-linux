@@ -1,0 +1,46 @@
+#!/bin/sh
+# Assemble the file tree hexagonrpcd serves to the SLPI: stock sensor JSON,
+# this phone's persist registry, and a socinfo directory the JSON filters accept.
+set -eu
+src=/usr/share/negroni/sensors
+persist=/usr/lib/firmware/msm-firmware-loader/mnt/persist/sensors/registry/registry
+root=/run/negroni-sensors
+
+i=0
+while [ ! -d "$persist" ] && [ $i -lt 100 ]; do
+    sleep 0.1
+    i=$((i + 1))
+done
+[ -d "$persist" ] || { echo "negroni-sensor-files: $persist is not mounted" >&2; exit 1; }
+
+rm -rf "$root"
+mkdir -p "$root/sensors" "$root/socinfo"
+cp -R "$src/config" "$root/sensors/config"
+cp "$src/sns_reg.conf" "$root/sensors/sns_reg.conf"
+cp -R "$persist" "$root/sensors/registry"
+
+# The factory registry still names the QRD I2C bus 5 / IRQ 89; NE2210 wires TCS3701 to bus 2 / IRQ 14.
+alsps=$root/sensors/registry/alsps_platform.config
+if [ -f "$alsps" ]; then
+    python3 - "$alsps" <<'PY'
+import json, sys
+path = sys.argv[1]
+with open(path) as f:
+    registry = json.load(f)
+config = registry["alsps_platform.config"]
+config["bus_instance"]["data"] = "2"
+config["dri_irq_num"]["data"] = "14"
+with open(path, "w") as f:
+    json.dump(registry, f, separators=(",", ":"))
+PY
+fi
+
+for f in /sys/devices/soc0/*; do
+    [ -f "$f" ] && [ -r "$f" ] && cat "$f" > "$root/socinfo/${f##*/}" 2>/dev/null || true
+done
+# hexagonrpcd maps /sys/devices/soc0 here; mainline lacks hw_platform and the platform_* fields.
+printf 'QRD\n' > "$root/socinfo/hw_platform"
+for field in platform_subtype platform_subtype_id platform_version; do
+    printf '0\n' > "$root/socinfo/$field"
+done
+[ -s "$root/socinfo/soc_id" ] || printf '457\n' > "$root/socinfo/soc_id"

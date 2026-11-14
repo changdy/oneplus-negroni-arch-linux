@@ -1,0 +1,9 @@
+origin NE2210 slot b stock partitions, extracted on the phone to ~/android-ro/vendor_b and ~/android-ro/odm_b
+copied 2026-11-14 from the hexagonrpcd tree that served the SLPI while auto-rotation, light and proximity worked
+config/ 53 files from vendor_b/etc/sensors/config, byte-identical
+config/ 12 files from odm_b/etc/sensor/config, byte-identical except waipio_qrd_alsps.json
+edited config/waipio_qrd_alsps.json stock-sha256 be3c5dac3238843c5ea88d8a5a2670297c98571555e04b2b0471b537f470eed6 sha256 1f1188b401cf26637c9248f63acf2db3cf1da731c92537e2e846e44d0deb23d0
+edited config/waipio_qrd_alsps.json: alsps.als.config is_dri 0 -> 1, bus_instance 5 -> 2, dri_irq_num 89 -> 14
+edited sns_reg.conf stock vendor_b/etc/sensors/sns_reg_config sha256 3399ec82c9af8d3f350ff655d3ac40187944497220db4f2f9d4848558bd9df9f
+edited sns_reg.conf: file=config=/odm/etc/sensor/config -> /vendor/etc/sensors/config; sha256 6583b8b2d5206a055c9556e885fe93d348ab02bb0565c8fc88a56de72301bd61
+not stored persist sensors/registry (factory calibration); negroni-sensor-files copies it from the phone at boot

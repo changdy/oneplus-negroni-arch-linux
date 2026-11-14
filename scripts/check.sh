@@ -62,8 +62,22 @@ if hashlib.sha256(gyro).hexdigest() != recorded("config/sensors/negroni-gyro.sou
     raise SystemExit("negroni-gyro does not match its source note")
 if gyro[:4] != b"\x7fELF" or gyro[18:20] != b"\xb7\x00":
     raise SystemExit("negroni-gyro is not an aarch64 ELF binary")
+qcom = Path("config/sensors/qcom")
+note = Path("config/sensors/qcom.source").read_text()
+if len(list((qcom / "config").glob("*.json"))) != 65:
+    raise SystemExit("config/sensors/qcom/config must hold the 65 served JSON files")
+for edited in (qcom / "config/waipio_qrd_alsps.json", qcom / "sns_reg.conf"):
+    if f"sha256 {hashlib.sha256(edited.read_bytes()).hexdigest()}" not in note:
+        raise SystemExit(f"{edited} does not match qcom.source")
 print("sensor payloads match")
 PY
+for script in config/sensors/negroni-sensor-files config/sensors/hexagonrpcd-sdsp-wait; do
+    sh -n "$script"
+    if grep -q $'\r' "$script"; then
+        printf '%s has CRLF line endings\n' "$script" >&2
+        exit 1
+    fi
+done
 
 printf 'Running experimental voice test cleanup checks...\n'
 python3 -B tests/test-voice-test.py

@@ -34,7 +34,7 @@ AudioReach 通话语音 `81637d2a07f3` 打开 Negroni 的 hostless 语音图：V
 
 SN100 `fff7de955691` 在控制器打开期间使用 `LN_BB_CLK2`，并把中断做成电平触发。NE2210 打开控制器、完成 RF 发现，并读到一张 Type 2 卡的 UID。块读取得到 Classic NAK，NDEF 未做。被动监听 UID 没有进入这个提交。bundle 保留原两个前置提交与历史 rc2 引用，见 [NFC](../../docs/nfc.md)。
 
-SMEM 光线距离 `472db17c1a3b` 分配 Oplus SMEM 项 130，并通过 debugfs 写入 5140 字节。NE2210 写入 TCS3701 描述并重启 SLPI 后，遮住传感器时光线降到约 0 lux，距离为 NEAR，加速度计和磁力计仍有读数。父仓库用 `negroni-smem-sensor.service` 在开机时做同样的写入。`hexagonrpc` 仍未进镜像。DMIC 路由和 NFC 被动监听没有混入。bundle 保留原两个前置提交与历史 rc2 引用，见[传感器说明](../../docs/sensors.md)。
+SMEM 光线距离 `472db17c1a3b` 分配 Oplus SMEM 项 130，并通过 debugfs 写入 5140 字节。NE2210 写入 TCS3701 描述并重启 SLPI 后，遮住传感器时光线降到约 0 lux，距离为 NEAR，加速度计和磁力计仍有读数。父仓库用 `negroni-smem-sensor.service` 在开机时做同样的写入，`hexagonrpc` 也由父仓库装进镜像。DMIC 路由和 NFC 被动监听没有混入。bundle 保留原两个前置提交与历史 rc2 引用，见[传感器说明](../../docs/sensors.md)。
 
 NFC-A 被动监听 `b7385d286e` 在目标协议只有 MIFARE、没有发起方协议时写入 `LA_NFCID1` 和 `SEL_INFO 0x08`，再以模式 `0x80` 监听。NE2210 的 SN100 接受了 UID `CD 27 FC DB`、ATQA `00 04` 和 SEL_INFO `0x08`，并保持监听 20 秒。旁边没有读卡器，空中身份未证实。Classic 加密扇区没有实现。这一提交只改 `nci`。bundle 保留原两个前置提交与历史 rc2 引用，见 [NFC](../../docs/nfc.md)。
 

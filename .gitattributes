@@ -29,5 +29,8 @@ config/gnss/sources.txt text eol=lf
 *.rules text eol=lf
 *.source text eol=lf
 
+# Stock sensor JSON is served to the SLPI byte for byte; two files carry CRLF.
+/config/sensors/qcom/** -text -whitespace
+
 # Keep the verified stock module archive byte-identical to its SHA256SUMS.
 /downloads/stock-drivers-20261113/vendor_dlkm_b/** binary

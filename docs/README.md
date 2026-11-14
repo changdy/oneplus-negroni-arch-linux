@@ -22,7 +22,7 @@
 | [蓝牙](bluetooth.md) | WCN6855 缺少 public address 的修复与验证范围 |
 | [NFC](nfc.md) | 已读到 UID `CD 27 FC DB`，手机可监听申报该 UID；门禁未测 |
 | [振动反馈](haptics.md) | PM8350B 自动加载、标准 FF 接口、feedbackd / Plasma 接入与实机验证边界 |
-| [传感器](sensors.md) | 自动旋转方向已确认。陀螺仪已能读，单位 rad/s。镜像安装 udev、换过的 iio-sensor-proxy、SMEM 光线距离服务和陀螺仪程序。hexagonrpc 仍只在本机 |
+| [传感器](sensors.md) | 自动旋转方向已确认。陀螺仪已能读，单位 rad/s。镜像安装 hexagonrpc、原厂传感器 JSON、udev、换过的 iio-sensor-proxy、SMEM 光线距离服务和陀螺仪程序。注册表开机从本机 persist 拷贝 |
 | [GPU](gpu.md) | Adreno 730 3D/Vulkan 实测、runtime PM 与慢亮屏规避 |
 | [相机](camera.md) | 四摄 RAW。JN1 设备树在内核里；另外三颗以外部模块安装，不自动加载。新镜像未构建 |
 | [红外](infrared.md) | NE2210 没有红外遥控发射器；TCS3701 的红外 LED 只做距离感应 |
