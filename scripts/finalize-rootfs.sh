@@ -66,6 +66,7 @@ bash "$project_dir/scripts/configure-camera.sh" "$target_dir" "$project_dir/$log
 bash "$project_dir/scripts/configure-nfc.sh" "$target_dir" "$project_dir/$log_dir"
 bash "$project_dir/scripts/configure-sensors.sh" "$target_dir" "$project_dir/$log_dir"
 bash "$project_dir/scripts/configure-modem-uim.sh" "$target_dir" "$project_dir/$log_dir"
+bash "$project_dir/scripts/configure-gnss.sh" "$target_dir" "$project_dir/$log_dir"
 bash "$project_dir/scripts/configure-volte.sh" "$target_dir" "$project_dir/$log_dir"
 bash "$project_dir/scripts/configure-runtime-fixes.sh" "$target_dir" "$project_dir/$log_dir"
 bash "$project_dir/scripts/configure-cpu-performance.sh" "$target_dir" "$project_dir/$log_dir"

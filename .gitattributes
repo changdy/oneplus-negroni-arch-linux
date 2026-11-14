@@ -34,3 +34,6 @@ config/gnss/sources.txt text eol=lf
 
 # Keep the verified stock module archive byte-identical to its SHA256SUMS.
 /downloads/stock-drivers-20261113/vendor_dlkm_b/** binary
+config/gnss/runtime/ModemManager binary
+config/gnss/runtime/*.so.* binary
+config/gnss/runtime/SHA256SUMS text eol=lf

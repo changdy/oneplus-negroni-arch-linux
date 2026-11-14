@@ -13,3 +13,8 @@ Build: scripts/build-gnss-stack.sh (native aarch64, prefix /opt/negroni-gnss)
   protocol https://github.com/qualcomm-linux/location-apis-qcom aa950a783a4b8fbb41807bab4d840d44643878a9
   installed /usr/local/libexec/negroni-gnss-assist.py
   sha256 0af4c0cc5025071573f8ace273785f17d27ee1bc7ad1599a3b4d67084a785cc8
+2026-11-15 image delivery:
+  runtime/ contains the two verified deployed ELF files, with debug sections stripped only.
+  Original hashes above; delivered hashes and license copies in runtime/SHA256SUMS.
+  configure-gnss.sh installs the private prefix, service override and on-demand assistance helper.
+  New complete image build/boot and valid coordinates remain untested.

@@ -2,7 +2,7 @@
 
 状态日期：2026-11-14，NE2210，内核 `7.3.0-sm8450+`。11-14 仅复核日志并做了一次 150 秒射频采样，见“干扰状态复核”。
 
-**已修复定位引擎无法启动，2026-11-13 已收到并跟踪真实卫星信号，尚未获得有效坐标。** 用户空间修复已部署到本机，另已补齐手动刷新时间/辅助星历的工具；没有修改内核或刷写分区，调试期间未执行手机重启，也未接入完整镜像构建。
+**已修复定位引擎无法启动，2026-11-13 已收到并跟踪真实卫星信号，尚未获得有效坐标。** 用户空间修复已部署到本机，另已补齐手动刷新时间/辅助星历的工具；没有修改内核或刷写分区，调试期间未执行手机重启；2026-11-15 已把已验证的启动修复接入镜像构建，新完整镜像未构建、未刷入。
 
 ## 已确认的问题
 
@@ -143,3 +143,9 @@ sudo systemctl restart ModemManager
 原厂 HAL 还会发、而当前 Linux 侧没有发的 QMI 请求主要是：响应 `TIME_SYNC` 指示的 `InjectTimeSyncData`、`SetMinGpsWeekNumber`、`SetXtraVersionCheck`，以及 `AGPS_CONFIG_INJECT` 所覆盖的 SUPL/LPP 配置。这些影响星历能否套到已跟踪卫星和在线辅助，不能解释已经跟踪到的卫星只有约 23 dB-Hz。只读的 `GetSupportedFeature` 还没查过。
 
 真正使 Start 成功、以及补齐辅助数据链路的参考是**高通定位用户空间接口**，并非另一个 GNSS 内核驱动。手机已经加载原厂 `modem_b` 的固件，当前没有证据支持更换固件；也没有下载其它型号的固件覆盖它。
+
+## 镜像交付（2026-11-15）
+
+`configure-gnss.sh` 安装已验证的私有 ModemManager/libqmi、drop-in、解锁服务和辅助工具；对应二进制、来源、许可证和哈希在 [runtime](../config/gnss/runtime/README.md)。不覆盖发行版程序，安装时用 `--version` 检查目标 rootfs 能否加载程序和库。`prepare-rootfs.sh` 显式安装提供 `qrtr-lookup` 的 `qrtr-git`。
+
+`build.sh` 根据 GNSS 源文件指纹调用 `update-feature-image.sh gnss` 更新已有镜像；打包前 `verify-gnss-image.py` 检查内容、权限、动态库链接和服务启用。解锁随 ModemManager 启动，定位仍由客户端请求，辅助下载手动调用，没有开机持续搜星。打包核对通过不代表已经定位，坐标、室外首次定位、新完整镜像启动未测。
