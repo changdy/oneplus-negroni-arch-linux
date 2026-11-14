@@ -48,10 +48,10 @@ sudo systemctl disable --now negroni-charge-limit.service  # 停止限制并取�
 | 根文件系统自动扩容 | 刷入后首次启动将 5 GiB ext4 扩展到整个 userdata 分区，成功后跳过、失败下次重试，见[构建集成说明](docs/build-integration.md) |
 | 电池状态显示 | 修正 Negroni 电池电流符号，改善充放电状态判断；已通过实机拔插验证 |
 | 登录界面虚拟键盘 | 配置 SDDM / KWin 使用 Plasma Keyboard 和 layer-shell，修复触屏登录输入问题 |
-| 远程维护 | USB3 线连接时可用 `ssh oneplus@10.55.0.1` 和 USB 串口调试（目前手动安装，见 [USB 调试通道](docs/usb-debug.md)）；默认启用 SSH，允许 `oneplus` 密码或公钥登录，禁止 root 和空密码登录，首次启动生成主机密钥 |
+| 远程维护 | USB3 线连接时可用 `ssh oneplus@10.55.0.1` 和 USB 串口调试（已接进镜像打包，带它的新镜像未构建，见 [USB 调试通道](docs/usb-debug.md)）；默认启用 SSH，允许 `oneplus` 密码或公钥登录，禁止 root 和空密码登录，首次启动生成主机密钥 |
 | 常用工具与 USB 固件 | 预装 nano、curl、wget、htop、rsync、git、tmux、ripgrep、usbutils 与 Realtek 固件，见[安装列表](config/packages/common-tools.txt) |
 | Wi-Fi 默认设置 | 关闭省电，生成固定本地 MAC，按当前部署地点使用 CN 国家域，见 [Wi-Fi 说明](docs/wifi.md) |
-| 音频 | 自制 AudioReach 拓扑、UCM 与设备树路由修复；实机扬声器出声。2026-11-14 傍晚去掉 WCD9385 复位脚的 sleep 状态并重启后，内置麦克风 ALSA 录音能录到 1 kHz 测试音；内核提交 `67d9e35c9ac0`，尚未重新构建镜像，耳机待测，见[音频说明](docs/audio.md) |
+| 音频 | 自制 AudioReach 拓扑、UCM 与设备树路由修复；实机扬声器出声。2026-11-14 傍晚去掉 WCD9385 复位脚的 sleep 状态并重启后，内置麦克风 ALSA 录音能录到 1 kHz 测试音；复位脚修正在内核 `67d9e35c9ac0`，DMIC3/DMIC4 路由在 `cba22a622ac0`，尚未重新构建镜像，耳机待测，见[音频说明](docs/audio.md) |
 | Docker 内核支持 | 每次构建补齐 nftables 兼容与 NAT 模块，支持全新构建和续建；Docker / Compose 按需安装，详见[使用说明](docs/docker.md) |
 | 构建与校验 | 通过源码和产物指纹识别需要更新的镜像，核对内核模块及配置，检查 ext4、启动镜像、sparse 往返和 SHA-256 |
 
