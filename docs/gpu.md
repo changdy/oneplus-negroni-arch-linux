@@ -12,6 +12,16 @@
 - Vulkan：需要 `vulkan-freedreno`（已加入镜像软件清单）。Turnip 报告 Vulkan 1.4，`vkcube` 跑 300 帧正常。
 - 未测：游戏、视频硬解、长时间负载下的温控。
 
+## 内屏分辨率：当前使用 FHD+（2026-11-12 实机核查）
+
+OnePlus 10 Pro 的屏幕原生分辨率为 **1440×3216**（官方横屏写法为 3216×1440），不是 1080×2412。当前手机的 DRM/KWin 仅提供 **1080×2412 @ 60/90/120 Hz**，实际选择 120 Hz；这是当前 Linux 驱动可用的输入模式，不能作为面板原生像素数。
+
+面板驱动 `panel-samsung-s6e3hc3.c` 已列出 FHD+ 和 WQHD+ 两组模式，但 probe 中的 DSC 配置仍固定为 `slice_width = 540`、`slice_height = 36`、`slice_count = 1080 / 540`。DSI 模式校验要求画面宽高能分别被分块宽高整除，1440 无法被 540 整除；实机当前启动日志反复出现 `DSI: pic_width 1440 has to be multiple of slice 540`，因此 WQHD+ 模式未进入可选列表。详见[核查依据](../artifacts/display-resolution-20261112/README.md)。
+
+本次通过 USB SSH 只读核查模式、日志及 WSL 源码，没有修改驱动、切换显示模式或重启。**原生 1440×3216 的完整适配与显示效果未测**；不能仅修改模式尺寸或 DSC 分块宽度就视为修复。未来 4:3 掌机串流的渲染/采集分辨率可与内屏预览模式分开设计，虚拟显示、拉伸预览和串流均未测。
+
+2026-11-13 原厂资料补充：本机 `dtbo_a` 的量产面板配置明确区分 FHD 的 **540×36** 与 WQHD 的 **720×24** DSC slice，两组均保留 60 / 90 / 120 Hz 条目，DSC 1.2、8 bpp、每包 2 个 slice。后续可据此对照 PPS、切换命令、DSI 时序与带宽；本轮仅静态分析，没有改驱动或切换分辨率，见[原厂面板资料](stock-hardware.md#原生屏幕分辨率)。
+
 ## Runtime PM 与慢亮屏
 
 默认启用的 `gpu-runtime-active.service` 把 GPU 的 `power/control` 设为 `on`，阻止 runtime suspend。这是规避措施，可能增加待机耗电。
