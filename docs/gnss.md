@@ -1,6 +1,6 @@
 # GPS / GNSS
 
-状态日期：2026-11-13，NE2210，内核 `7.3.0-sm8450+`。
+状态日期：2026-11-14，NE2210，内核 `7.3.0-sm8450+`。11-14 仅复核日志并做了一次 150 秒射频采样，见“干扰状态复核”。
 
 **已修复定位引擎无法启动，2026-11-13 已收到并跟踪真实卫星信号，尚未获得有效坐标。** 用户空间修复已部署到本机，另已补齐手动刷新时间/辅助星历的工具；没有修改内核或刷写分区，调试期间未执行手机重启，也未接入完整镜像构建。
 
@@ -39,7 +39,7 @@
 
 ## 射频与测量诊断
 
-2026-11-13 的进一步长测仍无坐标。600 秒记录中 USB 链路始终连接，L1 PGA 曾从 -12 dB 自行恢复至 +4 dB，L5 从 -12 dB 恢复至 +6 dB；因此低增益本身不能证明 USB 干扰，也不能证明天线放大器损坏。拔线对照**未测**，后续 Wi-Fi SSH 不可用，暂保留 USB 通道。
+2026-11-13 的进一步长测仍无坐标。600 秒记录中 `usb0` carrier 始终为 1，L1 PGA 曾从 -12 dB 恢复至 +4 dB，L5 从 -12 dB 恢复至 +6 dB。当时据此认为低增益不能证明 USB 干扰；**2026-11-14 复核认为这一推断不成立**：carrier 不反映 USB 链路挂起，而增益恢复的时刻与内核记录的 USB 挂起重合，见下文“干扰状态复核”。拔线对照仍**未测**。
 
 [probe.py](../artifacts/gnss-20261112/probe.py) 新增 `--rf-metrics` 和 `--measurements`，按高通公开 IDL 读取各频段增益、AGC/BP、时间来源与卫星测量数量。后者先发送 `SetGNSSConstellationReportConfig (0x88)`，否则只订阅事件也收不到原始测量报告；退出时清除报告配置并停止自己的定位 session，支持 SIGTERM 清理。
 
@@ -48,6 +48,19 @@ python probe.py --duration 180 --full-power --rf-metrics --measurements
 ```
 
 工具按 15 秒间隔输出摘要，不输出坐标、伪距和卫星时间。测量报告的 AGC/BP 按协议的 0.01 dB 缩放，频段报告的 jammer 值保留原始整数，避免在单位尚未确认时套用阈值。当前固件没有提供可选的 `agc_status`，缺省不能解释为“未饱和”。该诊断配置仅用于报告，不改变星座启用状态、RF/NV 或引擎锁。详细次数和辅助连接排查见 [2026-11-13 记录](../artifacts/gnss-20261113/README.md)。
+
+### 干扰状态复核（2026-11-14）
+
+重读 2026-11-13 的原始日志并补一次 150 秒采样后，**当前首要嫌疑是 USB3 SuperSpeed 链路工作时对 GNSS 接收的宽带干扰**，尚未做同条件对照，不能写成已定位。
+
+- **阈值其实有公开依据。** `location_service_v02.h` 的 `QMI_LOC_GET_BAND_MEASUREMENT_METRICS_IND (0xce)` 注释给出参考范围：L1 PGA 标称 0 至 +4 dB、极限 -12 至 +18 dB；GPS L1 BP 幅度标称 160–200、极限 89–356；L5 PGA 标称 -4 至 0 dB。11-13 的“低增益”状态是 L1/L5 PGA 都贴在下限 -12 dB，GPS L1 BP 幅度 402–477，已超出极限；“恢复”后 L1 为 +4 dB、174–178，正好落在标称范围。
+- **jammer 字段单位是 0.01 dB。** 同一时刻 `0xce` 的 GPS L1 原始值 7374 与 `0x86` 中按 0.01 dB 解码的 BP 指标 73.74 dB 一致，GLONASS、北斗、Galileo 和 L5 同样逐项吻合。按此换算，GPS L1 该指标在三种状态下约为 56 dB（恢复后）、73–74 dB（中间态）、79–81 dB（饱和态），饱和态比恢复后高约 24 dB，L5 高约 20–23 dB。指标升高与实际 C/N₀ 损失的换算关系未验证。
+- **恢复时刻与 USB 挂起重合。** 600 秒记录中最后一个饱和样本在 00:20:35 UTC，第一个正常样本在 00:20:50 UTC；同一时段的内核日志在 08:20:40（北京时间，即 00:20:40 UTC）记录 `dwc3 … remote wakeup not configured` 和 `not armed for func remote wakeup`。这两条是 gadget 在链路已挂起时尝试唤醒主机才会打印的（如 NCM 的 `ether_wakeup_host()` 路径），说明当时 USB 链路进入了挂起，而 `usb0` carrier 仍为 1；这是该小时内唯一一次挂起记录。饱和的 6 分钟内没有跟踪到任何卫星，恢复约 2 分钟后才出现第一颗。
+- **此前所有长测都在 USB3 super-speed 下进行。** 正常状态的累计观测只有上述约 3.5 分钟，因此“窗边接收性能异常”还没有在无干扰条件下验证过。
+- **2026-11-14 15:15 USB2 口采样**（`high-speed`，内核 `#4`，开机约 3 分钟，屏幕关闭，150 秒）：10 个样本的 L1 PGA 为 -4 至 +2 dB，GPS L1 BP 幅度 151–210、指标 58–62 dB，没有出现 -12 dB；L5 PGA 仍为 -12 至 -2 dB、指标 46.5–56.9 dB，来源未定位。149 份卫星报告均不含卫星列表，无定位。本次开机没有注入时间，手机摆放位置未确认，**不能据此评价灵敏度**，也不是与 USB3 的同条件对照。
+- **2026-11-14 16:04 窗边 300 秒**。手机刚重启，USB 仍为 `high-speed`。先注入 NTP 时间并重新下载 XTRA（61956 字节，有效至 `2026-11-21T07:00:00Z`），再以 full power 搜星。L1 PGA 全程 -4 至 +4 dB，GPS L1 BP 幅度 154–202，没有回到 -12 dB；L5 PGA 从 -12 dB 升至 +4 dB。前约 3 分 40 秒没有跟踪，之后持续跟踪 1 颗 GPS L1，C/N₀ 16.8–23.6 dB-Hz。测量里这颗星的星历可用位和码相位时间位都未置位，时间来源仍是外部注入，300 份位置状态无坐标。会话已停止。这证明 USB2 下射频能收到真实卫星，信号强度仍不足以定位；与 USB3 的同位置对照和室外对照仍未做。原始输出在 `logs/gnss-20261114/window-usb2-probe.log`。
+
+内核日志同时显示测试期间 Wi-Fi 每隔几分钟在两个 BSSID 之间来回切换，屏幕和充电状态也没有记录；这些因素尚未排除。下一步应在同一位置、同一次开机内依次对比 USB3 口、USB2 口和拔线（脱机记录到文件）三种状态，并在每次开机后先运行时间/XTRA 注入。原始输出在本地 `logs/gnss-20261113/rf-usb-ab.log`、`logs/camera-20261113/baseline.txt` 与 `logs/gnss-20261114/usb2-highspeed-rf.log`。
 
 ## 刷新时间和辅助星历
 
@@ -119,5 +132,14 @@ sudo systemctl restart ModemManager
 已对照 OnePlus 官方 Android 12.1、14、15 分支的 `wly-20846` 和 `waipio` DTS；在这些已查文件中未找到本板明确的 GNSS ELNA 控制配置，没有据此改 GPIO。还拉取并查看了官方 Android 14 内核的 GNSS 驱动目录，里面没有发现 SM8450 专用 GNSS 接收驱动。
 
 手机保留的原厂 vendor/odm 提取目录中有 `gps.conf`、`izat.conf`、`gps.cfg`、`gps_modem.cfg` 和 GNSS HAL。它们用于检查初始化和文件依赖，没有将配置或二进制命令流盲目写入基带。搜星期间对 tqftpserv 的文件调用抓取未发现请求缺失文件，但这不覆盖启动早期或其它文件服务。
+
+2026-11-14 重新核对了本机原厂文件，没有发现被遗漏的 GNSS 内核驱动或射频初始化：
+
+- 373 个原厂模块里，`gnss` / `gps` / `izat` / `xtra` / `elna` 的命中都来自 “initialization”“extra”“blanking” 或 Wi-Fi 的 `eLNA bypass`。`oplus_bsp_rfcablemonitor.ko` 只上报 GPIO89 的射频线缆状态。
+- `odm_b/etc/gps.cfg`（1761 字节）和 `gps_modem.cfg`（3825 字节）是二进制文件，没有可解析的配置项。全库只有 `diag_mdlog` 引用这两个路径，定位 HAL 不读它们。
+- `odm_b/etc/gps.conf` 的 `RF_LOSS_*` 全部是 0，`libloc_api_v02.so` 对这种情况只打印告警。`gnss_antenna_info.conf` 是高通示例，`ANTENNA_INFO_VECTOR_SIZE` 被注释掉。`DR_SYNC_ENABLED = 0`，原厂不依赖 `/dev/pps0`。
+- `izat.conf` 里一加明确关闭了 `lowi-server`、`slim_daemon` 和 `edgnss-daemon`，打开的是 `xtra-daemon`。原厂并没有把 IMU 送进 GNSS。`rfs/apq/gnss` 下没有文件。
+
+原厂 HAL 还会发、而当前 Linux 侧没有发的 QMI 请求主要是：响应 `TIME_SYNC` 指示的 `InjectTimeSyncData`、`SetMinGpsWeekNumber`、`SetXtraVersionCheck`，以及 `AGPS_CONFIG_INJECT` 所覆盖的 SUPL/LPP 配置。这些影响星历能否套到已跟踪卫星和在线辅助，不能解释已经跟踪到的卫星只有约 23 dB-Hz。只读的 `GetSupportedFeature` 还没查过。
 
 真正使 Start 成功、以及补齐辅助数据链路的参考是**高通定位用户空间接口**，并非另一个 GNSS 内核驱动。手机已经加载原厂 `modem_b` 的固件，当前没有证据支持更换固件；也没有下载其它型号的固件覆盖它。
