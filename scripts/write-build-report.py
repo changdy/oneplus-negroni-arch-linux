@@ -115,4 +115,8 @@ if (log_directory / "charge-limit-config.complete").exists():
     report["validation"]["charge_limit_configuration"] = charge_verification.exists()
     if charge_verification.exists():
         report["charge_limit_validation"] = json.loads(charge_verification.read_text())
+report["feature_delivery"] = {
+    path.name.removesuffix("-verification.json"): json.loads(path.read_text())
+    for path in sorted(log_directory.glob("*-verification.json"))
+}
 (log_directory / "build-result.json").write_text(json.dumps(report, indent=2) + "\n")

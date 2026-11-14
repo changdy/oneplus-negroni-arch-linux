@@ -17,6 +17,7 @@ git diff --check
 修改 CPU 默认安装或镜像检查时，运行真实 rootfs 安装/校验测试（需要 `systemctl`、`mkfs.ext4`、`debugfs`）：
 
 ```sh
+sudo bash scripts/check-image-delivery.sh
 sudo python3 -B tests/test-cpu-performance-image.py
 # 支持无特权 user namespace 的主机也可用：
 unshare --user --map-root-user python3 -B tests/test-cpu-performance-image.py

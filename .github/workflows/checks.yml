@@ -31,6 +31,8 @@ jobs:
         run: bash scripts/check.sh --with-kernel
       - name: Verify CPU defaults in fresh and existing rootfs images
         run: sudo python3 -B tests/test-cpu-performance-image.py
+      - name: Verify device feature delivery and reject missing or stale payloads
+        run: sudo bash scripts/check-image-delivery.sh
       - name: Rebuild CPU device-tree reference images
         run: python3 scripts/build-cpu-performance-dtb.py --output "$RUNNER_TEMP/cpu-performance"
       - name: Build and check the pinned kernel battery drivers and CPU device tree
