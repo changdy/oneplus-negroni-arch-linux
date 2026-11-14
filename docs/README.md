@@ -20,6 +20,7 @@
 | [通话语音](call-audio.md) | VoLTE 通话下行、通话录音与向对方放音（实验）、自动开关服务、已知问题与排查方法 |
 | [蓝牙](bluetooth.md) | WCN6855 缺少 public address 的修复与验证范围 |
 | [振动反馈](haptics.md) | PM8350B 自动加载、标准 FF 接口、feedbackd / Plasma 接入与实机验证边界 |
+| [传感器](sensors.md) | SLPI 加速度计驱动自动旋转；X/Y 取反后方向已由用户确认。TCS3701 光线和距离仍未探测成功 |
 | [GPU](gpu.md) | Adreno 730 3D/Vulkan 实测、runtime PM 与慢亮屏规避 |
 | [CPU 性能与调度](cpu-performance.md) | Boost / performance 服务、设备树构建、部署验证与恢复 |
 | [Docker 内核支持](docker.md) | Docker 安装、网络模块配置、续建和镜像验证 |
