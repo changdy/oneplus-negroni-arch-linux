@@ -2,7 +2,7 @@
 
 状态日期：2026-11-14。**声卡已经可用**：刷入路由修正后的 `vendor_boot_b`，开机即生成 `OnePlus-10-Pro` 声卡，PipeWire 识别出扬声器、耳机、内置麦克风和耳机麦克风。用户已确认扬声器正常出声。**内置麦克风从 2026-11-14 傍晚起可以录音**。此前稳定段全零：早期非零样本只是启动瞬态；原厂路由是 DMIC3/DMIC4，2026-11-13 补齐 DMIC4 的 MIC BIAS1、双 DMIC 门控与 VA_MCLK 并部署后 VA 端口能打开但仍全零；2026-11-14 的 TX/VA 多通道修正和 DMIC3/4 UCM 启停通过，声学信号仍为零。当天下午定位到 `audio-codec` 的 `sleep` 引脚状态把 WCD9385 复位脚在空闲时拉低；傍晚去掉该状态、刷入 `vendor_boot_b` 并重启后，ALSA `hw:0,2` 录到扬声器播放的 1 kHz 测试音。同一改动已进入内核提交 `67d9e35c9ac0`，这次提交没有重新构建镜像。见[本轮记录](../artifacts/mic-clock-20261113/README.md)。耳机出声和插拔检测尚未测试。通话相关的内容（语音图、通话录音与放音、麦克风排查）统一写在[通话语音](call-audio.md)。
 
-内核工作区里还有一份没有提交的 DMIC 试验：把 VA/TX DMIC3 的偏置从 MIC BIAS1 改到 MIC BIAS3，并改采样率和 pinctrl。已经验证能录音的是去掉 `audio-codec` sleep 引脚的 `67d9e35c9ac0`，不是这份偏置改动。`build-kernel.sh` 看到已跟踪文件有差异会停止，避免它经 `kernel-local.patch` 进镜像。
+DMIC3/DMIC4 路由在内核提交 `cba22a622ac0`：DMIC3 用 GPIO8/9 和 MIC BIAS3，DMIC4 用 GPIO12/13 和 MIC BIAS1，VA DMIC 时钟 2.4 MHz，两路 TX DMIC 依赖 VA DMIC 门控和 `VA_MCLK`，`VA Capture` 改用 `VA_CODEC_DMA_TX_0`。2026-11-14 22 时整理时，曾把工作区里的 DMIC3 部分误当成失败试验。23:10 读取手机运行中的设备树，确认能录音时用的 `vendor_boot` 同时带着这份路由和 `67d9e35c9ac0`。`67d9e35c9ac0` 本身没有 DMIC 引脚复用，单独使用的效果没有实测。用 `cba22a622ac0` 重新构建的镜像未构建、未刷入。
 
 2026-11-14 补充：用户未测试刷机前的原厂麦克风，当前没有正常采集基线。对照原厂 WCD 模块又验证了 eFuse/SLEEP_CTL 校准：运行时字段调整及启动时模块对照均未恢复信号，实验 WCD 模块已还原并重启；详见[续测记录](../artifacts/mic-clock-20261113/README.md#同日续测原厂基线未测与-wcd9385-启动校准)。
 

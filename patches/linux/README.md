@@ -1,6 +1,6 @@
 # 7.3 设备修复与源码恢复
 
-当前 `linux` 子模块固定到 `7.3` 修复提交 `b7385d286e15eb184f9938311901909709e9f818`。修复从重新同步的上游 `476a4a8984395a77b6b6508f849dfb7b786d86b3` 直接修改，新增提交均只有一个父提交；没有 merge 或 cherry-pick `7.3-rc2`。之前的本地合并版本不再作为固定内核。
+当前 `linux` 子模块固定到 `7.3` 修复提交 `cba22a622ac0b73d7266aecbf2567273218a81ce`。修复从重新同步的上游 `476a4a8984395a77b6b6508f849dfb7b786d86b3` 直接修改，新增提交均只有一个父提交；没有 merge 或 cherry-pick `7.3-rc2`。之前的本地合并版本不再作为固定内核。
 
 新增提交为 `835c18d2739`（电池驱动及限充）、`3ca85b51d20`（CPU 参数）和 `1eaec99b04a`（补齐触觉驱动 trace 头文件）。
 
@@ -28,15 +28,17 @@ LPASS 录音状态修复 `463023bf84b1` 改为按 TX/VA 通道 mask 的实际 bi
 
 WCD9385 中断修复 `baa7d74668f4` 让没有寄存器映射的 RX SoundWire 设备改用 TX 的映射清中断状态，共享回调在映射缺失时直接返回。RX 告警原先对空映射调用 `regmap_read()`，控制器中断线程退出后，停流和 mixer 更新停在不可中断睡眠。2026-11-14 装上 `snd-soc-wcd-common`、`snd-soc-wcd938x` 和 `snd-soc-wcd938x-sdw` 并重启后，该 oops 没有再出现；VoLTE 拨出接通，对端听过本机麦克风并反馈听着还可以。没有回声消除。只提交 wcd938x 与 wcd-common，相机、AudioReach 和未提交设备树没有混入。bundle 保留原两个前置提交与历史 rc2 引用，见[通话语音](../../docs/call-audio.md)。
 
-AudioReach 通话语音 `81637d2a07f3` 打开 Negroni 的 hostless 语音图：VCPM 校准共享内存、跨图控制连接和路由修正。2026-11-14 对端听过本机麦克风，听筒/免提切换用户确认可以。没有回声消除。父仓库把实机拓扑 `5fb6fba6…` 和 `negroni-call-audio.service` 接进 `configure-audio.sh`。打包路径已接入，新镜像未构建、未刷入。只提交 qdsp6，失败的 DMIC 偏置试验没有混入。bundle 保留原两个前置提交与历史 rc2 引用。
+AudioReach 通话语音 `81637d2a07f3` 打开 Negroni 的 hostless 语音图：VCPM 校准共享内存、跨图控制连接和路由修正。2026-11-14 对端听过本机麦克风，听筒/免提切换用户确认可以。没有回声消除。父仓库把实机拓扑 `5fb6fba6…` 和 `negroni-call-audio.service` 接进 `configure-audio.sh`。打包路径已接入，新镜像未构建、未刷入。只提交 qdsp6，DMIC 路由另作提交。bundle 保留原两个前置提交与历史 rc2 引用。
 
-超广角出流设备树 `463b5ac2be3b` 写下已经取到帧的 JN1：PM8010J L1 1.056 V、L3 2.8 V，CSI PHY2，MCLK 24 MHz，GPIO24 低有效复位，EEPROM `0x50`。`0x51` 无应答。主摄、长焦和前摄仍是外部模块加 overlay，不进这块板级设备树，也不自动加载。失败的 DMIC 偏置试验没有混入。bundle 保留原两个前置提交与历史 rc2 引用，见[相机说明](../../docs/camera.md)。
+超广角出流设备树 `463b5ac2be3b` 写下已经取到帧的 JN1：PM8010J L1 1.056 V、L3 2.8 V，CSI PHY2，MCLK 24 MHz，GPIO24 低有效复位，EEPROM `0x50`。`0x51` 无应答。主摄、长焦和前摄仍是外部模块加 overlay，不进这块板级设备树，也不自动加载。DMIC 路由另作提交。bundle 保留原两个前置提交与历史 rc2 引用，见[相机说明](../../docs/camera.md)。
 
 SN100 `fff7de955691` 在控制器打开期间使用 `LN_BB_CLK2`，并把中断做成电平触发。NE2210 打开控制器、完成 RF 发现，并读到一张 Type 2 卡的 UID。块读取得到 Classic NAK，NDEF 未做。被动监听 UID 没有进入这个提交。bundle 保留原两个前置提交与历史 rc2 引用，见 [NFC](../../docs/nfc.md)。
 
-SMEM 光线距离 `472db17c1a3b` 分配 Oplus SMEM 项 130，并通过 debugfs 写入 5140 字节。NE2210 写入 TCS3701 描述并重启 SLPI 后，遮住传感器时光线降到约 0 lux，距离为 NEAR，加速度计和磁力计仍有读数。父仓库用 `negroni-smem-sensor.service` 在开机时做同样的写入。`hexagonrpc` 仍未进镜像。DMIC 偏置试验和 NFC 被动监听没有混入。bundle 保留原两个前置提交与历史 rc2 引用，见[传感器说明](../../docs/sensors.md)。
+SMEM 光线距离 `472db17c1a3b` 分配 Oplus SMEM 项 130，并通过 debugfs 写入 5140 字节。NE2210 写入 TCS3701 描述并重启 SLPI 后，遮住传感器时光线降到约 0 lux，距离为 NEAR，加速度计和磁力计仍有读数。父仓库用 `negroni-smem-sensor.service` 在开机时做同样的写入。`hexagonrpc` 仍未进镜像。DMIC 路由和 NFC 被动监听没有混入。bundle 保留原两个前置提交与历史 rc2 引用，见[传感器说明](../../docs/sensors.md)。
 
 NFC-A 被动监听 `b7385d286e` 在目标协议只有 MIFARE、没有发起方协议时写入 `LA_NFCID1` 和 `SEL_INFO 0x08`，再以模式 `0x80` 监听。NE2210 的 SN100 接受了 UID `CD 27 FC DB`、ATQA `00 04` 和 SEL_INFO `0x08`，并保持监听 20 秒。旁边没有读卡器，空中身份未证实。Classic 加密扇区没有实现。这一提交只改 `nci`。bundle 保留原两个前置提交与历史 rc2 引用，见 [NFC](../../docs/nfc.md)。
+
+内置麦克风路由 `cba22a622ac0` 按原厂把 DEC0/DEC1 接到 DMIC3/DMIC4：DMIC3 用 GPIO8/9 和 MIC BIAS3，DMIC4 用 GPIO12/13 和 MIC BIAS1，VA DMIC 时钟 2.4 MHz，两路 TX DMIC 依赖 VA DMIC 门控和 `VA_MCLK`，`VA Capture` 改用 `VA_CODEC_DMA_TX_0`。内容等于 [sm8450-oneplus-negroni-dmic.patch](../../config/audio/sm8450-oneplus-negroni-dmic.patch) 加 [sm8450-oneplus-negroni-dmic34-va.patch](../../config/audio/sm8450-oneplus-negroni-dmic34-va.patch)。手机能录音时运行的设备树（`vendor_boot` 字节补丁）同时带着这两份补丁和 `67d9e35c9ac0`。2026-11-14 23:10 读取实机 `/sys/firmware/devicetree`：14 条 DMIC 路由、VA 时钟、两组引脚和 VA DAI 编号 110，与这次编译出的 DTB 一致。单靠 `67d9e35c9ac0` 的设备树没有 DMIC 引脚复用，没有实测。用这一提交重新构建的镜像未构建、未刷入。bundle 保留原两个前置提交与历史 rc2 引用，见[音频说明](../../docs/audio.md)。
 
 ## 重做范围
 

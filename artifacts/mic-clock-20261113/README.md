@@ -70,7 +70,7 @@ GPIO 软件采样复现了前一日的“没有时钟翻转”观察；本轮没
 
 ### 已部署的 VA / DMIC4 设备树候选
 
-[增量实验补丁](../../config/audio/sm8450-oneplus-negroni-dmic34-va.patch) 修正 `VA Capture` CPU DAI：`TX_CODEC_DMA_TX_3` 改为 `VA_CODEC_DMA_TX_0`；补齐 DMIC4 的 GPIO12/13、MIC BIAS1、VA DMIC4 及 VA_MCLK 依赖。它依赖现有 DMIC3 实验改动，只在当前 WSL 工作树执行过 `git apply --check`，**尚未应用、提交到内核树或接入正式构建**。独立 DTS 预处理/编译通过，已有的相机等 DTC 警告不计作本补丁的功能验证。
+[增量实验补丁](../../config/audio/sm8450-oneplus-negroni-dmic34-va.patch) 修正 `VA Capture` CPU DAI：`TX_CODEC_DMA_TX_3` 改为 `VA_CODEC_DMA_TX_0`；补齐 DMIC4 的 GPIO12/13、MIC BIAS1、VA DMIC4 及 VA_MCLK 依赖。它依赖现有 DMIC3 改动。两份补丁在 2026-11-14 23 时一起进入内核提交 `cba22a622ac0`，编译出的 DTB 与手机运行中的设备树逐项一致。独立 DTS 预处理/编译通过，已有的相机等 DTC 警告不计作本补丁的功能验证。
 
 这次测试镜像直接修改新备份中的 DTB，未使用含其他未提交功能的整棵源码 DTB。逐属性核对只有 14 个麦克风相关属性发生变化（包括新引脚节点属性）；分区中 DTB 区域及头部 DTB size 字段以外的所有字节保持原样，原有 ramdisk、USB2 LPM 与其他设备配置由字节比较保留。镜像全长 201,326,592 字节，与当前分区相同。
 

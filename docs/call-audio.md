@@ -44,8 +44,8 @@ SM8450 用 GPR/AudioReach，通话音频由 DSP 里的 VCPM 管理，不能套�
 | [negroni-call-audio.py](../config/audio/voice/negroni-call-audio.py)、[.service](../config/audio/voice/negroni-call-audio.service) | 通话期间自动打开和关闭语音图 |
 | [negroni-voice-test.py](../config/audio/voice/negroni-voice-test.py) | 限时手动打开语音图；服务复用它的 PCM 和 mixer 代码 |
 | [install-test.sh](../config/audio/voice/install-test.sh) | 安装或恢复三个实验内核模块和拓扑，不重启 |
-| [sm8450-audioreach-voice.patch](../config/audio/sm8450-audioreach-voice.patch)、[sm8450-oneplus-negroni-dmic.patch](../config/audio/sm8450-oneplus-negroni-dmic.patch) | 语音图内核改动已进入内核提交 `81637d2a07f3`；补丁文件仍保留对照。DMIC 偏置试验没有进入该提交 |
-| [sm8450-oneplus-negroni-dmic34-va.patch](../config/audio/sm8450-oneplus-negroni-dmic34-va.patch) | 2026-11-13—14 增量诊断候选：修正 VA CPU DAI、补齐 DMIC4，已刷入 B 槽并重启；VA 录音可以打开但仍无信号，DT 改动尚未接入正式源码/构建 |
+| [sm8450-audioreach-voice.patch](../config/audio/sm8450-audioreach-voice.patch)、[sm8450-oneplus-negroni-dmic.patch](../config/audio/sm8450-oneplus-negroni-dmic.patch) | 语音图内核改动已进入内核提交 `81637d2a07f3`。DMIC3 补丁和下一行的 DMIC4 补丁合起来是内核提交 `cba22a622ac0`。补丁文件仍保留对照 |
+| [sm8450-oneplus-negroni-dmic34-va.patch](../config/audio/sm8450-oneplus-negroni-dmic34-va.patch) | 2026-11-13—14 修正 VA CPU DAI、补齐 DMIC4，已刷入 B 槽并重启。单独部署时 VA 录音能打开但仍无信号；加上 WCD9385 复位脚修正 `67d9e35c9ac0` 后录到声音。已进入内核提交 `cba22a622ac0` |
 
 原厂 ACDB、提取出的图和校准、生成的拓扑、内核模块和原始日志都在本地 `logs/call-audio-20261112/`，不纳入 Git。校准来自手机自己的 `~/android-ro/odm_b/etc/acdbdata/acdb_cal.acdb`，SHA-256 `da0cd92a94e77d6f7894de44f4afe4c701715ba46c6cf9bbe0b45fe1ea1ab63a`。许可见[来源与许可](licensing.md)。
 
