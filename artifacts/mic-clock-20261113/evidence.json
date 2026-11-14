@@ -1072,5 +1072,201 @@
       "micb1_and_micb3_hex": "10",
       "call_audio_and_modemmanager_active": true
     }
+  },
+  "stock_microphone_baseline": {
+    "user_report_date": "2026-11-14",
+    "before_installing_linux": "Not tested",
+    "known_working_stock_recording_or_call_baseline": false,
+    "hardware_health": "Unknown; cannot infer prior working or faulty hardware"
+  },
+  "wcd_sleep_trim_followup": {
+    "static_comparison": "wcd-init-comparison.json",
+    "stock_module_sha256": "f222435a2b4507ff85008dbb430970eb28ec1ce425fc6a1911fbda449a1d66cc",
+    "init_constant_writes_and_delays_equal": true,
+    "missing_mainline_step": "Read eFuse30 at 0x34ce; write (value & 7) << 1 to SLEEP_CTL 0x3103 mask 0x0e",
+    "observed_fuse_hex": "01",
+    "original_sleep_hardware_hex": "16",
+    "original_sleep_regcache_hex": "de",
+    "runtime_trial": {
+      "sleep_hardware_written_and_read_back_hex": "12",
+      "regcache_left_unchanged_hex": "de",
+      "phases": [
+        "trim only",
+        "trim plus stock MICBIAS enable sequence",
+        "trim plus bias sequence plus BOB 3320000 uV"
+      ],
+      "initial_attempts": "Aborted before writes on regcache/hardware mismatch; excluded from trim outcome",
+      "all_seven_registers_and_bob_voltage_restored_and_verified": true,
+      "result": "No sustained signal; sampled GPIO8/9/12/13 remained low"
+    },
+    "startup_trial": {
+      "module_install": {
+        "before_sha256": "073cab9f8e5d571515b50bf23e7a6d19547731afb9626a86971d0d0adb6f39c6",
+        "candidate_sha256": "d7390e20c47a9ba3b750a8362c7aa30ce25bb361c85aaf89a4f0f786239d7837",
+        "target": "/lib/modules/7.3.0-sm8450+/kernel/sound/soc/codecs/snd-soc-wcd938x.ko",
+        "partition_written": false,
+        "last_action": "restore",
+        "installed_sha256": "073cab9f8e5d571515b50bf23e7a6d19547731afb9626a86971d0d0adb6f39c6"
+      },
+      "candidate_loaded": {
+        "mode": "candidate",
+        "loaded_note_matches_expected": true,
+        "loaded_note_sha256": "497965a6f90ea60e2f9a108ad3a6f09079763d159e9969fc8a8d9cc39ede0f9a",
+        "init_markers": [
+          "[   15.913964] negroni_wcd_sleep_init: efuse=1 trim=2 write_ret=0"
+        ]
+      },
+      "startup_marker": "efuse=1 trim=2 write_ret=0",
+      "active_capture_sleep_regcache_hex": "d2",
+      "captures": [
+        {
+          "file_name": "bob-cold-boot.wav",
+          "sha256": "37b5af7b0a024409c661560776ccedfa1e83b6e0370c7afe7d3368e4216453f2",
+          "sample_rate_hz": 48000,
+          "channels": 2,
+          "duration_seconds": 12.0,
+          "ignored_start_seconds": 1,
+          "channel_statistics": [
+            {
+              "channel": 0,
+              "stable_nonzero_samples": 0,
+              "stable_dc_removed_rms": 0.0,
+              "stable_peak_abs": 0
+            },
+            {
+              "channel": 1,
+              "stable_nonzero_samples": 0,
+              "stable_dc_removed_rms": 0.0,
+              "stable_peak_abs": 0
+            }
+          ]
+        },
+        {
+          "file_name": "va-DMIC3-DMIC4-wcd-cold-boot.wav",
+          "sha256": "05379dc966be6e6823fd4b0cf97904958c4e6822e8f3f7fb19826174da6b9a62",
+          "sample_rate_hz": 48000,
+          "channels": 2,
+          "duration_seconds": 6.0,
+          "ignored_start_seconds": 1,
+          "channel_statistics": [
+            {
+              "channel": 0,
+              "stable_nonzero_samples": 0,
+              "stable_dc_removed_rms": 0.0,
+              "stable_peak_abs": 0
+            },
+            {
+              "channel": 1,
+              "stable_nonzero_samples": 0,
+              "stable_dc_removed_rms": 0.0,
+              "stable_peak_abs": 0
+            }
+          ]
+        },
+        {
+          "file_name": "wcd-cold-boot.wav",
+          "sha256": "657e1553154a43aa017a061c55a7dd31d591d5890cb5060e96e66717b8c79f2f",
+          "sample_rate_hz": 48000,
+          "channels": 2,
+          "duration_seconds": 12.0,
+          "ignored_start_seconds": 1,
+          "channel_statistics": [
+            {
+              "channel": 0,
+              "stable_nonzero_samples": 0,
+              "stable_dc_removed_rms": 0.0,
+              "stable_peak_abs": 0
+            },
+            {
+              "channel": 1,
+              "stable_nonzero_samples": 0,
+              "stable_dc_removed_rms": 0.0,
+              "stable_peak_abs": 0
+            }
+          ]
+        },
+        {
+          "file_name": "wcd-init.wav",
+          "sha256": "fdddc5bb11a01fde3a01168a8381164d9f981fb07fc7bcb52739151b697ac9b2",
+          "sample_rate_hz": 48000,
+          "channels": 2,
+          "duration_seconds": 12.0,
+          "ignored_start_seconds": 1,
+          "channel_statistics": [
+            {
+              "channel": 0,
+              "stable_nonzero_samples": 0,
+              "stable_dc_removed_rms": 0.0,
+              "stable_peak_abs": 0
+            },
+            {
+              "channel": 1,
+              "stable_nonzero_samples": 0,
+              "stable_dc_removed_rms": 0.0,
+              "stable_peak_abs": 0
+            }
+          ]
+        },
+        {
+          "file_name": "wcd-trim-hardware.wav",
+          "sha256": "08150558ebe49bf1d64b3a4ac830102d1f36cb983585be8a2eba2f67d74f1082",
+          "sample_rate_hz": 48000,
+          "channels": 2,
+          "duration_seconds": 12.0,
+          "ignored_start_seconds": 1,
+          "channel_statistics": [
+            {
+              "channel": 0,
+              "stable_nonzero_samples": 0,
+              "stable_dc_removed_rms": 0.0,
+              "stable_peak_abs": 0
+            },
+            {
+              "channel": 1,
+              "stable_nonzero_samples": 0,
+              "stable_dc_removed_rms": 0.0,
+              "stable_peak_abs": 0
+            }
+          ]
+        }
+      ],
+      "combined_stock_micbias_sequence_and_bob_3320000_uv_tested": true,
+      "result": "TX 12 s, VA 6 s and combined supply/sequence 12 s remain zero after first second",
+      "original_module_restored": {
+        "mode": "restored",
+        "loaded_note_matches_expected": true,
+        "loaded_note_sha256": "5e714963e2a5c40747253c4920a40bbef160bef1ced9ccb76c6e981c4cc906a0",
+        "init_markers": []
+      },
+      "boot_successful_after_restore": true,
+      "kernel_source_or_bundle_changed": false,
+      "startup_partition_written": false
+    },
+    "final_cleanup": {
+      "kernel": "7.3.0-sm8450+",
+      "pcms": {
+        "/proc/asound/card0/pcm0p/sub0/status": "closed",
+        "/proc/asound/card0/pcm1p/sub0/status": "closed",
+        "/proc/asound/card0/pcm2c/sub0/status": "closed",
+        "/proc/asound/card0/pcm3c/sub0/status": "closed",
+        "/proc/asound/card0/pcm4p/sub0/status": "closed",
+        "/proc/asound/card0/pcm5c/sub0/status": "closed",
+        "/proc/asound/card0/pcm6p/sub0/status": "closed",
+        "/proc/asound/card0/pcm7c/sub0/status": "closed"
+      },
+      "diagnostic_modules": [],
+      "audio_helper_processes": [],
+      "services": "active\nactive\n",
+      "kernel_audio_failures": [],
+      "33f0000.codec-va_macro": [
+        "088: XXXXXXXX",
+        "08c: XXXXXXXX"
+      ],
+      "sdw:3:0:0217:010d:00:3-wcd938x_csr": [
+        "3022: 10",
+        "3025: 10"
+      ]
+    },
+    "outcome": "Stock microphone baseline remains untested. This initialization difference alone or with bias/input voltage did not restore capture; no hardware health conclusion."
   }
 }

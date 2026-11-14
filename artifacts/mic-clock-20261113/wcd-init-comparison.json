@@ -1,0 +1,194 @@
+{
+  "stock_module_sha256": "f222435a2b4507ff85008dbb430970eb28ec1ce425fc6a1911fbda449a1d66cc",
+  "stock_function": {
+    "name": "wcd938x_init_reg",
+    "text_offset_hex": "0x5094",
+    "size_bytes": 628
+  },
+  "module_register_writes_match_downloaded_source": true,
+  "stock_write_count": 27,
+  "mainline_write_count": 26,
+  "constant_writes_and_order_equal": true,
+  "initialization_delay_ranges_us": [
+    [
+      "1000",
+      "1010"
+    ],
+    [
+      "1000",
+      "1010"
+    ],
+    [
+      "10000",
+      "10010"
+    ]
+  ],
+  "difference": {
+    "read_register_hex": "0x34ce",
+    "read_register": "WCD938X_DIGITAL_EFUSE_REG_30",
+    "write_register_hex": "0x3103",
+    "write_register": "WCD938X_SLEEP_CTL",
+    "mask_hex": "0x0e",
+    "value_expression": "(efuse30 & 7) << 1",
+    "module_read_instruction_hex": "0x52c8",
+    "module_write_instruction_hex": "0x52dc"
+  },
+  "common_constant_writes": [
+    {
+      "register": "WCD938X_SLEEP_CTL",
+      "address_hex": "0x3103",
+      "mask": 14,
+      "value": 14
+    },
+    {
+      "register": "WCD938X_SLEEP_CTL",
+      "address_hex": "0x3103",
+      "mask": 128,
+      "value": 128
+    },
+    {
+      "register": "WCD938X_SLEEP_CTL",
+      "address_hex": "0x3103",
+      "mask": 64,
+      "value": 64
+    },
+    {
+      "register": "WCD938X_LDORXTX_CONFIG",
+      "address_hex": "0x312a",
+      "mask": 16,
+      "value": 0
+    },
+    {
+      "register": "WCD938X_BIAS_VBG_FINE_ADJ",
+      "address_hex": "0x3029",
+      "mask": 240,
+      "value": 128
+    },
+    {
+      "register": "WCD938X_ANA_BIAS",
+      "address_hex": "0x3001",
+      "mask": 128,
+      "value": 128
+    },
+    {
+      "register": "WCD938X_ANA_BIAS",
+      "address_hex": "0x3001",
+      "mask": 64,
+      "value": 64
+    },
+    {
+      "register": "WCD938X_ANA_BIAS",
+      "address_hex": "0x3001",
+      "mask": 64,
+      "value": 0
+    },
+    {
+      "register": "WCD938X_HPH_NEW_INT_RDAC_GAIN_CTL",
+      "address_hex": "0x3132",
+      "mask": 240,
+      "value": 0
+    },
+    {
+      "register": "WCD938X_HPH_NEW_INT_RDAC_HD2_CTL_L_NEW",
+      "address_hex": "0x3140",
+      "mask": 31,
+      "value": 21
+    },
+    {
+      "register": "WCD938X_HPH_NEW_INT_RDAC_HD2_CTL_R_NEW",
+      "address_hex": "0x3141",
+      "mask": 31,
+      "value": 21
+    },
+    {
+      "register": "WCD938X_HPH_REFBUFF_UHQA_CTL",
+      "address_hex": "0x30dd",
+      "mask": 192,
+      "value": 128
+    },
+    {
+      "register": "WCD938X_DIGITAL_CDC_DMIC_CTL",
+      "address_hex": "0x345b",
+      "mask": 2,
+      "value": 2
+    },
+    {
+      "register": "WCD938X_TX_COM_NEW_INT_TXFE_ICTRL_STG2CASC_ULP",
+      "address_hex": "0x31e1",
+      "mask": 255,
+      "value": 20
+    },
+    {
+      "register": "WCD938X_TX_COM_NEW_INT_TXFE_ICTRL_STG2MAIN_ULP",
+      "address_hex": "0x31df",
+      "mask": 31,
+      "value": 8
+    },
+    {
+      "register": "WCD938X_DIGITAL_TX_REQ_FB_CTL_0",
+      "address_hex": "0x34d0",
+      "mask": 255,
+      "value": 85
+    },
+    {
+      "register": "WCD938X_DIGITAL_TX_REQ_FB_CTL_1",
+      "address_hex": "0x34d1",
+      "mask": 255,
+      "value": 68
+    },
+    {
+      "register": "WCD938X_DIGITAL_TX_REQ_FB_CTL_2",
+      "address_hex": "0x34d2",
+      "mask": 255,
+      "value": 17
+    },
+    {
+      "register": "WCD938X_DIGITAL_TX_REQ_FB_CTL_3",
+      "address_hex": "0x34d3",
+      "mask": 255,
+      "value": 0
+    },
+    {
+      "register": "WCD938X_DIGITAL_TX_REQ_FB_CTL_4",
+      "address_hex": "0x34d4",
+      "mask": 255,
+      "value": 0
+    },
+    {
+      "register": "WCD938X_MICB1_TEST_CTL_1",
+      "address_hex": "0x306b",
+      "mask": 224,
+      "value": 224
+    },
+    {
+      "register": "WCD938X_MICB2_TEST_CTL_1",
+      "address_hex": "0x306e",
+      "mask": 224,
+      "value": 224
+    },
+    {
+      "register": "WCD938X_MICB3_TEST_CTL_1",
+      "address_hex": "0x3071",
+      "mask": 224,
+      "value": 224
+    },
+    {
+      "register": "WCD938X_MICB4_TEST_CTL_1",
+      "address_hex": "0x3074",
+      "mask": 224,
+      "value": 224
+    },
+    {
+      "register": "WCD938X_TX_3_4_TEST_BLK_EN2",
+      "address_hex": "0x308f",
+      "mask": 1,
+      "value": 0
+    },
+    {
+      "register": "WCD938X_HPH_SURGE_HPHLR_SURGE_EN",
+      "address_hex": "0x30e2",
+      "mask": 192,
+      "value": 192
+    }
+  ]
+}
