@@ -18,11 +18,17 @@ udev 规则已纳入仓库。镜像构建还没有安装它，hexagonrpc、注�
 - KWin 在输出 DPMS 不是 On 时直接停用自动旋转。18:57 内核 `card0-DSI-1` 的 dpms 为 `Off`，策略虽然显示 `always`，方向变化也不会改画面。打开 DPMS 后，`left-up` 被应用到旋转 2（横向 965×432）。当时背光只有 1/4095，已调到约 30%（1229/4095），否则画面几乎是黑的。
 - 19:01 用户确认会跟着转，但上下左右都反了。当时屏幕后倾，左边框在下、右边框在上，原始读数仍是 X 约 +8.49，方向 `left-up`、旋转 2。这是绕屏幕法线差了 180°。加上上述安装矩阵并重启代理后，同一姿势变为 `right-up`，`kscreen-doctor` 旋转值从 2 变为 8，几何尺寸仍是横向 965×432。20:20 用户确认修正后的画面方向正确。
 
-## 还没有接通的部分
+## 光线和距离
 
-`ambient_light` 和 `proximity` 没有出现在 SEE 的 SUID 列表里，总线上 `HasAmbientLight=false`、`HasProximity=false`。SLPI 固件里有 TCS3701 / `sns_alsps` 驱动，字符串包含 “fail to probe any devices” 和 “HW absent”。同一路 `sensor_vdd` / `sensor_vddio` 上的加速度计，以及另一条 I²C 上的磁力计都能读数，所以不像是整组传感器电源没起来。主线内核没有 SLPI trace 缓冲，探测失败的 I²C 返回值还没拿到。
+原厂 `dtbo` 的 `oplus,sensor-devinfo` 把光线和距离标成 TCS3701（`sensor-name = 2`）、总线 2、中断 14，`als-type = 4`。`oplus_sensor.ko` 把这组数据写进 SMEM 项 130（`SMEM_SENSOR`，5140 字节）；总线、方向、中断为 `0xff` 才表示退回注册表。注册表里的总线 5、中断 89 是 QRD 模板。2026-11-14 18:21 只改注册表并重启 SLPI 时，加速度计仍在，光线和距离没有发布。
 
-原厂 `dtbo` 的 `oplus,sensor-devinfo` 把光线和距离标成 TCS3701（`sensor-name = 2`）、总线 2、中断 14，`als-type = 4`。`oplus_sensor.ko` 把这组数据写进 SMEM 项 130（`SMEM_SENSOR`，5140 字节）；字段值 `0xff` 才表示退回注册表。注册表里的总线 5、中断 89 是 QRD 模板。2026-11-14 18:21 已把本机注册表改成总线 2、中断 14 并只重启 SLPI，加速度计仍在，光线和距离仍未发布。主线没有这个 SMEM 项，芯片类型和 `als-type` 还没送进 SLPI。不能先分配一块全 0 的 SMEM，否则总线 0 会盖掉现在可用的加速度计。
+2026-11-14 22:21 用临时模块分配了这项共享内存。布局与原厂模块的 5140 字节一致：12 个物理传感器、每个 2 路、8 个虚拟算法。只填写光线（类型 3）和距离（类型 4）；其余传感器的 `sensor_name` 保持 0，总线、方向、中断写成 `0xff`。写入后核对与文件一致，然后只重启 SLPI，整机 boot id 未变。
+
+22:22 `ssccli` 读到光线约 291–304 lux，距离为 `FAR`。22:27 用户盖住手机后，光线降到约 42–43 lux，距离变为 `NEAR`。22:28 进一步遮严后，光线在 0 和 1 lux 之间，距离仍是 `NEAR`。加速度计仍约 Z 9.82 m/s²，磁力计仍约 X −194、Y −16、Z 152 µT，安装矩阵仍是全 0。SLPI 停止时 `iio-sensor-proxy` 失败退出，手动拉起后 `HasAccelerometer`、`HasAmbientLight`、`HasProximity` 都是 true。SSH 没有 seat，polkit 拒绝认领，所以总线上的 `LightLevel` 仍是 0；这不是传感器没出数。
+
+这项共享内存在内存里，重启手机会丢掉。临时模块没有加入开机加载，也没有进入镜像构建。
+
+## 还没对上的部分
 
 桌面自动旋转策略是 `always`。平放朝上时方向是 `undefined`，KWin 保留手动变换。DPMS 关闭时也不会跟着转。2026-11-14 19:01 安装矩阵取反 X/Y 后，右边框在上的姿势从 `left-up`（旋转 2）改为 `right-up`（旋转 8）。20:20 用户确认这个方向正确。登录界面那次 KWin 启动较早，当时仍显示 `incapable`；登录后的会话已经认领到加速度计。
 

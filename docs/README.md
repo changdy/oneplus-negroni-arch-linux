@@ -22,7 +22,7 @@
 | [蓝牙](bluetooth.md) | WCN6855 缺少 public address 的修复与验证范围 |
 | [NFC](nfc.md) | SN100 重复打开、19.2 MHz 参考时钟与 RF 发现；标签 UID 未测 |
 | [振动反馈](haptics.md) | PM8350B 自动加载、标准 FF 接口、feedbackd / Plasma 接入与实机验证边界 |
-| [传感器](sensors.md) | SLPI 加速度计驱动自动旋转；X/Y 取反后方向已由用户确认。TCS3701 光线和距离仍未探测成功 |
+| [传感器](sensors.md) | SLPI 加速度计驱动自动旋转；X/Y 取反后方向已由用户确认。TCS3701 露出时约 300 lux、FAR，遮严后 0–1 lux、NEAR；共享内存重启后会丢失 |
 | [GPU](gpu.md) | Adreno 730 3D/Vulkan 实测、runtime PM 与慢亮屏规避 |
 | [相机](camera.md) | 四摄 RAW 与主摄 C-PHY 实验移植；CSID 停流修正后 58 次启停通过，尚未进镜像 |
 | [CPU 性能与调度](cpu-performance.md) | Boost / performance 服务、设备树构建、部署验证与恢复 |
