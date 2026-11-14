@@ -1,0 +1,28 @@
+#!/bin/bash
+# Publish the TCS3701 description, then restart SLPI so it reads SMEM item 130.
+set -euo pipefail
+modprobe smem_sensor
+for _ in $(seq 1 30); do
+    [[ -e /sys/kernel/debug/smem_sensor ]] && break
+    sleep 1
+done
+if [[ ! -e /sys/kernel/debug/smem_sensor ]]; then
+    echo 'smem_sensor debugfs node is missing; debugfs must be mounted' >&2
+    exit 1
+fi
+dd if=/usr/lib/negroni/smem-sensor.bin of=/sys/kernel/debug/smem_sensor bs=5140 count=1 conv=notrunc status=none
+found=0
+for _ in $(seq 1 30); do
+    for rproc in /sys/class/remoteproc/remoteproc*; do
+        [[ -e $rproc/firmware ]] || continue
+        if [[ $(cat "$rproc/firmware") == slpi.mdt ]]; then
+            echo stop > "$rproc/state"
+            echo start > "$rproc/state"
+            found=1
+            break
+        fi
+    done
+    [[ $found == 1 ]] && break
+    sleep 1
+done
+[[ $found == 1 ]] || { echo 'SLPI remoteproc not found' >&2; exit 1; }

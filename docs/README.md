@@ -20,11 +20,12 @@
 | [GPS / GNSS](gnss.md) | 引擎锁、AFW 注册、新 XTRA 辅助接口与真实卫星接收验证边界 |
 | [通话语音](call-audio.md) | VoLTE 通话下行、通话录音与向对方放音（实验）、自动开关服务、已知问题与排查方法 |
 | [蓝牙](bluetooth.md) | WCN6855 缺少 public address 的修复与验证范围 |
-| [NFC](nfc.md) | SN100 重复打开、19.2 MHz 参考时钟与 RF 发现；标签 UID 未测 |
+| [NFC](nfc.md) | 已读到 UID `CD 27 FC DB`，手机可监听申报该 UID；门禁未测 |
 | [振动反馈](haptics.md) | PM8350B 自动加载、标准 FF 接口、feedbackd / Plasma 接入与实机验证边界 |
-| [传感器](sensors.md) | SLPI 加速度计驱动自动旋转；X/Y 取反后方向已由用户确认。TCS3701 露出时约 300 lux、FAR，遮严后 0–1 lux、NEAR；共享内存重启后会丢失 |
+| [传感器](sensors.md) | 自动旋转方向已确认。镜像安装 udev、换过的 iio-sensor-proxy 和 SMEM 光线距离服务。hexagonrpc 仍只在本机 |
 | [GPU](gpu.md) | Adreno 730 3D/Vulkan 实测、runtime PM 与慢亮屏规避 |
-| [相机](camera.md) | 四摄 RAW 与主摄 C-PHY 实验移植；CSID 停流修正后 58 次启停通过，尚未进镜像 |
+| [相机](camera.md) | 四摄 RAW。JN1 设备树在内核里；另外三颗以外部模块安装，不自动加载。新镜像未构建 |
+| [红外](infrared.md) | NE2210 没有红外遥控发射器；TCS3701 的红外 LED 只做距离感应 |
 | [CPU 性能与调度](cpu-performance.md) | Boost / performance 服务、设备树构建、部署验证与恢复 |
 | [Docker 内核支持](docker.md) | Docker 安装、网络模块配置、续建和镜像验证 |
 | [构建集成说明](build-integration.md) | 各配置如何进入 rootfs，已有镜像如何更新 |

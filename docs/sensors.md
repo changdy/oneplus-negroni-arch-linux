@@ -6,12 +6,12 @@
 
 ## 已在手机上接通的部分
 
-udev 规则已纳入仓库。镜像构建还没有安装它，hexagonrpc、注册表和换过的 `iio-sensor-proxy` 也仍只在本机。
+udev 规则、SMEM 描述和换过的 `iio-sensor-proxy` 已接入镜像打包。`prepare-rootfs.sh` 安装发行版 `iio-sensor-proxy`，`configure-sensors.sh` 再换成手机上这份（SHA-256 `babc9af3…`），对应补丁是 [iio-sensor-proxy-3.9-negroni.patch](../config/sensors/iio-sensor-proxy-3.9-negroni.patch)。`hexagonrpc` 0.5.0、传感器注册表和桌面 `autoRotation=Always` 仍只在本机，没有进镜像。没有 hexagonrpc 时，下面的 SLPI 重启不能把加速度计带回来。打包路径已接入，新镜像未构建、未刷入。
 
 - 安装了 `hexagonrpc` 0.5.0，并用 `hexagonrpcd-sdsp.service` 向 `/dev/fastrpc-sdsp` 提供传感器文件。虚拟文件系统只映射 `/vendor/etc/sensors/config`、`/persist/sensors/registry/registry` 和 `/sys/devices/soc0`，没有 `/odm`。因此把原厂 `sns_reg_config` 的配置目录改成 `/vendor/etc/sensors/config`，并把 ODM 的 `waipio_qrd_*.json` 放进 `/usr/share/qcom/sensors/config`。`socinfo` 写成 `hw_platform=QRD`、`soc_id=457`。
 - SLPI 重启后会打开 `waipio_qrd_alsps.json`、`alsps_platform.config`、`icm4x6xx_0_platform.config` 和 `mmc56x3x_0_platform.config`。注册表写入被只读文件系统拒绝，已有校准文件仍可读。
 - `ssccli` 能读到加速度计和磁力计。手机平放、屏幕朝上时加速度约 X 0.06、Y 0.08、Z 9.82 m/s²；磁力计约 X −188、Y −9、Z 143 µT。固件给出的安装矩阵全是 0，`libssc` 退回单位矩阵。芯片的 +X/+Y 和面板相反，+Z 与屏幕一致。
-- `iio-sensor-proxy` 3.9 已安装。发行版 udev 只给 SSC 登记光线和磁力计，本机另加 `/etc/udev/rules.d/81-negroni-ssc.rules`（仓库副本 [81-negroni-ssc.rules](../config/sensors/81-negroni-ssc.rules)），把 `ssc-accel` 和 `ssc-proximity` 加到 `fastrpc-sdsp*`，并把 `ACCEL_MOUNT_MATRIX` 设为 `-1, 0, 0; 0, -1, 0; 0, 0, 1`。系统总线上 `HasAccelerometer=true`。镜像构建还没有安装这条规则。
+- `iio-sensor-proxy` 3.9 已安装。发行版 udev 只给 SSC 登记光线和磁力计，本机另加 `/etc/udev/rules.d/81-negroni-ssc.rules`（仓库副本 [81-negroni-ssc.rules](../config/sensors/81-negroni-ssc.rules)），把 `ssc-accel` 和 `ssc-proximity` 加到 `fastrpc-sdsp*`，并把 `ACCEL_MOUNT_MATRIX` 设为 `-1, 0, 0; 0, -1, 0; 0, 0, 1`。系统总线上 `HasAccelerometer=true`。`configure-sensors.sh` 会安装这条规则。
 - 从 SDDM 图形会话的 cgroup 里认领加速度计成功。平放时 `AccelerometerOrientation` 为 `undefined`，这是倾斜不够时的正常结果，不是认领失败。SSH 会话没有 seat，polkit 会拒绝认领。
 - `~/.config/kwinoutputconfig.json` 里 DSI-1 的 `autoRotation` 已从 `InTabletMode` 改为 `Always`。2026-11-14 18:16 登录后的 KWin 已认领加速度计，`kscreen-doctor` 报告 `Auto Rotate Policy: always`。手机平放朝上，方向保持 `undefined`，屏幕保持横向 965×432。
 - 竖持时加速度约为 X 1.3、Y 9.5、Z 2.2 m/s²，但 `AccelerometerOrientation` 仍停在 `undefined`，画面不转。原因是 `iio-sensor-proxy` 在 KWin 认领加速度计时还没打开采样，认领被记下后没有人再调用 `driver_set_polling`。本机已换上自行编译的 3.9（`/usr/lib/iio-sensor-proxy`，原文件备份为 `iio-sensor-proxy.stock`）：传感器在拥有 D-Bus 名之前打开，已有认领会补上采样。发行版软件包和镜像都还是原版。修好后同一时刻的读数能对上方向。单位矩阵下 X 8.49、Y 0.01、Z 4.59 m/s² 被报成 `left-up`。
@@ -26,7 +26,7 @@ udev 规则已纳入仓库。镜像构建还没有安装它，hexagonrpc、注�
 
 22:22 `ssccli` 读到光线约 291–304 lux，距离为 `FAR`。22:27 用户盖住手机后，光线降到约 42–43 lux，距离变为 `NEAR`。22:28 进一步遮严后，光线在 0 和 1 lux 之间，距离仍是 `NEAR`。加速度计仍约 Z 9.82 m/s²，磁力计仍约 X −194、Y −16、Z 152 µT，安装矩阵仍是全 0。SLPI 停止时 `iio-sensor-proxy` 失败退出，手动拉起后 `HasAccelerometer`、`HasAmbientLight`、`HasProximity` 都是 true。SSH 没有 seat，polkit 拒绝认领，所以总线上的 `LightLevel` 仍是 0；这不是传感器没出数。
 
-这项共享内存在内存里，重启手机会丢掉。临时模块没有加入开机加载，也没有进入镜像构建。
+这项共享内存在内存里，重启手机会丢掉。内核 `472db17c1a3b` 提供 `smem_sensor`，镜像用 `negroni-smem-sensor.service` 在开机时写入 5140 字节并按固件名 `slpi.mdt` 重启 SLPI。SSH 没有 seat，总线上的 `LightLevel` 仍会是 0。新镜像未构建、未刷入。
 
 ## 还没对上的部分
 

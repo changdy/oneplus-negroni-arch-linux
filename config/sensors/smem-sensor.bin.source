@@ -1,0 +1,3 @@
+generator config/sensors/make-smem-sensor.c
+size 5140
+sha256 bbc7e47575bf0102919ff87238fe2736ae6dcf0113e56152beb4f974bc93e240

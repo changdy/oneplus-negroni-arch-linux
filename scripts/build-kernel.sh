@@ -6,6 +6,11 @@ log_dir=${LOG_DIR:-logs}
 mkdir -p "$log_dir"
 exec > >(tee "$project_dir/$log_dir/kernel-build.log") 2>&1
 cd linux
+if ! git diff --quiet HEAD || ! git diff --cached --quiet; then
+    printf 'linux/ has tracked changes. Commit them or set the experiment aside before building.\n' >&2
+    git diff --stat HEAD >&2
+    exit 1
+fi
 make_args=(O=output ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-)
 bash "$project_dir/scripts/configure-docker-kernel.sh" "$project_dir/linux/output"
 make "${make_args[@]}" -j"${JOBS:-8}"

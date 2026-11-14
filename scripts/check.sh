@@ -38,6 +38,28 @@ PY
 printf 'Checking audio topology and UCM sources...\n'
 python3 -B scripts/verify-audio-image.py --sources-only
 
+printf 'Checking sensor payloads...\n'
+python3 -B - <<'PY'
+import hashlib
+import re
+from pathlib import Path
+
+def recorded(path):
+    match = re.search(r"^sha256 ([0-9a-f]{64})$", Path(path).read_text(), re.M)
+    if not match:
+        raise SystemExit(f"missing sha256 in {path}")
+    return match.group(1)
+
+blob = Path("config/sensors/smem-sensor.bin").read_bytes()
+digest = hashlib.sha256(blob).hexdigest()
+if len(blob) != 5140 or digest != recorded("config/sensors/smem-sensor.bin.source"):
+    raise SystemExit("smem-sensor.bin does not match its source note")
+proxy = Path("config/sensors/iio-sensor-proxy").read_bytes()
+if hashlib.sha256(proxy).hexdigest() != recorded("config/sensors/iio-sensor-proxy.source"):
+    raise SystemExit("iio-sensor-proxy does not match its source note")
+print("sensor payloads match")
+PY
+
 printf 'Running experimental voice test cleanup checks...\n'
 python3 -B tests/test-voice-test.py
 python3 -B tests/test-call-audio.py

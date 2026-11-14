@@ -1,0 +1,4 @@
+iio-sensor-proxy 3.9 https://gitlab.freedesktop.org/hadess/iio-sensor-proxy (GPL-3.0-only)
+patch config/sensors/iio-sensor-proxy-3.9-negroni.patch
+phone /usr/lib/iio-sensor-proxy
+sha256 babc9af3dcaeda9846b5c7fe7ace0802e69ee5271ce499ae443b4c2aad7d8c68

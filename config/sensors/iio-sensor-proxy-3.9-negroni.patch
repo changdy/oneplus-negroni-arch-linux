@@ -1,0 +1,56 @@
+--- a/src/iio-sensor-proxy.c
++++ b/src/iio-sensor-proxy.c
+@@ -745 +745 @@
+-	for (guint i = 0; i < NUM_SENSOR_TYPES; i++)
++	for (i = 0; i < NUM_SENSOR_TYPES; i++) {
+@@ -746,0 +747,2 @@
++		data->sensor_startup_dbus_invocations_delayed[i] = g_ptr_array_new ();
++	}
+@@ -749,9 +750,0 @@
+-}
+-
+-static void
+-name_acquired_handler (GDBusConnection *connection,
+-		       const gchar     *name,
+-		       gpointer         user_data)
+-{
+-	SensorData *data = user_data;
+-	guint i;
+@@ -758,0 +752,4 @@
++	/* Discover and open sensors before the well-known name is requested.
++	 * Synchronous SSC calls iterate the main context; doing that after the
++	 * name is owned lets KWin observe HasAccelerometer=false and keep the
++	 * output marked incapable. */
+@@ -760 +757 @@
+-		goto bail;
++		return;
+@@ -768,2 +764,0 @@
+-		data->sensor_startup_dbus_invocations_delayed[i] = g_ptr_array_new ();
+-
+@@ -781,0 +777,2 @@
++		if (g_hash_table_size (data->clients[i]) > 0)
++			driver_set_polling (sensor_device, TRUE);
+@@ -782,0 +780,21 @@
++}
++
++static gboolean
++reannounce_sensors (gpointer user_data)
++{
++	SensorData *data = user_data;
++
++	/* KWin reads HasAccelerometer as soon as the bus name appears, which
++	 * can be before discovery finishes, and a late reply can overwrite the
++	 * later property change. Announce again once the value is stable. */
++	send_dbus_event (data, PROP_ALL);
++	send_dbus_event (data, PROP_ALL_COMPASS);
++	return G_SOURCE_REMOVE;
++}
++
++static void
++name_acquired_handler (GDBusConnection *connection,
++		       const gchar     *name,
++		       gpointer         user_data)
++{
++	SensorData *data = user_data;
+@@ -788,0 +807 @@
++	g_timeout_add_seconds (2, reannounce_sensors, data);

@@ -88,8 +88,17 @@ git diff --check
 - 提交规范见 [CONTRIBUTING.md](CONTRIBUTING.md)。没做过的实机验证要明确写“未测”，不能从模拟测试推断实机结果。
 - 不要提交凭据、私钥、分区备份、镜像产物，也不要提交 `logs/` 下的原始日志。
 
+### 已经驱动成功的硬件，和试过但没成的
+
+- 在这台 NE2210 上确认可用的硬件，驱动要在仓库里，下一次干净打包也要带上。三层都要齐：内核提交，加上父仓库 gitlink 和 `patches/linux/local-7.3.bundle`；`finalize-rootfs.sh` 调用的安装脚本把用户空间放进 rootfs；打包前的核对脚本能发现缺件。
+- 只确认了某一层时，把这一层接进打包，上面没做完的写成“未完成”。不要漏记，也不要写成已经可用。
+- 镜像只能从干净的内核树打。`build-kernel.sh` 发现已跟踪文件有差异就停止，避免试验 diff 经 `kernel-local.patch` 混进去。
+- 同一个文件里，成功的改动和失败的试验要拆开。失败的试验写在文档里，不进镜像。
+- 手机上手工安装、RAM overlay、字节补丁过的 `vendor_boot` 都不算已经进镜像。打包路径接上之后，文档要写明新镜像还没有构建、没有刷入。
+- 设备校准、凭据和分区备份不进 Git。手机正在用、并且可以随镜像分发的拓扑，按现有桌面拓扑的方式入库。
+
 ## 文档与记录
 
-- 当前状态汇总：[docs/status.md](docs/status.md)。各子系统：[音频](docs/audio.md)、[通话语音](docs/call-audio.md)、[基带/SIM/VoLTE](docs/modem.md)、[蓝牙](docs/bluetooth.md)、[GPU](docs/gpu.md)、[相机](docs/camera.md)、[USB 调试](docs/usb-debug.md)。
+- 当前状态汇总：[docs/status.md](docs/status.md)。各子系统：[音频](docs/audio.md)、[通话语音](docs/call-audio.md)、[基带/SIM/VoLTE](docs/modem.md)、[蓝牙](docs/bluetooth.md)、[NFC](docs/nfc.md)、[传感器](docs/sensors.md)、[红外](docs/infrared.md)、[GPU](docs/gpu.md)、[相机](docs/camera.md)、[USB 调试](docs/usb-debug.md)。
 - 完成一次实机调试后，更新对应子系统文档和 `docs/status.md`，写清日期、验证了什么、还没验证什么。原始日志放在 `logs/<主题>-<日期>/`（不纳入 Git），整理后的依据放在 `artifacts/`。
-- 未提交的进行中工作：相机 DT / CAMCC / CAMSS 修正与实验传感器代码仍未纳入内核提交、gitlink / bundle 或正式镜像。JN1 的 MCLK 24 MHz、GPIO24 低有效 reset 和 PHY2 已于 2026-11-13 实机取帧；2026-11-14 又通过 RAM overlay 取得主摄 IMX789（C-PHY）、长焦 OV08A10、前摄 IMX615 RAW，同日下午修正 CSID lite 越界写顶层寄存器、停流不关 RDI、开流失败不回退后，候选模块 58 次四摄切换/重复启停通过（`artifacts/camera-20261114/camss-stream-stop-fix.patch`）。同一修正在内核提交 `a7d9e945d961`。2026-11-14 17:03 已写入 `boot_b` 并安装对应模块后重启，B 槽仍成功。17:10 那份模块不能探测 C-PHY。内核 `d1ca2f4d48c2` 补上 C-PHY 与 GDSC 保持后已写入 `boot_b`，17:35 四轮四摄启停 16/16 出帧，没有硬重启。结束时 overlay 已卸、安装模块为 `e8d3b218…`，详见 [docs/camera.md](docs/camera.md)。USB2 gadget 的 LPM 补丁已在 2026-11-13 刷入 b 槽 `vendor_boot_b` 并重启验证：DT 属性和 DCFG LPMCap 清零都生效，但 USB2 口仍然失败，根因转向充电驱动的 OTG host 误切换；补丁未纳入 Git 和镜像构建，回滚镜像与注入脚本在 `logs/usb-debug-20261112/`，详见 [docs/usb-debug.md](docs/usb-debug.md)。
+- 未提交的进行中工作：DMIC 偏置试验和 NFC 被动监听仍留在内核工作区，不能打进镜像。`drivers/media/i2c/imx615.c` 仍未跟踪。主摄、长焦、前摄以外部模块安装，不自动加载。JN1 出流设备树、CSID、C-PHY、通话语音、NFC 时钟和 SMEM 光线距离已经进入内核提交。JN1 的 MCLK 24 MHz、GPIO24 低有效 reset 和 PHY2 已于 2026-11-13 实机取帧；2026-11-14 又通过 RAM overlay 取得主摄 IMX789（C-PHY）、长焦 OV08A10、前摄 IMX615 RAW，同日下午修正 CSID lite 越界写顶层寄存器、停流不关 RDI、开流失败不回退后，候选模块 58 次四摄切换/重复启停通过（`artifacts/camera-20261114/camss-stream-stop-fix.patch`）。同一修正在内核提交 `a7d9e945d961`。2026-11-14 17:03 已写入 `boot_b` 并安装对应模块后重启，B 槽仍成功。17:10 那份模块不能探测 C-PHY。内核 `d1ca2f4d48c2` 补上 C-PHY 与 GDSC 保持后已写入 `boot_b`，17:35 四轮四摄启停 16/16 出帧，没有硬重启。结束时 overlay 已卸、安装模块为 `e8d3b218…`，详见 [docs/camera.md](docs/camera.md)。USB2 gadget 的 LPM 补丁已在 2026-11-13 刷入 b 槽 `vendor_boot_b` 并重启验证：DT 属性和 DCFG LPMCap 清零都生效，但 USB2 口仍然失败，根因转向充电驱动的 OTG host 误切换；补丁未纳入 Git 和镜像构建，回滚镜像与注入脚本在 `logs/usb-debug-20261112/`，详见 [docs/usb-debug.md](docs/usb-debug.md)。

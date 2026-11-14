@@ -1,0 +1,12 @@
+[Unit]
+Description=Publish Negroni light and proximity data to SLPI
+After=sys-kernel-debug.mount hexagonrpcd-sdsp.service
+Wants=sys-kernel-debug.mount
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/sbin/negroni-smem-sensor
+
+[Install]
+WantedBy=multi-user.target

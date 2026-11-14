@@ -63,6 +63,7 @@ bash "$project_dir/scripts/configure-wifi.sh" "$target_dir" "$project_dir/$log_d
 bash "$project_dir/scripts/configure-audio.sh" "$target_dir" "$project_dir/$log_dir"
 bash "$project_dir/scripts/build-extra-camera-modules.sh" "$target_dir"
 bash "$project_dir/scripts/configure-nfc.sh" "$target_dir" "$project_dir/$log_dir"
+bash "$project_dir/scripts/configure-sensors.sh" "$target_dir" "$project_dir/$log_dir"
 bash "$project_dir/scripts/configure-modem-uim.sh" "$target_dir" "$project_dir/$log_dir"
 bash "$project_dir/scripts/configure-volte.sh" "$target_dir" "$project_dir/$log_dir"
 bash "$project_dir/scripts/configure-runtime-fixes.sh" "$target_dir" "$project_dir/$log_dir"

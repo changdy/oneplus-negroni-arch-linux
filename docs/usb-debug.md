@@ -108,7 +108,7 @@ sudo python3 /tmp/negroni-usb2-recover.py --apply   # 核对状态后只清 PHY_
 
 脚本限定 Negroni、device 角色、有 Type-C 伙伴、UDC 已绑定且未枚举；已配置时跳过，host / 未绑定 / 写前状态变化时拒绝。执行时保持线缆不动，用户空间检查不能与内核切换角色形成原子操作。直接寄存器操作属于实验性规避，未接入镜像构建。
 
-整理后的证据、精确时序及 [驱动候选补丁](../artifacts/usb2-gadget-20261113/usb2-datapath-candidate.patch) 见 [USB2 gadget 实验记录](../artifacts/usb2-gadget-20261113/README.md)。候选覆盖 PHY 初始化/模式设置的 datapath 释放，以及 DWC3 同为 device 时仍重新设置 PHY 模式的路径；ARM64 两个驱动对象编译与严格格式检查通过。**候选未提交、未刷入，通知时序、冷启动、自动热插拔恢复、USB3 / OTG / PD Hub 回归均未测。**
+整理后的证据、精确时序及 [驱动候选补丁](../artifacts/usb2-gadget-20261113/usb2-datapath-candidate.patch) 见 [USB2 gadget 实验记录](../artifacts/usb2-gadget-20261113/README.md)。候选覆盖 PHY 初始化/模式设置的 datapath 释放，以及 DWC3 同为 device 时仍重新设置 PHY 模式的路径。这段是写验证记录时的状态。随后的 datapath 修复已经进入内核 `f8350cc1e221` 并刷入 b 槽，见下一节。USB2 LPM 属性实验没有进 Git，也没有进镜像构建；去掉该属性之后的表现仍未测。
 
 ## USB2 驱动部署与验证（2026-11-13 22 时）
 
