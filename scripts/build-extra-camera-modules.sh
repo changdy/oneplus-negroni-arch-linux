@@ -5,7 +5,7 @@ set -euo pipefail
 project_dir=$(cd "$(dirname "$0")/.." && pwd)
 target_dir=$(realpath -e -- "${1:?Usage: build-extra-camera-modules.sh ROOTFS_DIRECTORY}")
 [[ $EUID == 0 && $target_dir != / ]] || exit 1
-kernel_dir=$project_dir/linux
+kernel_dir=${KERNEL_DIR:-$project_dir/linux}
 drivers=$project_dir/artifacts/camera-20261114/drivers
 overlay=$project_dir/artifacts/camera-20261114/negroni-four-camera-test.dts
 [[ -f $kernel_dir/output/.config && -f $drivers/Makefile && -f $overlay ]]
@@ -31,11 +31,19 @@ for module in imx615.ko negroni_extra_sensors.ko negroni_camera_overlay.ko; do
 done
 install -o 0 -g 0 -m 0644 "$work/negroni-four-camera-test.dtbo" \
     "$dest/negroni-four-camera-test.dtbo"
+install -d -o 0 -g 0 -m 0755 "$target_dir/usr/lib/firmware/negroni"
+install -o 0 -g 0 -m 0644 "$work/negroni-four-camera-test.dtbo" \
+    "$target_dir/usr/lib/firmware/negroni/negroni-four-camera-test.dtbo"
 install -o 0 -g 0 -m 0644 "$project_dir/config/camera/70-negroni-dma-heap.rules" \
     "$target_dir/etc/udev/rules.d/70-negroni-dma-heap.rules"
 for tool in negroni-camera-capture.sh negroni-camera-eeprom.sh negroni-camera-still.sh \
-    negroni-camera-multi-capture.sh negroni-camera-meter.py negroni-camera-raw-preview.py; do
+    negroni-camera-multi-capture.sh negroni-camera-meter.py negroni-camera-raw-preview.py \
+    negroni-camera-idle.sh negroni-camera-extra.sh; do
     install -o 0 -g 0 -m 0755 "$project_dir/scripts/$tool" "$target_dir/usr/local/bin/$tool"
 done
+install -d -o 0 -g 0 -m 0755 "$target_dir/etc/wireplumber/wireplumber.conf.d"
+install -o 0 -g 0 -m 0644 "$project_dir/config/camera/50-negroni-camera.conf" \
+    "$target_dir/etc/wireplumber/wireplumber.conf.d/50-negroni-camera.conf"
+python3 "$project_dir/scripts/camera_manifest.py" "$dest" "$kernel_dir" "$project_dir"
 # No modules-load.d entry. The board DTB already probes JN1; the other three
 # cameras stay unloaded until someone loads this overlay.

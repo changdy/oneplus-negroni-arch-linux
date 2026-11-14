@@ -18,9 +18,8 @@ done
 echo 'Experimental RAW path: camera switching has caused hard resets; see docs/camera.md.' >&2
 exec 9>/run/lock/negroni-camera-capture.lock
 flock -n 9 || { echo 'Another capture is running.' >&2; exit 1; }
-if fuser /dev/media0 /dev/video* /dev/v4l-subdev* >/dev/null 2>&1; then
-    echo 'Camera/video devices are in use.' >&2; exit 1;
-fi
+source "$(dirname "$0")/negroni-camera-idle.sh"
+negroni_camera_require_idle
 case $camera in
     main) entity=imx789; phy=1; csid=1; width=4000; height=3008; stride=5008
           code=SBGGR10_1X10; pixel=pBAA; cci=ac15000.cci;;

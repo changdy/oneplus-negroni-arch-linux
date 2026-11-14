@@ -1,16 +1,31 @@
 # 相机调试
 
-状态日期：2026-11-14，实机 OnePlus 10 Pro NE2210；本轮实验源码基于 `463023bf84b1`，运行内核仍为此前安装的 `7.3.0-sm8450+`。
+资料整理：2026-11-15；最近实机证据：2026-11-14。当前固定内核与恢复包见[内核提交说明](../patches/linux/README.md)。
 
-**四颗相机均已取得 RAW，主摄、长焦、前摄也已解包出真实场景。2026-11-14 下午修正 CSID 顶层配置与停流路径后，候选模块连续 58 次四摄切换/重复启停未再硬重启；该修正已提交为内核 `a7d9e945d961`，并已编入 `/opt/negroni-build/images/7.3`。2026-11-14 17:03 经同意只写 `boot_b` 并换上对应的 `qcom-camss.ko` 后重启，内核变为 `#5`（16:24:56 构建），模块哈希 `9ca488a3…`，B 槽仍为 Active / Successful / Bootable。17:10 那份只有 CSID 修复的模块不认识 C-PHY，四摄 overlay 探测失败；超广角随后因 `titan_top_gdsc` 卡在 off 而无法再次上电。随后把 C-PHY、gen2 PHY、GDSC 保持和连续 DMA 提交为内核 `d1ca2f4d48c2` 并写入 `boot_b`。17:34 重启为内核 `#6`（17:16:58 构建），模块 `e8d3b218…`，B 槽仍成功。17:35 用这份模块跑主摄→长焦→前摄→超广角共 4 轮、16 次启停全部出帧，`failures=0`，没有 GDSC 卡住，也没有硬重启，boot ID `a8d22d68`。测试结束已卸掉 overlay。长时间运行和睡眠交叉仍未测，尚不可作为日常相机使用。** 当前手机上仍是手动配置的实验采集路径，未接入相机应用。
+四摄均取得 RAW。超广角已有 Snapshot 预览和短录像（带声音），主摄/长焦/前摄仍是实验采集路径。CSID、C-PHY 和 GDSC 修复后，候选测试 58 次启停和随后运行模块 16 次四摄启停通过；长时间、冷启动、睡眠交叉与空闲功耗未测。完整成像、AF/OIS、应用切换尚未完成。
 
-超广角 JN1 的出流设备树在内核 `463b5ac2be3b`：PM8010J 的 L1 1.056 V、L3 2.8 V，CSI PHY2，MCLK 24 MHz，GPIO24 低有效复位，EEPROM 在 `0x50`。`0x51` 没有应答。主摄、长焦、前摄不放进板级设备树。`scripts/build-extra-camera-modules.sh` 交叉编译 `imx615.ko`、`negroni_extra_sensors.ko`、`negroni_camera_overlay.ko` 和四摄测试 overlay，装到 `/usr/lib/negroni/camera/`，不自动加载。采集脚本装到 `/usr/local/bin/`。libcamera 用的 system dma-heap udev 规则一并安装。AF/OIS 没有主线驱动，所以这三颗不开机自启。打包路径已接入，新镜像未构建、未刷入。
+超广角 JN1 的出流设备树在内核 `463b5ac2be3b`：PM8010J 的 L1 1.056 V、L3 2.8 V，CSI PHY2，MCLK 24 MHz，GPIO24 低有效复位，EEPROM 在 `0x50`。`0x51` 没有应答。主摄、长焦、前摄不放进板级设备树。`scripts/build-extra-camera-modules.sh` 交叉编译 `imx615.ko`、`negroni_extra_sensors.ko`、`negroni_camera_overlay.ko` 和四摄测试 overlay，装到 `/usr/lib/negroni/camera/`，不自动加载。采集脚本装到 `/usr/local/bin/`。libcamera 用的 system dma-heap udev 规则一并安装。默认启用以稳定性和功耗证据为准；这三颗的开机自动加载、休眠和空闲功耗尚未验证，暂保留手动入口。打包路径已接入，新镜像未构建、未刷入。
+
+## 镜像交付与操作入口（2026-11-15）
+
+`configure-camera.sh` 调用扩展模块构建器，安装采集/测光/预览工具、显式加载入口、dma-heap 权限和系统级 WirePlumber 配置。基础清单安装 Snapshot、libcamera/IPA/PipeWire 接入、v4l-utils、FFmpeg、NumPy 与 Pillow。设备树里的 JN1 默认探测，另外三摄按需加载：
+
+```sh
+# 手机上，先关闭相机应用和正在运行的预览：
+sudo negroni-camera-extra.sh load
+sudo negroni-camera-multi-capture.sh main /tmp/main.raw
+sudo negroni-camera-extra.sh unload
+```
+
+新入口不重启或刷分区，也不自动关掉别人的应用；遇到正在进行的相机/视频工作会拒绝。overlay 同时安装到固件搜索路径，避免模块虽在镜像中却找不到 DTBO。入口沿用已验证的加载顺序，新封装入口本身未在手机执行。
+
+续建会核对传感器源文件、overlay、脚本、配置、kernel release 和 Module.symvers 指纹，变化后重建并重新封装。打包前检查模块来源清单、实际文件哈希、vermagic 和当前内核 ABI，以及用户空间配置；缺件或过期即停止。扩展模块已在当前 WSL 内核输出上交叉编译，离线 ext4 拒绝场景通过；不能据此推断新完整镜像或开机加载已经实测。
 
 ## 相机应用 Snapshot（2026-11-14 晚）
 
 经用户同意，20:31 在手机上执行 `pacman -Syu`（61 个包，含 PipeWire 1.6.11、WirePlumber 0.5.19、systemd 262.2、BlueZ 5.88；不含内核、mesa、固件），并安装 `libcamera` / `libcamera-ipa` / `libcamera-tools` 0.7.2、`pipewire-libcamera`、`gst-plugin-libcamera` 与 GNOME `snapshot` 51.0。手机原有的包数据库已过期，镜像站删除了旧的 `gst-plugins-good` 等文件，只装应用会 404，必须整体升级。
 
-手机上额外做了两处配置（均未纳入镜像构建）：
+手机上额外做的两处配置已于 2026-11-15 整理进 `configure-camera.sh`，全新构建与已有镜像续建都会安装；新完整镜像未构建、未刷入：
 
 - `/etc/udev/rules.d/70-negroni-dma-heap.rules`：`SUBSYSTEM=="dma_heap", KERNEL=="system", GROUP="video", MODE="0660"`。缺少它时 libcamera 报 `Could not open any dma-buf provider`，软件 ISP 被禁用，只能输出 RAW。只开放 system heap，CMA 区仍为 root 独占。
 - `~/.config/wireplumber/wireplumber.conf.d/50-negroni-camera.conf`：`monitor.libcamera = required`，并用 `monitor.v4l2.rules` 把描述为 `Qualcomm Camera Subsystem` 的 17 个 CAMSS 原始视频节点设为 `device.disabled`，保留 Iris 编解码节点。随后只重启了 WirePlumber，音频设备恢复正常。
@@ -25,6 +40,8 @@
 未测：Snapshot 拍照、长时间预览/录像、前后摄切换（需其余三颗进入开机加载）、睡眠唤醒后再开相机。
 
 ## 启停硬重启修复（2026-11-14 下午）
+
+**四颗相机均已取得 RAW，主摄、长焦、前摄也已解包出真实场景。2026-11-14 下午修正 CSID 顶层配置与停流路径后，候选模块连续 58 次四摄切换/重复启停未再硬重启；该修正已提交为内核 `a7d9e945d961`，并已编入 `/opt/negroni-build/images/7.3`。2026-11-14 17:03 经同意只写 `boot_b` 并换上对应的 `qcom-camss.ko` 后重启，内核变为 `#5`（16:24:56 构建），模块哈希 `9ca488a3…`，B 槽仍为 Active / Successful / Bootable。17:10 那份只有 CSID 修复的模块不认识 C-PHY，四摄 overlay 探测失败；超广角随后因 `titan_top_gdsc` 卡在 off 而无法再次上电。随后把 C-PHY、gen2 PHY、GDSC 保持和连续 DMA 提交为内核 `d1ca2f4d48c2` 并写入 `boot_b`。17:34 重启为内核 `#6`（17:16:58 构建），模块 `e8d3b218…`，B 槽仍成功。17:35 用这份模块跑主摄→长焦→前摄→超广角共 4 轮、16 次启停全部出帧，`failures=0`，没有 GDSC 卡住，也没有硬重启，boot ID `a8d22d68`。测试结束已卸掉 overlay。长时间运行和睡眠交叉仍未测，尚不可作为日常相机使用。** 当前手机上仍是手动配置的实验采集路径，未接入相机应用。
 
 对照原厂 `cam_ife_csid_hw_ver2.c`、`cam_ife_csid680.h` / `cam_ife_csid_lite680.h` 后，在主线 CSID 680 及公共流程中确认三处代码缺陷：
 

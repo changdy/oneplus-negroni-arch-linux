@@ -25,3 +25,13 @@ iw
 wireless-regdb
 noto-fonts-cjk
 feedbackd
+libcamera
+libcamera-ipa
+libcamera-tools
+pipewire-libcamera
+gst-plugin-libcamera
+snapshot
+v4l-utils
+ffmpeg
+python-numpy
+python-pillow
