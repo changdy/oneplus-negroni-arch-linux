@@ -4,6 +4,8 @@
 
 **四颗相机均已取得 RAW，主摄、长焦、前摄也已解包出真实场景。2026-11-14 下午修正 CSID 顶层配置与停流路径后，候选模块连续 58 次四摄切换/重复启停未再硬重启；该修正已提交为内核 `a7d9e945d961`，并已编入 `/opt/negroni-build/images/7.3`。2026-11-14 17:03 经同意只写 `boot_b` 并换上对应的 `qcom-camss.ko` 后重启，内核变为 `#5`（16:24:56 构建），模块哈希 `9ca488a3…`，B 槽仍为 Active / Successful / Bootable。17:10 那份只有 CSID 修复的模块不认识 C-PHY，四摄 overlay 探测失败；超广角随后因 `titan_top_gdsc` 卡在 off 而无法再次上电。随后把 C-PHY、gen2 PHY、GDSC 保持和连续 DMA 提交为内核 `d1ca2f4d48c2` 并写入 `boot_b`。17:34 重启为内核 `#6`（17:16:58 构建），模块 `e8d3b218…`，B 槽仍成功。17:35 用这份模块跑主摄→长焦→前摄→超广角共 4 轮、16 次启停全部出帧，`failures=0`，没有 GDSC 卡住，也没有硬重启，boot ID `a8d22d68`。测试结束已卸掉 overlay。长时间运行和睡眠交叉仍未测，尚不可作为日常相机使用。** 当前手机上仍是手动配置的实验采集路径，未接入相机应用。
 
+超广角 JN1 的出流设备树在内核 `463b5ac2be3b`：PM8010J 的 L1 1.056 V、L3 2.8 V，CSI PHY2，MCLK 24 MHz，GPIO24 低有效复位，EEPROM 在 `0x50`。`0x51` 没有应答。主摄、长焦、前摄不放进板级设备树。`scripts/build-extra-camera-modules.sh` 交叉编译 `imx615.ko`、`negroni_extra_sensors.ko`、`negroni_camera_overlay.ko` 和四摄测试 overlay，装到 `/usr/lib/negroni/camera/`，不自动加载。采集脚本装到 `/usr/local/bin/`。libcamera 用的 system dma-heap udev 规则一并安装。AF/OIS 没有主线驱动，所以这三颗不开机自启。打包路径已接入，新镜像未构建、未刷入。
+
 ## 相机应用 Snapshot（2026-11-14 晚）
 
 经用户同意，20:31 在手机上执行 `pacman -Syu`（61 个包，含 PipeWire 1.6.11、WirePlumber 0.5.19、systemd 262.2、BlueZ 5.88；不含内核、mesa、固件），并安装 `libcamera` / `libcamera-ipa` / `libcamera-tools` 0.7.2、`pipewire-libcamera`、`gst-plugin-libcamera` 与 GNOME `snapshot` 51.0。手机原有的包数据库已过期，镜像站删除了旧的 `gst-plugins-good` 等文件，只装应用会 404，必须整体升级。
@@ -61,7 +63,7 @@
 
 新增[统一单次采集工具](../scripts/negroni-camera-multi-capture.sh)和[离线 sensormodule 检查器](../scripts/inspect-camera-sensormodule.py)。前者要求已经手动加载本轮候选模块及 overlay，不负责安装；同日下午使用最终编译模块，按主摄→超广角→长焦依次丢弃四帧、保存一帧实拍，三次均成功，单帧长度和传回电脑后的 SHA-256 均核对一致。拍摄及卸载恢复期间 boot ID 未改变，未发生重启；这三次成功不代表此前启停故障已解决。前摄尚未用统一脚本重测。后者验证本机观察到的 V3.5.1 文件长度、CRC32、表边界与寄存器位宽，不向硬件写入。RAW 和基础白平衡 PNG 仅保存于忽略的 `logs/camera-20261114/rear-1348-*`，不提交私人场景照片。
 
-结束时已停止采集；故障重启后 RAM overlay 和额外传感器模块均已消失，安装的 CAMSS 模块哈希仍为原来的 `0c78430b…d3fd4`，CCI / CAMSS / CAMCC 的 PM 策略恢复 `auto`，B 槽仍为 Active / Successful / Bootable。实验代码仍在工作区和归档，未提交到内核、未更新 gitlink / bundle、未启用自动加载。稳定启停、AF/OIS、主摄/长焦标准曝光增益控制、EEPROM 标定、AE/AWB、ISP/libcamera、JPEG/录像、多摄并发、HDR 与高分辨率模式仍未完成或未测。
+结束时已停止采集；故障重启后 RAM overlay 和额外传感器模块均已消失，安装的 CAMSS 模块哈希仍为原来的 `0c78430b…d3fd4`，CCI / CAMSS / CAMCC 的 PM 策略恢复 `auto`，B 槽仍为 Active / Successful / Bootable。当时实验代码还在工作区和归档，没有进内核，也没有自动加载。超广角设备树后来记在 `463b5ac2be3b`；另外三颗仍是上面的外部模块。稳定启停、AF/OIS、主摄/长焦标准曝光增益控制、EEPROM 标定、AE/AWB、ISP/libcamera、JPEG/录像、多摄并发、HDR 与高分辨率模式仍未完成或未测。
 
 ## 超广角已验证（2026-11-13）
 
@@ -74,7 +76,7 @@
 
 ## 修正与来源
 
-相机补丁副本见 [camera-bringup.patch](../artifacts/camera-20261113/camera-bringup.patch)，整理结果见 [实机依据](../artifacts/camera-20261113/README.md)。WSL 内核树中相机相关修改仍未提交，父仓库 gitlink 和恢复 bundle 未更新，**尚未接入正式完整镜像**；补丁不包含同一工作树里的音频修改。
+相机补丁副本见 [camera-bringup.patch](../artifacts/camera-20261113/camera-bringup.patch)，整理结果见 [实机依据](../artifacts/camera-20261113/README.md)。CSID、C-PHY/GDSC 和超广角设备树已经分别在内核 `a7d9e945d961`、`d1ca2f4d48c2`、`463b5ac2be3b`。另外三颗相机由镜像安装外部模块和 overlay，不自动加载。补丁不包含同一工作树里的音频修改。新的完整镜像还没有构建、没有刷入。
 
 1. 板级 DT：MCLK1 改为 24 MHz，reset 改为 GPIO24 低有效，CSI 连接改为 CSIPHY2；模拟电源使用 PM8010J L3（2.8 V）、数字核电源使用 PM8010J L1（1.056 V）、I/O 与 EEPROM 使用 PM8350C L2。供电与连接来自上一轮对原厂 DTBO 的核查。本轮读取实际 `vendor_boot_b`，确认设备已经使用这些参数；本轮未重刷设备树。
 2. CAMSS PHY：`csiphy_is_gen2()` 补上 `CAMSS_8450`。原代码虽有 SM8450 lane table，实际却选择了旧的寄存器编程路径。原版模块在本轮复现 STREAMON 成功但 8 秒无帧；修正后收到完整色条和实拍帧。

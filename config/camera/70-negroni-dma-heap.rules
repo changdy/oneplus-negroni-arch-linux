@@ -1,0 +1,2 @@
+# libcamera needs the system dma-heap. Leave CMA root-only.
+SUBSYSTEM=="dma_heap", KERNEL=="system", GROUP="video", MODE="0660"

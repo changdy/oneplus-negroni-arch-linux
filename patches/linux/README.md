@@ -1,6 +1,6 @@
 # 7.3 设备修复与源码恢复
 
-当前 `linux` 子模块固定到 `7.3` 修复提交 `81637d2a07f3603b99d981571b321668f673ea81`。修复从重新同步的上游 `476a4a8984395a77b6b6508f849dfb7b786d86b3` 直接修改，新增提交均只有一个父提交；没有 merge 或 cherry-pick `7.3-rc2`。之前的本地合并版本不再作为固定内核。
+当前 `linux` 子模块固定到 `7.3` 修复提交 `463b5ac2be3b0a0c73cb8b939636063f04fb07b1`。修复从重新同步的上游 `476a4a8984395a77b6b6508f849dfb7b786d86b3` 直接修改，新增提交均只有一个父提交；没有 merge 或 cherry-pick `7.3-rc2`。之前的本地合并版本不再作为固定内核。
 
 新增提交为 `835c18d2739`（电池驱动及限充）、`3ca85b51d20`（CPU 参数）和 `1eaec99b04a`（补齐触觉驱动 trace 头文件）。
 
@@ -29,6 +29,8 @@ LPASS 录音状态修复 `463023bf84b1` 改为按 TX/VA 通道 mask 的实际 bi
 WCD9385 中断修复 `baa7d74668f4` 让没有寄存器映射的 RX SoundWire 设备改用 TX 的映射清中断状态，共享回调在映射缺失时直接返回。RX 告警原先对空映射调用 `regmap_read()`，控制器中断线程退出后，停流和 mixer 更新停在不可中断睡眠。2026-11-14 装上 `snd-soc-wcd-common`、`snd-soc-wcd938x` 和 `snd-soc-wcd938x-sdw` 并重启后，该 oops 没有再出现；VoLTE 拨出接通，对端听过本机麦克风并反馈听着还可以。没有回声消除。只提交 wcd938x 与 wcd-common，相机、AudioReach 和未提交设备树没有混入。bundle 保留原两个前置提交与历史 rc2 引用，见[通话语音](../../docs/call-audio.md)。
 
 AudioReach 通话语音 `81637d2a07f3` 打开 Negroni 的 hostless 语音图：VCPM 校准共享内存、跨图控制连接和路由修正。2026-11-14 对端听过本机麦克风，听筒/免提切换用户确认可以。没有回声消除。父仓库把实机拓扑 `5fb6fba6…` 和 `negroni-call-audio.service` 接进 `configure-audio.sh`。打包路径已接入，新镜像未构建、未刷入。只提交 qdsp6，失败的 DMIC 偏置试验没有混入。bundle 保留原两个前置提交与历史 rc2 引用。
+
+超广角出流设备树 `463b5ac2be3b` 写下已经取到帧的 JN1：PM8010J L1 1.056 V、L3 2.8 V，CSI PHY2，MCLK 24 MHz，GPIO24 低有效复位，EEPROM `0x50`。`0x51` 无应答。主摄、长焦和前摄仍是外部模块加 overlay，不进这块板级设备树，也不自动加载。失败的 DMIC 偏置试验没有混入。bundle 保留原两个前置提交与历史 rc2 引用，见[相机说明](../../docs/camera.md)。
 
 ## 重做范围
 
