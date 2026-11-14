@@ -8,6 +8,9 @@
 *.yaml text eol=lf
 *.conf text eol=lf
 *.service text eol=lf
+*.desktop text eol=lf
+*.page text eol=lf
+config/packages/*.txt text eol=lf
 *.bundle binary
 *.tar.gz binary
 *.img binary
@@ -26,6 +29,10 @@ artifacts/usb2-gadget-20261113/*.patch text eol=lf whitespace=-blank-at-eol,-bla
 artifacts/camera-20261113/*.patch text eol=lf whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab
 artifacts/camera-20261114/*.patch whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab
 config/gnss/sources.txt text eol=lf
+config/gnss/runtime/ModemManager binary
+config/gnss/runtime/*.so.* binary
+config/gnss/runtime/SHA256SUMS text eol=lf
+artifacts/usb2-gadget-20261113/experiments/*.patch text eol=lf whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab
 *.rules text eol=lf
 *.source text eol=lf
 
@@ -34,10 +41,6 @@ config/gnss/sources.txt text eol=lf
 
 # Keep the verified stock module archive byte-identical to its SHA256SUMS.
 /downloads/stock-drivers-20261113/vendor_dlkm_b/** binary
-config/gnss/runtime/ModemManager binary
-config/gnss/runtime/*.so.* binary
-config/gnss/runtime/SHA256SUMS text eol=lf
-*.desktop text eol=lf
-config/packages/*.txt text eol=lf
-*.page text eol=lf
-artifacts/usb2-gadget-20261113/experiments/*.patch text eol=lf whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab
+
+# License copies participate in the delivered payload checksum.
+config/gnss/runtime/COPYING* text eol=lf

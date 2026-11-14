@@ -109,3 +109,9 @@ python3 -m json.tool logs/7.3/build-result.json
 | `logs/7.3/build-result.json` | 内核提交、配置、验证结果与镜像大小/哈希 |
 
 脚本不会自动刷写手机。构建和离线检查通过后，继续阅读[刷机说明](flashing.md)。CPU Boost / performance 与大小核调度修复默认随新固件生效，启停及旧镜像续建见 [CPU 性能说明](cpu-performance.md)。
+
+## 已有 WSL 构建副本的同步（2026-11-15 核对）
+
+Windows 仓库的 main 是本轮交付来源。现有 `/opt/negroni-build` 父仓库 HEAD 仍为 `6160bea`，有此前留下的脚本、配置和换行等未提交改动；内核子仓库则已经固定在 `cba22a622ac0`。本轮没有用新文件覆盖这份混合构建副本，也没有在其中构建完整镜像。
+
+下一次完整打包前，先核对该父仓库的 diff，保留其它会话的有效修改，再将父仓库脚本、config、gitlink 和 bundle 同步到本次 main 的同一版本。确认源码一致后运行子模块恢复及正常构建。不要直接把旧目录中一次成功的命令当成本次版本的镜像结果，也不要用强制 checkout/reset 丢弃未整理内容。所有构建命令应在已同步的仓库根目录执行，完整镜像和刷机验证另行记录。

@@ -12,7 +12,7 @@
 ssh -o BatchMode=yes -o ConnectTimeout=6 oneplus@10.55.0.1 'uname -r; uptime'
 ```
 
-- 手机通过 USB 线接电脑的 **USB3 口**（USB2 口不可用）。手机侧 IP `10.55.0.1`，电脑侧 NCM 网卡静态 IP `10.55.0.2/24`。
+- 手机通过 USB 线接电脑的 **USB3 口**（调试首选；USB2 已有修复验证，边界见 `docs/usb-debug.md`）。手机侧 IP `10.55.0.1`，电脑侧 NCM 网卡静态 IP `10.55.0.2/24`。
 - 电脑公钥已经授权，可以直接用 `BatchMode` 非交互执行命令，或用 `scp` 传文件。
 - 用户 `oneplus`；`sudo` 需要密码（等于登录密码）。这台开发机的初始密码是 `3401778728`，**当前密码是 `123321`**（用户 2026-11-12 提供并要求记录在此）。密码不对时再向用户索要，不要自行搜索凭据文件。
 
@@ -79,6 +79,7 @@ EOS
 - **一个功能对应一个提交**：同一功能的代码、配置、测试和文档放进同一个提交，不同功能分开提交；不要把无关改动混进去，也不要把一个功能拆成多个零碎提交。
 - 只 `git add` 本功能涉及的文件，不要用 `git add -A`。
 - 推送到远端前先征得用户同意。
+- 修改镜像安装/检查时，再运行 `sudo bash scripts/check-image-delivery.sh`；小型 ext4 检查不能代替完整镜像或实机验证。
 
 ```sh
 bash scripts/check.sh
@@ -93,12 +94,14 @@ git diff --check
 - 在这台 NE2210 上确认可用的硬件，驱动要在仓库里，下一次干净打包也要带上。三层都要齐：内核提交，加上父仓库 gitlink 和 `patches/linux/local-7.3.bundle`；`finalize-rootfs.sh` 调用的安装脚本把用户空间放进 rootfs；打包前的核对脚本能发现缺件。
 - 只确认了某一层时，把这一层接进打包，上面没做完的写成“未完成”。不要漏记，也不要写成已经可用。
 - 镜像只能从干净的内核树打。`build-kernel.sh` 发现已跟踪文件有差异就停止，避免试验 diff 经 `kernel-local.patch` 混进去。
-- 同一个文件里，成功的改动和失败的试验要拆开。失败的试验写在文档里，不进镜像。
+- 同一个文件里，成功的改动和失败的试验要拆开。有价值的失败代码/补丁与复现、结果、恢复方法一起保存在实验资料中，默认构建不执行。
+- 已验证且没有明显稳定性或耗电影响的驱动默认启用，空闲时应释放资源；证据不足的标为待验证并保留操作入口。按需访问不等于开机持续采集。
+- 基础应用及中文、键盘、SSH、旋转等系统修复要交付；串流和专门调试工具按需安装。完整整理与对话清单见 [项目记录](docs/project-records.md)。
 - 手机上手工安装、RAM overlay、字节补丁过的 `vendor_boot` 都不算已经进镜像。打包路径接上之后，文档要写明新镜像还没有构建、没有刷入。
 - 设备校准、凭据和分区备份不进 Git。手机正在用、并且可以随镜像分发的拓扑，按现有桌面拓扑的方式入库。
 
 ## 文档与记录
 
-- 当前状态汇总：[docs/status.md](docs/status.md)。各子系统：[音频](docs/audio.md)、[通话语音](docs/call-audio.md)、[基带/SIM/VoLTE](docs/modem.md)、[蓝牙](docs/bluetooth.md)、[NFC](docs/nfc.md)、[传感器](docs/sensors.md)、[红外](docs/infrared.md)、[GPU](docs/gpu.md)、[相机](docs/camera.md)、[USB 调试](docs/usb-debug.md)。
+- 当前状态汇总：[docs/status.md](docs/status.md)。各子系统：[音频](docs/audio.md)、[通话语音](docs/audio.md#通话语音)、[基带/SIM/VoLTE](docs/modem.md)、[蓝牙](docs/bluetooth.md)、[NFC](docs/nfc.md)、[传感器](docs/sensors.md)、[红外](docs/infrared.md)、[GPU](docs/gpu.md)、[相机](docs/camera.md)、[USB 调试](docs/usb-debug.md)。
 - 完成一次实机调试后，更新对应子系统文档和 `docs/status.md`，写清日期、验证了什么、还没验证什么。原始日志放在 `logs/<主题>-<日期>/`（不纳入 Git），整理后的依据放在 `artifacts/`。
-- 内核工作区只剩未跟踪的 `drivers/media/i2c/imx615.c`（镜像编译 `artifacts/camera-20261114/drivers/` 里那份）。主摄、长焦、前摄以外部模块安装，不自动加载。JN1 出流设备树、CSID、C-PHY、通话语音、NFC 时钟、SMEM 光线距离、NFC 被动监听和 DMIC3/DMIC4 麦克风路由已经进入内核提交。NFC 被动监听没有读卡器验证，`configure-nfc.sh` 不写入 UID。JN1 的 MCLK 24 MHz、GPIO24 低有效 reset 和 PHY2 已于 2026-11-13 实机取帧；2026-11-14 又通过 RAM overlay 取得主摄 IMX789（C-PHY）、长焦 OV08A10、前摄 IMX615 RAW，同日下午修正 CSID lite 越界写顶层寄存器、停流不关 RDI、开流失败不回退后，候选模块 58 次四摄切换/重复启停通过（`artifacts/camera-20261114/camss-stream-stop-fix.patch`）。同一修正在内核提交 `a7d9e945d961`。2026-11-14 17:03 已写入 `boot_b` 并安装对应模块后重启，B 槽仍成功。17:10 那份模块不能探测 C-PHY。内核 `d1ca2f4d48c2` 补上 C-PHY 与 GDSC 保持后已写入 `boot_b`，17:35 四轮四摄启停 16/16 出帧，没有硬重启。结束时 overlay 已卸、安装模块为 `e8d3b218…`，详见 [docs/camera.md](docs/camera.md)。USB2 gadget 的 LPM 补丁已在 2026-11-13 刷入 b 槽 `vendor_boot_b` 并重启验证：DT 属性和 DCFG LPMCap 清零都生效，但 USB2 口仍然失败，根因转向充电驱动的 OTG host 误切换；补丁未纳入 Git 和镜像构建，回滚镜像与注入脚本在 `logs/usb-debug-20261112/`，详见 [docs/usb-debug.md](docs/usb-debug.md)。
+- 当前固定内核、gitlink 与恢复 bundle 已包含音频/DMIC、相机 CSID/C-PHY、NFC 和 SMEM 相关提交。主摄、长焦、前摄的实验模块和操作入口随镜像提供，开机/睡眠/功耗未验收，暂不自动加载。NFC 被动监听没有读卡器验证，默认镜像不写入本机 UID。USB2 早期 LPM 实验已否证，后续 datapath 修复有启动、拔插和传输记录；当前结论及历史依据分别见硬件文档，不再沿用旧的失败总述。

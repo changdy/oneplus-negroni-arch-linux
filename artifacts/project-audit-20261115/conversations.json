@@ -1,0 +1,548 @@
+{
+  "schema_version": 1,
+  "reviewed_at": "2026-11-15",
+  "scope": "Existing chats for C:/project/oneplus-negroni-arch-linux in Codex and Cursor; archived chats included. Message bodies, final results, compacted summaries and relevant code paths were cross-checked; this is a curated inventory, not a raw transcript export.",
+  "codex": [
+    {
+      "id": "01a1d8b4-2985-78b2-8c9a-993bcd8ac8df",
+      "title": "评估原厂驱动移植难度",
+      "archived": false,
+      "primary_doc": "docs/haptics.md",
+      "disposition": "已核对；具体能力、历史实验及验证边界汇入主题文档，使用当前代码和较晚证据纠正旧结论。"
+    },
+    {
+      "id": "01a1d7c3-24ab-7d52-b3ae-0d234b48f196",
+      "title": "移植安卓相机驱动",
+      "archived": false,
+      "primary_doc": "docs/camera.md",
+      "disposition": "已核对；具体能力、历史实验及验证边界汇入主题文档，使用当前代码和较晚证据纠正旧结论。"
+    },
+    {
+      "id": "01a1d574-d737-7cf0-8dbc-9ac2fb059b0b",
+      "title": "查找原厂 DMIC3/DMIC4 路由",
+      "archived": false,
+      "primary_doc": "docs/audio.md",
+      "disposition": "已核对；具体能力、历史实验及验证边界汇入主题文档，使用当前代码和较晚证据纠正旧结论。"
+    },
+    {
+      "id": "01a1d551-8e5f-7583-b9ab-fa5ecbf98dae",
+      "title": "检查原厂系统驱动逻辑",
+      "archived": false,
+      "primary_doc": "docs/stock-hardware.md",
+      "disposition": "已核对；具体能力、历史实验及验证边界汇入主题文档，使用当前代码和较晚证据纠正旧结论。"
+    },
+    {
+      "id": "01a1d559-1782-7dc3-9ae5-f126c4073195",
+      "title": "排查手机 USB SSH 无操作断连",
+      "archived": false,
+      "primary_doc": "docs/usb-debug.md",
+      "disposition": "已核对；具体能力、历史实验及验证边界汇入主题文档，使用当前代码和较晚证据纠正旧结论。"
+    },
+    {
+      "id": "01a1d514-6988-7162-a0b0-e452ed6753ba",
+      "title": "排查 USB 2.0 驱动",
+      "archived": false,
+      "primary_doc": "docs/usb-debug.md",
+      "disposition": "已核对；具体能力、历史实验及验证边界汇入主题文档，使用当前代码和较晚证据纠正旧结论。"
+    },
+    {
+      "id": "01a1d283-5e71-7f31-92f1-72b997ab02e2",
+      "title": "继续推送摄像头驱动",
+      "archived": false,
+      "primary_doc": "docs/camera.md",
+      "disposition": "已核对；具体能力、历史实验及验证边界汇入主题文档，使用当前代码和较晚证据纠正旧结论。"
+    },
+    {
+      "id": "01a1d01b-8b94-7903-91a9-cc52fde49f24",
+      "title": "修复 GPS/GNSS 驱动",
+      "archived": false,
+      "primary_doc": "docs/gnss.md",
+      "disposition": "已核对；具体能力、历史实验及验证边界汇入主题文档，使用当前代码和较晚证据纠正旧结论。"
+    },
+    {
+      "id": "01a1d222-caa8-7512-980d-debcacf8330e",
+      "title": "梳理手机串流服务器待办",
+      "archived": false,
+      "primary_doc": "docs/optional-apps.md",
+      "disposition": "已核对；具体能力、历史实验及验证边界汇入主题文档，使用当前代码和较晚证据纠正旧结论。"
+    },
+    {
+      "id": "01a1d223-c543-72c0-94a4-15c67b465b12",
+      "title": "查找手机 GPS 应用",
+      "archived": false,
+      "primary_doc": "docs/gnss.md",
+      "disposition": "已核对；具体能力、历史实验及验证边界汇入主题文档，使用当前代码和较晚证据纠正旧结论。"
+    },
+    {
+      "id": "01a1d049-92ab-77c1-9b3f-f1087b842263",
+      "title": "查找可用的浏览器工具",
+      "archived": false,
+      "primary_doc": "docs/browser.md",
+      "disposition": "已核对；具体能力、历史实验及验证边界汇入主题文档，使用当前代码和较晚证据纠正旧结论。"
+    },
+    {
+      "id": "01a1d00b-7b9c-7981-b21f-33509e277991",
+      "title": "盘点缺失的驱动",
+      "archived": false,
+      "primary_doc": "docs/status.md",
+      "disposition": "已核对；具体能力、历史实验及验证边界汇入主题文档，使用当前代码和较晚证据纠正旧结论。"
+    },
+    {
+      "id": "01a1cfd2-76b6-7752-8c2b-9e05547e2517",
+      "title": "评估 4:3 信号拉伸显示",
+      "archived": false,
+      "primary_doc": "docs/optional-apps.md",
+      "disposition": "已核对；具体能力、历史实验及验证边界汇入主题文档，使用当前代码和较晚证据纠正旧结论。"
+    },
+    {
+      "id": "01a1cff3-7231-7b21-bba6-8899d4a2883f",
+      "title": "排查 free -h 仅显示 10G 内存",
+      "archived": false,
+      "primary_doc": "docs/memory.md",
+      "disposition": "已核对；具体能力、历史实验及验证边界汇入主题文档，使用当前代码和较晚证据纠正旧结论。"
+    },
+    {
+      "id": "01a1cfca-5e7f-7820-aeeb-d5b659713292",
+      "title": "比较当前系统与 Nura",
+      "archived": false,
+      "primary_doc": "docs/building.md",
+      "disposition": "已核对；具体能力、历史实验及验证边界汇入主题文档，使用当前代码和较晚证据纠正旧结论。"
+    },
+    {
+      "id": "01a1cee2-fd88-7ee1-b9e2-60467461a7d9",
+      "title": "修复手机中文字体缺失",
+      "archived": false,
+      "primary_doc": "docs/fonts.md",
+      "disposition": "已核对；具体能力、历史实验及验证边界汇入主题文档，使用当前代码和较晚证据纠正旧结论。"
+    },
+    {
+      "id": "01a1cdd0-72b9-7291-a055-1a3d1c9f81dd",
+      "title": "修复通话语音问题",
+      "archived": false,
+      "primary_doc": "docs/audio.md",
+      "disposition": "已核对；具体能力、历史实验及验证边界汇入主题文档，使用当前代码和较晚证据纠正旧结论。"
+    },
+    {
+      "id": "01a1ce56-69f5-7623-86ba-e0ab545b025b",
+      "title": "查找 Linux 手机通话语音案例",
+      "archived": false,
+      "primary_doc": "docs/audio.md",
+      "disposition": "已核对；具体能力、历史实验及验证边界汇入主题文档，使用当前代码和较晚证据纠正旧结论。"
+    },
+    {
+      "id": "01a1ca1a-6eba-7f81-9b44-811354a755b4",
+      "title": "查找一加 10 Pro 刷机步骤",
+      "archived": false,
+      "primary_doc": "docs/flashing.md",
+      "disposition": "已核对；具体能力、历史实验及验证边界汇入主题文档，使用当前代码和较晚证据纠正旧结论。"
+    },
+    {
+      "id": "01a1cad4-e336-7830-9368-278ed68c075f",
+      "title": "查找一加10 Pro的Nura仓库",
+      "archived": false,
+      "primary_doc": "docs/building.md",
+      "disposition": "已核对；具体能力、历史实验及验证边界汇入主题文档，使用当前代码和较晚证据纠正旧结论。"
+    },
+    {
+      "id": "01a1d52d-e68a-70c2-a65f-742ba029bc33",
+      "title": "分析刷回一加系统对驱动的帮助",
+      "archived": true,
+      "primary_doc": "docs/stock-hardware.md",
+      "disposition": "已核对；具体能力、历史实验及验证边界汇入主题文档，使用当前代码和较晚证据纠正旧结论。"
+    },
+    {
+      "id": "01a1d526-8cd1-7f81-9704-ede4d4aab654",
+      "title": "查找卡刷包与线刷包区别",
+      "archived": true,
+      "primary_doc": "docs/flashing.md",
+      "disposition": "已核对；具体能力、历史实验及验证边界汇入主题文档，使用当前代码和较晚证据纠正旧结论。"
+    },
+    {
+      "id": "01a1d2d1-e749-75a2-a557-a5d1e39f8012",
+      "title": "评估刷回原厂系统难度",
+      "archived": true,
+      "primary_doc": "docs/flashing.md",
+      "disposition": "已核对；具体能力、历史实验及验证边界汇入主题文档，使用当前代码和较晚证据纠正旧结论。"
+    }
+  ],
+  "cursor": [
+    {
+      "id": "7460f156-e271-4735-9c2b-9d3304f37573",
+      "title": "Camera driver improvement steps",
+      "archived": true,
+      "primary_doc": null,
+      "disposition": "只有错误或停止标记，没有可提炼的技术正文。",
+      "compacted_segments": 0,
+      "terminal_errors": [
+        "Model not available This model provider is not supported in your region. Visit https://cursor.com/docs/account/regions for more information."
+      ]
+    },
+    {
+      "id": "922d6636-81a7-484c-a943-7259eb5b5e2a",
+      "title": "Camera driver improvement steps",
+      "archived": true,
+      "primary_doc": null,
+      "disposition": "只有错误或停止标记，没有可提炼的技术正文。",
+      "compacted_segments": 0,
+      "terminal_errors": [
+        "Model not available This model provider is not supported in your region. Visit https://cursor.com/docs/account/regions for more information."
+      ]
+    },
+    {
+      "id": "cb31c28f-1672-4867-becb-38c81670a86e",
+      "title": "Camera driver improvement steps",
+      "archived": true,
+      "primary_doc": null,
+      "disposition": "只有错误或停止标记，没有可提炼的技术正文。",
+      "compacted_segments": 0,
+      "terminal_errors": [
+        "Model not available This model provider is not supported in your region. Visit https://cursor.com/docs/account/regions for more information."
+      ]
+    },
+    {
+      "id": "6ca554a0-1909-4a08-9033-d86501fabfbe",
+      "title": "Camera driver improvement steps",
+      "archived": true,
+      "primary_doc": null,
+      "disposition": "只有错误或停止标记，没有可提炼的技术正文。",
+      "compacted_segments": 0,
+      "terminal_errors": [
+        "Model not available This model provider is not supported in your region. Visit https://cursor.com/docs/account/regions for more information."
+      ]
+    },
+    {
+      "id": "3c820c2a-b6bc-4fb2-8711-17d674c9ac68",
+      "title": "Camera driver improvement steps",
+      "archived": true,
+      "primary_doc": null,
+      "disposition": "只有错误或停止标记，没有可提炼的技术正文。",
+      "compacted_segments": 0,
+      "terminal_errors": [
+        "Model not available This model provider is not supported in your region. Visit https://cursor.com/docs/account/regions for more information."
+      ]
+    },
+    {
+      "id": "bf65f298-6280-4dcb-8722-e0c08e057039",
+      "title": "Camera driver improvement steps",
+      "archived": true,
+      "primary_doc": null,
+      "disposition": "只有错误或停止标记，没有可提炼的技术正文。",
+      "compacted_segments": 0,
+      "terminal_errors": [
+        "Model not available This model provider is not supported in your region. Visit https://cursor.com/docs/account/regions for more information."
+      ]
+    },
+    {
+      "id": "f73f3ec1-78bb-4a89-b28b-bed53dff7cae",
+      "title": "Camera driver improvement steps",
+      "archived": true,
+      "primary_doc": null,
+      "disposition": "只有错误或停止标记，没有可提炼的技术正文。",
+      "compacted_segments": 0,
+      "terminal_errors": [
+        "Model not available This model provider is not supported in your region. Visit https://cursor.com/docs/account/regions for more information."
+      ]
+    },
+    {
+      "id": "3472ae7b-661c-466e-accd-1ca2c208cfa8",
+      "title": "你好?",
+      "archived": true,
+      "primary_doc": null,
+      "disposition": "问候对话，没有项目成果。",
+      "compacted_segments": 0,
+      "terminal_errors": []
+    },
+    {
+      "id": "26db79f4-ca17-49e7-bc42-37d14751227b",
+      "title": "Microphone troubleshooting options",
+      "archived": true,
+      "primary_doc": "docs/audio.md",
+      "disposition": "已核对正文与后续结论；代码、实验与未测范围按主题保留。",
+      "compacted_segments": 1,
+      "terminal_errors": []
+    },
+    {
+      "id": "92c6aaab-6df8-471b-b69c-291d2a70aacb",
+      "title": "定位模块驱动问题",
+      "archived": false,
+      "primary_doc": "docs/gnss.md",
+      "disposition": "已核对正文与后续结论；代码、实验与未测范围按主题保留。",
+      "compacted_segments": 0,
+      "terminal_errors": [
+        "Other Models usage limit reached Switched to Auto after reaching Other Models usage limit.",
+        "user_stopped_generation"
+      ]
+    },
+    {
+      "id": "38a6eec5-902e-47f3-888d-dbfd31381f30",
+      "title": "Camera driver restart issue",
+      "archived": true,
+      "primary_doc": null,
+      "disposition": "只有错误或停止标记，没有可提炼的技术正文。",
+      "compacted_segments": 0,
+      "terminal_errors": [
+        "user_stopped_generation"
+      ]
+    },
+    {
+      "id": "9a9b2428-f1d0-4bcf-a896-ae009a420e72",
+      "title": "Camera driver restart issue",
+      "archived": true,
+      "primary_doc": "docs/camera.md",
+      "disposition": "已核对正文与后续结论；代码、实验与未测范围按主题保留。",
+      "compacted_segments": 0,
+      "terminal_errors": [
+        "Other Models usage limit reached Switched to Auto after reaching Other Models usage limit."
+      ]
+    },
+    {
+      "id": "d4ed0d6f-b334-42b7-802e-cb5f5a66f74f",
+      "title": "Camera app recommendations",
+      "archived": false,
+      "primary_doc": "docs/camera.md",
+      "disposition": "已核对正文与后续结论；代码、实验与未测范围按主题保留。",
+      "compacted_segments": 0,
+      "terminal_errors": [
+        "Other Models usage limit reached Switched to Auto after reaching Other Models usage limit."
+      ]
+    },
+    {
+      "id": "2804718d-c1d6-48e5-885f-f68d6cffec06",
+      "title": "Camera driver restart issue",
+      "archived": true,
+      "primary_doc": "docs/camera.md",
+      "disposition": "已核对正文与后续结论；代码、实验与未测范围按主题保留。",
+      "compacted_segments": 0,
+      "terminal_errors": []
+    },
+    {
+      "id": "fe1fba9e-c7c0-4018-8bab-966495bda6bf",
+      "title": "Microphone troubleshooting discussion",
+      "archived": true,
+      "primary_doc": "docs/audio.md",
+      "disposition": "已核对正文与后续结论；代码、实验与未测范围按主题保留。",
+      "compacted_segments": 0,
+      "terminal_errors": []
+    },
+    {
+      "id": "c2ea34bb-1d00-4fa3-96c3-e16b050824c1",
+      "title": "Auto rotation and sensor features",
+      "archived": true,
+      "primary_doc": "docs/sensors.md",
+      "disposition": "已核对正文与后续结论；代码、实验与未测范围按主题保留。",
+      "compacted_segments": 2,
+      "terminal_errors": []
+    },
+    {
+      "id": "2527cbdd-bc45-452e-84f1-73fe457d7fe3",
+      "title": "Password change investigation",
+      "archived": true,
+      "primary_doc": "AGENTS.md",
+      "disposition": "已核对正文与后续结论；代码、实验与未测范围按主题保留。",
+      "compacted_segments": 0,
+      "terminal_errors": []
+    },
+    {
+      "id": "ca04af4b-0bc1-42e0-9314-ab0d14d89d6a",
+      "title": "现在拾音器是不是已经可以驱动了? 那是不是打电话能有声音了?  如果不能的话.看能不能驱动",
+      "archived": true,
+      "primary_doc": "docs/audio.md",
+      "disposition": "已核对正文与后续结论；代码、实验与未测范围按主题保留。",
+      "compacted_segments": 1,
+      "terminal_errors": []
+    },
+    {
+      "id": "b12839eb-002e-450a-b6df-e6e835a2fd36",
+      "title": "Game preparation issues",
+      "archived": true,
+      "primary_doc": null,
+      "disposition": "只有错误或停止标记，没有可提炼的技术正文。",
+      "compacted_segments": 0,
+      "terminal_errors": [
+        "user_stopped_generation"
+      ]
+    },
+    {
+      "id": "3b44ea56-1576-416d-970e-8d395d0d4dbe",
+      "title": "NFC basic tag reader driver",
+      "archived": false,
+      "primary_doc": "docs/nfc.md",
+      "disposition": "已核对正文与后续结论；代码、实验与未测范围按主题保留。",
+      "compacted_segments": 2,
+      "terminal_errors": []
+    },
+    {
+      "id": "9b7741da-490e-4385-8653-e76e5d145b45",
+      "title": "看下这个手机 对比安卓 可能还缺那些驱动",
+      "archived": false,
+      "primary_doc": "docs/stock-hardware.md",
+      "disposition": "已核对正文与后续结论；代码、实验与未测范围按主题保留。",
+      "compacted_segments": 0,
+      "terminal_errors": []
+    },
+    {
+      "id": "1a312bd6-aa97-4e52-a986-984ec79b254b",
+      "title": "Call recording and playback",
+      "archived": true,
+      "primary_doc": "docs/audio.md",
+      "disposition": "已核对正文与后续结论；代码、实验与未测范围按主题保留。",
+      "compacted_segments": 0,
+      "terminal_errors": []
+    },
+    {
+      "id": "a2494fcc-1c4c-48ec-8a4f-ee1654709762",
+      "title": "Call audio mode switch",
+      "archived": false,
+      "primary_doc": "docs/audio.md",
+      "disposition": "已核对正文与后续结论；代码、实验与未测范围按主题保留。",
+      "compacted_segments": 0,
+      "terminal_errors": [
+        "user_stopped_generation"
+      ]
+    },
+    {
+      "id": "6e4a09aa-e058-4149-aec3-16c4d9f3b2d0",
+      "title": "Mobile infrared functionality",
+      "archived": true,
+      "primary_doc": "docs/infrared.md",
+      "disposition": "已核对正文与后续结论；代码、实验与未测范围按主题保留。",
+      "compacted_segments": 0,
+      "terminal_errors": []
+    },
+    {
+      "id": "90bc5b4f-7605-4651-8f14-e126b0cadfe2",
+      "title": "Camera functionality enhancements",
+      "archived": false,
+      "primary_doc": "docs/camera.md",
+      "disposition": "已核对正文与后续结论；代码、实验与未测范围按主题保留。",
+      "compacted_segments": 1,
+      "terminal_errors": []
+    },
+    {
+      "id": "501fc126-6aac-47a0-9376-9ee26fedd64d",
+      "title": "Password input error discussion",
+      "archived": true,
+      "primary_doc": "AGENTS.md",
+      "disposition": "已核对正文与后续结论；代码、实验与未测范围按主题保留。",
+      "compacted_segments": 0,
+      "terminal_errors": []
+    },
+    {
+      "id": "ba22607a-a0f1-4d28-809d-6eb1c9b83e2f",
+      "title": "看下工作区当前有多少未提交大文件.",
+      "archived": false,
+      "primary_doc": "docs/project-records.md",
+      "disposition": "已核对正文与后续结论；代码、实验与未测范围按主题保留。",
+      "compacted_segments": 0,
+      "terminal_errors": []
+    },
+    {
+      "id": "79ab5dc3-f22b-4206-8093-7bc304082ef4",
+      "title": "Light and distance sensing",
+      "archived": true,
+      "primary_doc": "docs/sensors.md",
+      "disposition": "已核对正文与后续结论；代码、实验与未测范围按主题保留。",
+      "compacted_segments": 0,
+      "terminal_errors": [
+        "user_stopped_generation",
+        "user_stopped_generation"
+      ]
+    },
+    {
+      "id": "c9b704df-2c9c-48d1-88aa-7511d16f1d23",
+      "title": "OnePlus Negroni project review",
+      "archived": false,
+      "primary_doc": "docs/project-records.md",
+      "disposition": "已核对正文与后续结论；代码、实验与未测范围按主题保留。",
+      "compacted_segments": 1,
+      "terminal_errors": []
+    },
+    {
+      "id": "571d43a0-7542-4458-9788-4aec4794b8ff",
+      "title": "Speaker switch effectiveness",
+      "archived": false,
+      "primary_doc": "docs/audio.md",
+      "disposition": "已核对正文与后续结论；代码、实验与未测范围按主题保留。",
+      "compacted_segments": 0,
+      "terminal_errors": []
+    },
+    {
+      "id": "72be9d2f-348a-449e-8fe3-7008b2514b20",
+      "title": "Essential apps for debugging",
+      "archived": false,
+      "primary_doc": "docs/optional-apps.md",
+      "disposition": "已核对正文与后续结论；代码、实验与未测范围按主题保留。",
+      "compacted_segments": 0,
+      "terminal_errors": []
+    },
+    {
+      "id": "625aa3a6-2044-49f0-a715-d46673768cf9",
+      "title": "Mobile streaming server setup",
+      "archived": false,
+      "primary_doc": "docs/optional-apps.md",
+      "disposition": "已核对正文与后续结论；代码、实验与未测范围按主题保留。",
+      "compacted_segments": 0,
+      "terminal_errors": []
+    },
+    {
+      "id": "0f8c1fd8-e819-47e6-809d-cd49b8b606a0",
+      "title": "Mobile gyroscope driver status",
+      "archived": false,
+      "primary_doc": "docs/sensors.md",
+      "disposition": "已核对正文与后续结论；代码、实验与未测范围按主题保留。",
+      "compacted_segments": 0,
+      "terminal_errors": []
+    },
+    {
+      "id": "ef384217-4f8c-4b3e-a07f-47ab3a9a59b7",
+      "title": "Screen green line issue",
+      "archived": true,
+      "primary_doc": "docs/gpu.md",
+      "disposition": "已核对正文与后续结论；代码、实验与未测范围按主题保留。",
+      "compacted_segments": 0,
+      "terminal_errors": []
+    },
+    {
+      "id": "322a1a61-d9c4-4acb-bc7d-9af909bcea01",
+      "title": "Application error message",
+      "archived": false,
+      "primary_doc": "docs/optional-apps.md",
+      "disposition": "已核对正文与后续结论；代码、实验与未测范围按主题保留。",
+      "compacted_segments": 0,
+      "terminal_errors": [
+        "Increase limits for faster responses You're out of usage. Switch to Auto, or ask your admin to increase your limit to continue."
+      ]
+    },
+    {
+      "id": "15c2ddcc-0366-443c-9b87-376785194ce4",
+      "title": "Linux NFC manager",
+      "archived": false,
+      "primary_doc": "docs/nfc.md",
+      "disposition": "已核对正文与后续结论；代码、实验与未测范围按主题保留。",
+      "compacted_segments": 0,
+      "terminal_errors": [
+        "Increase limits for faster responses You're out of usage. Switch to Auto, or ask your admin to increase your limit to continue."
+      ]
+    }
+  ],
+  "supplementary_research": [
+    {
+      "id": "01a1cdd0-b800-7cf3-87b0-0bb919a0d109",
+      "parent_id": "01a1cdd0-72b9-7291-a055-1a3d1c9f81dd",
+      "primary_doc": "docs/audio.md",
+      "disposition": "已核对历史子任务结果；保留语音图启动条件与麦克风实验的证据边界。"
+    },
+    {
+      "id": "01a1cdd0-d92c-7ee0-8424-785bca605d42",
+      "parent_id": "01a1cdd0-72b9-7291-a055-1a3d1c9f81dd",
+      "primary_doc": "docs/audio.md",
+      "disposition": "已核对历史子任务结果；保留语音图启动条件与麦克风实验的证据边界。"
+    },
+    {
+      "id": "01a1cdd2-e199-72e2-b98a-3ec172772150",
+      "parent_id": "01a1cdd0-72b9-7291-a055-1a3d1c9f81dd",
+      "primary_doc": "docs/audio.md",
+      "disposition": "已核对历史子任务结果；保留语音图启动条件与麦克风实验的证据边界。"
+    }
+  ]
+}

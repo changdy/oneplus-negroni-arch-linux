@@ -85,7 +85,7 @@ bash scripts/init-submodules.sh
 | **用 USB 线 SSH 调试手机（不依赖 Wi-Fi）** | **[USB 调试通道](docs/usb-debug.md)** |
 | 使用 SSH、了解已知问题 | [设备状态与使用说明](docs/status.md) |
 | 基带 / SIM / 移动数据 / VoLTE | [基带说明](docs/modem.md) |
-| 通话声音、通话录音与放音（实验） | [通话语音](docs/call-audio.md) |
+| 通话声音、通话录音与放音（实验） | [通话语音](docs/audio.md#通话语音) |
 | 蓝牙、GPU | [蓝牙](docs/bluetooth.md) · [GPU](docs/gpu.md) |
 | 开启、配置和关闭充电限制 | [充电限制](docs/charge-limit.md) |
 | 调整屏幕和休眠的固件默认值 | [屏幕默认设置](docs/screen-defaults.md) |
@@ -123,3 +123,5 @@ bash scripts/check.sh --with-kernel   # 另运行固定内核的策略、驱动�
 检查不需要 root 或手机；第二条命令要求先初始化子模块并安装 ARM64 交叉编译器、flex 和 bison。GitHub Actions 执行相同检查，完整镜像构建和实机验证需另外进行。
 
 感谢 [Arch Linux ARM](https://archlinuxarm.org/)、[Xlie Electronic Customs](https://github.com/Xlie-Electronic-Customs)、[postmarketOS](https://postmarketos.org/)、Linux、KDE 及相关上游项目的工作。
+
+项目成果、归档对话核对与默认交付规则见[项目记录](docs/project-records.md)。基础浏览器、Snapshot 相机和中文字体随默认软件清单安装；串流及调试工具见[按需应用](docs/optional-apps.md)。新完整镜像尚未构建、未刷入。

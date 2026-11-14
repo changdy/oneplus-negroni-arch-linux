@@ -1,0 +1,37 @@
+{
+  "date": "2026-11-15",
+  "device": "OnePlus 10 Pro NE2210",
+  "kernel_pin": "cba22a622ac0b73d7266aecbf2567273218a81ce",
+  "conversation_inventory": {
+    "codex": 23,
+    "codex_archived": 3,
+    "cursor": 36,
+    "cursor_archived": 22,
+    "supplementary_research": 3
+  },
+  "checks": {
+    "scripts_check_sh": "passed under NegroniBuild-Ubuntu-26.04",
+    "image_delivery_fixture_tests": 19,
+    "image_delivery_fixture_result": "passed; real debugfs/ext4 and installers where applicable, synthetic device/kernel fixtures",
+    "camera_external_modules": "three modules and the overlay cross-built against the pinned WSL kernel output",
+    "nfc_tools": "four tools cross-built with aarch64-linux-gnu-gcc",
+    "adsp_f3": "host compilation and --selftest passed; no hardware capture",
+    "kernel_bundle": "git bundle verify passed against the WSL kernel repository, heads match the parent pin",
+    "gnss_payload": "USB-read original binary hashes match the recorded deployed hashes; debug sections removed, delivered hashes recorded",
+    "markdown_links": "local destinations of changed and new Markdown files checked",
+    "runtime_source_newlines": "LF checked for new/changed scripts, units and desktop files",
+    "credential_check": "no new credentials in the curated files; pre-existing README password edit excluded from commits",
+    "git_diff_check": "passed"
+  },
+  "new_complete_image_built": false,
+  "new_complete_image_flashed": false,
+  "new_hardware_validation": false,
+  "phone_interaction": "USB read-only inspection and copying existing program/config files; no driver reload, configuration change, partition write or reboot",
+  "limitations": [
+    "Fresh image boot and power consumption remain untested",
+    "Extra-camera loader, desktop first-login helper and optional-app installer were not run on the phone",
+    "New GNSS image ABI execution is checked by the installer during a future real rootfs build; the small image fixture does not run the daemon",
+    "Existing hardware capabilities retain the exact test boundaries recorded in their primary documents"
+  ],
+  "existing_wsl_parent_tree": "The /opt/negroni-build parent checkout remains at 6160bea with existing uncommitted changes; it was not overwritten. Future full builds must synchronize this main revision first. The kernel checkout itself matches cba22a622ac0."
+}

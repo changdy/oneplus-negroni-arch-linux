@@ -37,6 +37,7 @@ print(f"{len(paths)} Python files passed")
 PY
 
 printf 'Checking audio topology and UCM sources...\n'
+python3 -B scripts/check-project-records.py
 python3 -B scripts/verify-audio-image.py --sources-only
 
 printf 'Checking sensor payloads...\n'

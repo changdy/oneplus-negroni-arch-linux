@@ -10,21 +10,25 @@
 | [刷机说明](flashing.md) | 固件限制、分区映射、校验、刷入和首次启动 |
 | **[USB 调试通道](usb-debug.md)** | **不依赖 Wi-Fi 的 USB 网络 SSH（`ssh oneplus@10.55.0.1`）与 USB 串口；调试首选** |
 | [设备状态](status.md) | 已验证功能、已知问题、SSH 和 GPU 配置 |
+| [项目成果与记录](project-records.md) | 对话含归档的核对清单、入库与默认启用规则、交付和验收范围 |
+| [中文字体](fonts.md) | 中文缺字根因、Noto CJK、实机渲染与镜像检查 |
+| [浏览器](browser.md) | Angelfish 默认安装、HTTPS 实测和交互边界 |
+| [内存](memory.md) | 12 GB 机型可用约 10.3 GiB 的预留与开销依据 |
+| [可选应用与串流](optional-apps.md) | Sunshine、硬件调试工具、4:3 串流方向和未测项 |
 | [原厂系统与硬件资料](stock-hardware.md) | 本机保留的原厂分区、373 个模块、JN1 调校与 WQHD 面板参数 |
 | [启动成功服务](boot-success.md) | A/B 成功标记、设备确认配置及状态检查 |
 | [充电限制](charge-limit.md) | 默认行为、启停、阈值配置及验证范围 |
 | [屏幕默认设置](screen-defaults.md) | 默认关闭调暗和休眠、5 分钟熄屏及续建更新 |
 | [Wi-Fi 默认设置](wifi.md) | 关闭省电、固定本地 MAC、CN 国家域与已知限制 |
-| [音频](audio.md) | 扬声器、麦克风、耳机的诊断、拓扑/UCM/DT 修改；扬声器已实机验证，2026-11-14 傍晚内置麦克风 ALSA 录音恢复，内核提交 `67d9e35c9ac0` 尚未重新构建镜像 |
+| [音频](audio.md) | 扬声器、麦克风、耳机、通话语音及听筒/免提的统一入口；含当前能力、构建路径和根因资料 |
 | [基带与 VoLTE](modem.md) | QRTR 看门狗崩溃修复、SIM 选卡与热插、移动数据、VoLTE 拨号与限制 |
 | [GPS / GNSS](gnss.md) | 引擎锁、AFW 注册、新 XTRA 辅助接口与真实卫星接收验证边界 |
-| [通话语音](call-audio.md) | VoLTE 通话下行、通话录音与向对方放音（实验）、自动开关服务、已知问题与排查方法 |
 | [蓝牙](bluetooth.md) | WCN6855 缺少 public address 的修复与验证范围 |
 | [NFC](nfc.md) | 已读到 UID `CD 27 FC DB`，手机可监听申报该 UID；门禁未测 |
 | [振动反馈](haptics.md) | PM8350B 自动加载、标准 FF 接口、feedbackd / Plasma 接入与实机验证边界 |
 | [传感器](sensors.md) | 自动旋转方向已确认。陀螺仪已能读，单位 rad/s。镜像安装 hexagonrpc、原厂传感器 JSON、udev、换过的 iio-sensor-proxy、SMEM 光线距离服务和陀螺仪程序。注册表开机从本机 persist 拷贝 |
 | [GPU](gpu.md) | Adreno 730 3D/Vulkan 实测、runtime PM 与慢亮屏规避 |
-| [相机](camera.md) | 四摄 RAW。JN1 设备树在内核里；另外三颗以外部模块安装，不自动加载。新镜像未构建 |
+| [相机](camera.md) | 四摄 RAW、超广角应用、实验摄像头入口、首次/续建与 ABI 检查；新完整镜像未构建 |
 | [红外](infrared.md) | NE2210 没有红外遥控发射器；TCS3701 的红外 LED 只做距离感应 |
 | [CPU 性能与调度](cpu-performance.md) | Boost / performance 服务、设备树构建、部署验证与恢复 |
 | [Docker 内核支持](docker.md) | Docker 安装、网络模块配置、续建和镜像验证 |
@@ -41,6 +45,7 @@
 | [Docker 固件集成调研](docker-firmware-plan.md) | 实施前的根因和路径比较；已落实为 Docker 内核支持 |
 | [实机与实现记录索引](../artifacts/README.md) | 充电、USB2、GPU 唤醒及 CPU 性能与调度实测资料 |
 | [2026-09-16 构建记录](archive/build-notes-2026-09-16.md) | 整理前的完整 README，含历史版本、命令和产物哈希 |
+| [2026-11-14 桌面音频调试](archive/audio-bringup-2026-11-14.md) | 拓扑、路由、麦克风时钟与复位脚的历史过程，当前结论以音频主页为准 |
 | [2026-09-15 键盘修复](archive/keyboard-fix-2026-09-15.md) | SDDM 故障原因、临时修复过程及验证 |
 | [2026-09-16 工作区迁移](archive/workspace-migration-2026-09-16.md) | 本地工作区迁移与缓存情况 |
 | [内核提交恢复](../patches/linux/README.md) | Git bundle 的前置提交与恢复方法 |
