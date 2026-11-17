@@ -1,5 +1,9 @@
 # 设备状态与使用说明
 
+2026-11-17 应用户要求将手机 CPU 从 `performance` 切回 `schedutil` 按负载调频，并停用性能服务的开机自启；已确认三组策略生效、Boost 关闭。源码已将均衡服务设为镜像默认值，功耗未测，新完整镜像尚未构建或刷入，见 [CPU 说明](cpu-performance.md)。
+
+同日 18:07 安装均衡服务并重启，均衡服务 enabled / active、性能服务 disabled / inactive，三组均为 `schedutil`、Boost 为 `0`；USB SSH 已恢复，B 槽成功和可启动标记均为 1。
+
 2026-11-17 NFC 中断修复：内核 `beb56438b3` 在 SN100 关闭与模式切换期间屏蔽 IRQ，并为 Negroni 使用 GPIO 46 高电平触发。手机热更新模块后，三轮 `DEV_UP → DEV_DOWN` 与快捷开关重新加载通过，关闭状态下 IRQ 90 秒无增长；最后保持 NFC 开关关闭。重启、睡眠、读卡、长时间运行及新完整镜像未测。见 [NFC 说明](nfc.md)与[实机复测](../artifacts/thermal-nfc-20261117/README.md#后续修复与实机复测16021612)。
 
 2026-11-17 下拉快捷开关：新增 NFC 与陀螺仪项，NFC 关闭时卸载驱动并在新镜像中默认不自动加载，陀螺仪常驻采样默认关闭；原有自动旋转开关继续控制 KWin。手机已手工部署，两个开关的控制程序均通过 `关 → 开 → 关`，最终关闭。图形触控、新完整镜像、重启后的默认状态与节电量未测。见[快捷开关](quick-settings.md)及[实机记录](../artifacts/quicksettings-20261117/README.md)。
@@ -47,7 +51,7 @@ A 槽曾因缺少成功标记而耗尽重试次数、进入 recovery，现已恢
 - **源码与本地镜像**：充电限制、常用软件、GPU runtime PM 配置均已集成，完整构建与离线检查通过。
 - **最近完整刷入的系统**：包含键盘修复和默认 SSH 的早期 7.3-rc2 镜像；SSH 已由用户确认默认生效。
 - **随后单独部署的变更**：电池电流符号修复已通过充放电及拔插验证，GPU runtime PM 规避服务已部署并记录验证。
-- **CPU 性能与调度**：2026-09-16 已在手机启用 Boost / performance，并更新 `vendor_boot_a` 的大小核能力及功耗模型。重启后 capacity 为 276 / 849 / 1024，性能服务自启动和负载迁移验证通过；硬件频率限制仍存在。两项现已集成到完整固件默认构建并默认启用，见 [复现指南](cpu-performance.md)和 [CPU 实测记录](../artifacts/cpu-performance-20260916/README.md)。
+- **CPU 性能与调度**：大小核能力和功耗模型已集成；性能模式此前实测通过，现改为按需启用。源码默认使用 `schedutil` 均衡调频并关闭 Boost，见 [复现指南](cpu-performance.md)和 [CPU 实测记录](../artifacts/cpu-performance-20260916/README.md)。
 - **Docker 内核支持**：已补齐 nftables 兼容、NAT 和 IPv4/IPv6 FIB 配置，完成内核及固件重建、模块一致性与自动加载别名检查。手机此前的 IPv4 模块补装已验证 Docker 正常运行；本次新固件尚未刷入，冷启动和 IPv6 容器网络待验证，见 [Docker 说明](docker.md)。
 - **尚未完成**：全新完整 rootfs 的安装验证、最新常用软件逐项验证、USB 偶发热插拔故障的根因定位及上述未覆盖的连接场景。
 

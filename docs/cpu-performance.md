@@ -1,17 +1,22 @@
 # CPU 性能模式与大小核调度修复
 
+2026-11-17 18:00 手机从性能策略切换到按负载调频：停用并禁用 `negroni-cpu-performance.service`，服务恢复了启动前保存的配置，三组 governor 均为 `schedutil`，全局 Boost 为 `0`，超大核上限为 2.8416 GHz。切换后读取的三组频率分别为 1.1712 / 1.1136 / 0.8064 GHz；功耗与性能对比未测。源码现将均衡模式设为新镜像默认值，新镜像尚未构建或刷入。
+
+同日 18:07 手工安装均衡 helper / unit 并重启后，均衡服务 enabled / active、性能服务 disabled / inactive，三组 governor 均为 `schedutil`、Boost 为 `0`，超大核上限 2.8416 GHz。均衡 → 性能 → 均衡切换在重启前验证通过。USB SSH、NetworkManager 和 SDDM 已启动，B 槽成功和可启动标记均为 1；新完整镜像及功耗对比未测。
+
 适用于已运行本项目 `7.3-rc2` 系统的 OnePlus 10 Pro **NE2210 / Negroni / SM8450**。2026-09-16 已在安装外部散热器的实机上完成部署、回滚测试和重启验证。原始结果见 [实测记录](../artifacts/cpu-performance-20260916/README.md)。
 
 这项优化包含两个独立部分：
 
 | 部分 | 改动 | 生效方式 |
 | --- | --- | --- |
-| CPU 性能服务 | 开启硬件已有 Boost，三组 CPU 使用 `performance`，频率上限取硬件支持值 | 固件默认安装并开机自启，停止服务可恢复 |
+| CPU 均衡服务 | 关闭 Boost，三组 CPU 使用 `schedutil` 按负载调频 | 固件默认安装并开机自启 |
+| CPU 性能服务 | 开启硬件已有 Boost，三组 CPU 使用 `performance`，频率上限取硬件支持值 | 固件安装但默认关闭，手动启动；停止服务可恢复启动前状态 |
 | 大小核设备树 | 补充 8 核的 `capacity-dmips-mhz` 和 `dynamic-power-coefficient` | 默认内核包含修复，刷入新的 vendor_boot 后生效 |
 
 修复后的能力值为 **小核 276、大核 849、超大核 1024**；原配置错误地把全部核心标为 1024。超大核频率上限从 2.8416 GHz 提高到 2.9952 GHz，但硬件/固件仍可能限制实际频率。实测全核负载主要为 1.7856 / 2.4192 / 2.8416 GHz。热保护继续生效；性能模式可能增加待机耗电。
 
-常规 `./build.sh 7.3` **默认集成并启用**这两项变更。新固件无需再通过 SSH 手动安装服务或单独打补丁。没有对 Android 原厂系统、其他槽位布局或其他 NE221x 型号进行验证。固件升级历史与 bootloader 条件沿用[刷机说明](flashing.md#必须先核对的条件)。
+常规 `./build.sh 7.3` 默认启用均衡服务和大小核修复。没有对 Android 原厂系统、其他槽位布局或其他 NE221x 型号进行验证。固件升级历史与 bootloader 条件沿用[刷机说明](flashing.md#必须先核对的条件)。
 
 ## 默认固件构建与续建
 
@@ -24,9 +29,9 @@ bash scripts/init-submodules.sh
 
 固定内核为 `7.3` 修复提交 `1eaec99b04a54c0a6ac42f16a83a606a6d2248a4`，基于上游 `476a4a89843` 直接重做设备修复，8 核的 16 个能力与功耗参数与历史实测值一致。Git bundle 同时提供线性的 `7.3` 修复和独立的 `7.3-rc2` 历史引用，供下方对比脚本使用；rc2 提交不在新 `7.3` 的祖先历史中。初始化脚本会将可快进的 `7.3` 分支更新到固定版本；旧合并分支若已分叉则保留，固定源码检出为 detached HEAD。构建入口拒绝缺少固定修复的旧内核。
 
-- 全新 rootfs：`finalize-rootfs.sh` 调用 `configure-cpu-performance.sh` 安装 helper / unit，并在镜像内启用 `multi-user.target.wants` 链接；构建期间不运行手机性能策略。
-- 已有镜像：`build.sh` 检测 CPU 配置/脚本指纹缺失或变化时，调用 `update-cpu-performance-image.sh` 补装并启用服务，使旧封装标记失效。内核产物指纹包含 DTB，设备树变化也会触发镜像更新。
-- 打包门槛：必须检查 rootfs 中 helper / unit 与源码一致、root 所有权和权限正确、自启链接存在，以及 DTB 中全部 16 个 CPU 参数正确。结果写入 `build-result.json` 的 `cpu_performance`、`cpu_capacity` 及 `validation`。
+- 全新 rootfs：`finalize-rootfs.sh` 调用 `configure-cpu-performance.sh` 安装 helper 和两个 unit，启用均衡服务并禁用性能服务；构建期间不运行手机 CPU 策略。
+- 已有镜像：`build.sh` 检测 CPU 配置/脚本指纹缺失或变化时，调用 `update-cpu-performance-image.sh` 应用同样的默认值，使旧封装标记失效。内核产物指纹包含 DTB，设备树变化也会触发镜像更新。
+- 打包门槛：检查 helper 和两个 unit 与源码一致、root 所有权和权限正确、均衡自启链接存在且性能服务未自启，以及 DTB 中全部 16 个 CPU 参数正确。结果写入 `build-result.json` 的 `cpu_performance`、`cpu_capacity` 及 `validation`。
 
 当前分支产物在 `images/7.3/`。首次或完整重刷按项目[刷机说明](flashing.md)使用配套 rootfs 和 vendor_boot。已有系统只需更新设备树及服务时，可以继续采用下方独立部署流程。重刷优化之前保存的旧镜像仍会撤销相应变更。
 
@@ -37,11 +42,11 @@ sudo env IMAGE_DIR=images/7.3 LOG_DIR=logs/7.3 bash scripts/update-cpu-performan
 IMAGE_DIR=images/7.3 LOG_DIR=logs/7.3 bash scripts/pack-images.sh
 ```
 
-独立服务可以随时 `disable --now`，但后续配置源文件变化所触发的镜像更新会重新应用默认启用策略。CPU 温控及硬件保护仍保留。
+性能模式可用 `sudo systemctl start negroni-cpu-performance.service` 临时启用，用 `sudo systemctl stop negroni-cpu-performance.service` 恢复此前均衡配置；需要开机启用时可用 `enable --now`。后续配置源文件变化触发的镜像更新会重新应用均衡默认值。CPU 温控及硬件保护仍保留。
 
 2026-09-16 已完成默认内核增量构建、干净目录的 Kbuild DTB 编译、Git bundle 恢复、4 项 rootfs 安装/拒绝测试、完整镜像封装与 sparse 往返校验，并成功执行常规 `./build.sh 7.3-rc2` 续建。本地 `images/7.3-rc2/` 已更新为默认启用版本，原产物保存在 `logs/7.3-rc2/pre-cpu-defaults/`。因宿主 sudo 需交互认证，本次用已验证的安装器在 user namespace 中生成配置，再以 debugfs 更新镜像副本；挂载式镜像更新脚本未在此主机实际运行。新完整镜像未再次刷入手机，手机已验证的现场服务和 DTB 与新镜像对应文件相同。[校验与产物摘要](../artifacts/cpu-performance-20260916/default-build.json)
 
-以下独立步骤用于复现现场部署和恢复旧设备树，不是新固件启用性能所必需的步骤。
+以下独立步骤用于复现历史性能测试和恢复旧设备树；它们会手动启用性能模式，不代表新镜像默认值。
 
 ## 1. 构建主机：从固定源码生成镜像
 

@@ -25,7 +25,7 @@ sudo python3 -B tests/test-cpu-performance-image.py
 unshare --user --map-root-user python3 -B tests/test-cpu-performance-image.py
 ```
 
-该测试检查全新安装、已有镜像补装、开机启用、封装失效，以及缺失链接、错误权限和内容变化的拒绝行为。CI 还会用固定内核源码从干净目录编译并核对 8 核设备树参数。
+该测试检查全新安装、已有镜像补装、均衡模式开机启用、性能模式默认关闭、封装失效，以及缺失链接、错误权限和内容变化的拒绝行为。CI 还会用固定内核源码从干净目录编译并核对 8 核设备树参数。
 
 GitHub Actions 在推送和 Pull Request 中恢复固定子模块，并执行同一组检查。CI 不构建整个 ARM64 内核或 rootfs，也不代表实机验证通过。
 

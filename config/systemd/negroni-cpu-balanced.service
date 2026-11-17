@@ -1,0 +1,13 @@
+[Unit]
+Description=Set balanced CPU frequency policy on OnePlus Negroni
+ConditionPathExists=/sys/devices/system/cpu/cpufreq/policy7/scaling_governor
+After=systemd-modules-load.service
+Before=negroni-cpu-performance.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/negroni-cpu-performance balanced
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

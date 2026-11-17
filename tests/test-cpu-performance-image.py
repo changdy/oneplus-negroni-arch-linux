@@ -9,6 +9,7 @@ import unittest
 
 PROJECT = Path(__file__).resolve().parents[1]
 UNIT = "negroni-cpu-performance.service"
+BALANCED = "negroni-cpu-balanced.service"
 spec = importlib.util.spec_from_file_location("cpu_image", PROJECT / "scripts/verify-cpu-performance-image.py")
 verifier = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(verifier)
@@ -50,21 +51,31 @@ class CPUImageTests(unittest.TestCase):
         subprocess.run(["sha256sum", "--check", "--status",
                         str(self.logs / "cpu-performance-sources.sha256")], cwd=PROJECT, check=True)
         self.image()
-        self.assertTrue(verifier.verify(self.base, self.logs)["service_enabled"])
-        # Simulate an old image with a stale helper and no startup link.
+        self.assertEqual(verifier.verify(self.base, self.logs)["governor"], "schedutil")
+        # Simulate an old image with a stale helper and performance enabled.
         (self.root / "usr/local/sbin/negroni-cpu-performance").write_text("old helper\n")
-        (self.root / f"etc/systemd/system/multi-user.target.wants/{UNIT}").unlink()
+        (self.root / f"etc/systemd/system/multi-user.target.wants/{BALANCED}").unlink()
+        (self.root / f"etc/systemd/system/multi-user.target.wants/{UNIT}").symlink_to(f"../{UNIT}")
         (self.logs / "images.complete").touch()
         self.install()
         self.image()
-        self.assertTrue(verifier.verify(self.base, self.logs)["service_enabled"])
+        verification = verifier.verify(self.base, self.logs)
+        self.assertTrue(verification["service_enabled"])
+        self.assertFalse(verification["performance_service_enabled"])
         self.assertFalse((self.logs / "images.complete").exists())
 
     def test_disabled_service_is_rejected(self):
         self.install()
-        (self.root / f"etc/systemd/system/multi-user.target.wants/{UNIT}").unlink()
+        (self.root / f"etc/systemd/system/multi-user.target.wants/{BALANCED}").unlink()
         self.image()
         with self.assertRaises(RuntimeError):
+            verifier.verify(self.base, self.logs)
+
+    def test_performance_enabled_is_rejected(self):
+        self.install()
+        (self.root / f"etc/systemd/system/multi-user.target.wants/{UNIT}").symlink_to(f"../{UNIT}")
+        self.image()
+        with self.assertRaisesRegex(RuntimeError, "Performance service"):
             verifier.verify(self.base, self.logs)
 
     def test_wrong_helper_mode_is_rejected(self):

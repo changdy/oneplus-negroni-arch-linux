@@ -83,7 +83,7 @@ PY
 
 1. 首次生成 `defconfig` 与 `sm8450.config`，每次构建合并 `config/kernel/negroni.config` 和 `config/kernel/docker.config` 并解析依赖，再编译内核、DTB 和模块；强制核对 Docker 配置、模块及自动加载别名和 8 核能力、功耗参数。
 2. 创建 `alarm/` 构建 chroot 与 `images/7.3/root.img`，安装系统和 Plasma Mobile。
-3. 配置账号、SDDM、SSH、GPU 服务、默认启用的 CPU 性能服务、屏幕默认设置、默认关闭的充电限制、需设备确认配置的启动成功服务和 initramfs。
+3. 配置账号、SDDM、SSH、GPU 服务、默认启用的 CPU 均衡服务、屏幕默认设置、默认关闭的充电限制、需设备确认配置的启动成功服务和 initramfs。
 4. 更新有变化的内核产物、CPU / 充电 / 启动成功服务、屏幕默认设置和常用工具。
 5. 核对镜像内 Docker 模块及依赖索引，封装 Android 镜像，检查 ext4、sparse 往返、启动镜像内容并生成 SHA-256 与构建报告。
 
@@ -108,7 +108,7 @@ python3 -m json.tool logs/7.3/build-result.json
 | `images/7.3/root.img` | 5 GiB 原始 ext4 根文件系统 |
 | `logs/7.3/build-result.json` | 内核提交、配置、验证结果与镜像大小/哈希 |
 
-脚本不会自动刷写手机。构建和离线检查通过后，继续阅读[刷机说明](flashing.md)。CPU Boost / performance 与大小核调度修复默认随新固件生效，启停及旧镜像续建见 [CPU 性能说明](cpu-performance.md)。
+脚本不会自动刷写手机。构建和离线检查通过后，继续阅读[刷机说明](flashing.md)。CPU 默认使用 schedutil 均衡调频，大小核调度修复随新固件生效；性能模式及旧镜像续建见 [CPU 性能说明](cpu-performance.md)。
 
 ## 已有 WSL 构建副本的同步（2026-11-15 核对）
 

@@ -95,15 +95,33 @@ def stop():
     print('Original CPU governors, frequency limits and boost settings restored')
 
 
+def balanced():
+    compatible = Path('/proc/device-tree/compatible').read_bytes().split(b'\0')
+    if b'oplus,negroni' not in compatible:
+        raise RuntimeError('This configuration is only validated on OnePlus Negroni')
+    policies = sorted(BASE.glob('policy*'))
+    if {p.name for p in policies} != {'policy0', 'policy4', 'policy7'}:
+        raise RuntimeError('Unexpected CPU frequency policy layout')
+    for p in policies:
+        if read(p / 'scaling_driver') != 'qcom-cpufreq-hw':
+            raise RuntimeError('Unexpected CPU frequency driver')
+        if 'schedutil' not in read(p / 'scaling_available_governors').split():
+            raise RuntimeError('Schedutil governor unavailable')
+    write(BASE / 'boost', '0')
+    for p in policies:
+        write(p / 'scaling_governor', 'schedutil')
+    print(json.dumps(capture(), indent=2))
+
+
 def main():
-    if len(sys.argv) != 2 or sys.argv[1] not in ('start', 'stop', 'status'):
-        raise SystemExit('Usage: negroni-cpu-performance {start|stop|status}')
+    if len(sys.argv) != 2 or sys.argv[1] not in ('start', 'stop', 'status', 'balanced'):
+        raise SystemExit('Usage: negroni-cpu-performance {start|stop|status|balanced}')
     if sys.argv[1] == 'status':
         print(json.dumps(capture(), indent=2))
         return
     if os.geteuid() != 0:
         raise SystemExit('Root privileges required')
-    {'start': start, 'stop': stop}[sys.argv[1]]()
+    {'start': start, 'stop': stop, 'balanced': balanced}[sys.argv[1]]()
 
 
 if __name__ == '__main__':
