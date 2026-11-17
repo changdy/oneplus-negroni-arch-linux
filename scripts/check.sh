@@ -136,6 +136,8 @@ if [[ $with_kernel == true ]]; then
     python3 -B tests/test-lpass-capture.py
     printf 'Running haptics playback regression checks...\n'
     python3 -B tests/test-haptics-driver.py
+    printf 'Running GPU recovery wait checks...\n'
+    python3 -B tests/test-gpu-recovery.py
     printf 'Running Wi-Fi regulatory intersection checks...\n'
     python3 -B tests/test-wifi-regulatory.py
     printf 'Checking Docker configuration in fresh and existing kernel outputs...\n'

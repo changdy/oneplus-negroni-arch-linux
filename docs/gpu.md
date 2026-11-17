@@ -1,6 +1,6 @@
 # GPU（Adreno 730）
 
-状态日期：2026-11-12。
+状态日期：2026-11-17。
 
 ## 3D 加速：可用（2026-11-11 实机）
 
@@ -24,19 +24,31 @@ OnePlus 10 Pro 的屏幕原生分辨率为 **1440×3216**（官方横屏写法�
 
 ## Runtime PM 与慢亮屏
 
-默认启用的 `gpu-runtime-active.service` 把 GPU 的 `power/control` 设为 `on`，阻止 runtime suspend。这是规避措施，可能增加待机耗电。
+2026-11-17 已部署 **GPU 自动省电 + 1000 ms 自动挂起延时**，并回移恢复死锁修复 `e0f04ee5b6`。手机运行修复内核 `#8`；`gpu-runtime-pm.service` enabled / active，旧保活服务 disabled / inactive。内核、父仓库固定点、恢复 bundle、新建/续建与打包检查均已接通，新完整 rootfs 镜像未构建、未刷入。
 
-原问题出现在 7.3-rc2，见 [wake-latency-20260916](../artifacts/wake-latency-20260916/)：GMU suspend 后亮屏时，`a6xx_hfi_set_freq` 发出的 `GX_BW_PERF_VOTE` 在等中断时等满 1 秒超时，随后读到同一 seqnum 的 `Unexpected message id`（GMU 其实已经回复），还伴有 `Timeout waiting for GMU OOB set GPU_SET` 和 hangcheck recover。
+新内核上，锁屏后 **20 轮混合测试全部通过**（熄屏 2/5/15/60 秒各 5 次）：每轮 DPMS Off、GPU/GMU suspended、挂起计时增长，亮屏后 FD730 GL 渲染成功，无新增 HFI/OOB/hangcheck/GPU fault/DRM 错误。DRM On 状态耗时 0.085–0.175 秒，中位数 0.124 秒，**不是光学亮屏延迟**。启用最终服务后再测 1 轮通过；保活切换及返回自动策略也已实机验证。1 秒延时减少空闲间隙的频繁掉电，不修改 GMU 握手超时；持续渲染时 active 是正常行为。
 
-2026-11-11 在 7.3 正式版上重测，见 [gpu-runtime-pm-20261111](../artifacts/gpu-runtime-pm-20261111/README.md)：设成 `auto` 后，熄屏期间 GPU、GMU 都处于 `suspended`；2 次亮屏的 panel On 约 0.09 秒，没有复现 1 秒超时。但样本只有 2 次，也没有检查这两次的 dmesg，**所以还不能移除这个服务**。
+原默认保活的原因仍有完整记录：7.3-rc2 在 GMU suspend 后出现 HFI 等满 1 秒、OOB 超时及 hangcheck，见 [wake-latency-20260916](../artifacts/wake-latency-20260916/)。2026-11-11 的 2 次 `auto` 亮屏样本不足，见[前次重测](../artifacts/gpu-runtime-pm-20261111/README.md)。本轮旧内核、66 ms 延时下，20 次短测通过后，60 秒熄屏中的 `kscreenlocker_greet` 渲染仍触发 OOB GPU_SET 超时、CP 空地址故障及 watchdog；GPU 恢复线程持 `gpu->lock` 等待转储，SMMU 转储线程又等待该锁，KWin 与关机均被阻住。详见[本轮证据](../artifacts/gpu-runtime-pm-20261117/README.md)。
 
-下一步：
+恢复修复来自[上游补丁](https://lists.openwall.net/linux-kernel/2026/11/01/730)：恢复持锁期间不等待故障转储，故障处理也跳过恢复期间的转储。真实 OOB/HFI 函数的 10 个交错场景、ARM64 DRM/MSM 编译及完整 Image.gz 链接通过，原代码在同一回归中确定性失败。经用户同意，完整备份并核对 SHA-256 后仅刷 `boot_b`；回读匹配，原 ramdisk 和 vendor_boot 保持不变，B 槽成功、可启动标记均为 1。
 
-1. 在已登录的 Plasma 会话中（SDDM 登录界面下 kscreen-doctor 无法连接）用 `dpms-cycle.sh auto 10 <秒>` 跑至少 10 轮，同时收集 dmesg 中的 HFI / OOB / hangcheck 记录。
-2. 如果仍偶发超时，对比 7.3-rc2 → 7.3 之间 `a6xx_gmu` / `a6xx_hfi` 的变化，再考虑在 resume 时清除残留的 MSGQ 位。
-3. 如果稳定，把默认值改为 `auto`（或调大 `autosuspend_delay_ms`），并同步更新 [设备状态](status.md) 和构建脚本。
+验证边界：最初 GMU 固件超时的根因尚未确定，**不能承诺已彻底消除所有 OOB 超时**；新内核没有再次触发实际 GPU fault，故障后的恢复与关机尚未实测。整机深睡、长期稳定性、实际节电瓦数，以及最终自动服务的再次整机重启未测。先前故障后恢复保活配置、由用户强制关机重开；随后修复内核通过正常重启启动。新内核 66 ms 长测中有一轮 DPMS 被改变，不计作熄屏验收；一次 1000 ms 初测因取样时仍有 GPU 活动停止，未出现内核错误，之后加入最多 3 秒的有界收敛检查重测。最终 20 轮未实际用到额外等待（最大约 0.4 ms 的采样开销）。
 
-注意：测试中手机被另一个 SSH 会话的 `systemctl reboot` 重启过。多个会话共用手机时，重启前要先确认没有别人在用。
+镜像新建默认启用自动策略、禁用保活；续建通过 `gpu-runtime-pm-sources.sha256` 自动迁移旧配置并使旧打包标记失效，手动入口为 `sudo bash scripts/update-gpu-runtime-pm-image.sh`。打包前核对两份 unit、内容、权限、shell 与启用链接，拒绝残留的默认保活。自动策略应与含本次恢复修复的内核配套，旧内核不要只补 unit 就启用 `auto`。
+
+手动恢复持久保活：
+
+```sh
+sudo systemctl disable --now gpu-runtime-pm.service
+sudo systemctl enable --now gpu-runtime-active.service
+```
+
+在修复内核上返回自动省电：
+
+```sh
+sudo systemctl disable --now gpu-runtime-active.service
+sudo systemctl enable --now gpu-runtime-pm.service
+```
 
 ## 物理绿线与诊断显示（2026-11-14）
 

@@ -1,0 +1,32 @@
+{
+  "date": "2026-11-17",
+  "status": "flashed boot_b; prefix readback SHA-256 matched; boot verified",
+  "slot": "b",
+  "target_partition": "boot_b",
+  "kernel_commit": "e0f04ee5b6752bcc21a7d4aad1aeeb0bc30d92a3",
+  "kernel_release": "7.3.0-sm8450+",
+  "boot_header": "v4; every header byte preserved except kernel size",
+  "ramdisk": "byte-identical to phone boot_b",
+  "vendor_boot": "unchanged; full backup verified",
+  "kernel_tracked_tree_clean": true,
+  "module_symvers_unchanged": true,
+  "module_install_required": false,
+  "fix_scope": "GPU recovery lock/completion deadlock; initial GMU OOB timeout NOT proven fixed",
+  "validation": [
+    "DRM/MSM ARM64 compile",
+    "full Image.gz link",
+    "real OOB/HFI wait interleavings; original baseline rejected"
+  ],
+  "sha256": {
+    "boot_b-original.img": "9d702b68a1e63a9c6db577bddeec390f876a80f6ee2d74b8995dcdff2ae1b933",
+    "vendor_boot_b-original.img": "2714b634cc0fadbc96378c9c71f92851c41357a92ed4635476389e3b65473703",
+    "boot-gpu-recovery.img": "65dfd4d485e4ca630824a69991be9b30bcc2065827652ec5274949b0dfcee0cb",
+    "Image-gpu-recovery.gz": "231dc1abf67d5c0f435f05a3f153670947d15da58380933a8c81302c9c56bc85"
+  },
+  "image_bytes": 29257728,
+  "hardware_tested": true,
+  "kernel_uname_version": "#8 SMP PREEMPT Tue Nov 17 23:19:14 CST 2026",
+  "hardware_boot_tested": true,
+  "hardware_runtime_pm_tested": true,
+  "hardware_recovery_after_fault_tested": false
+}

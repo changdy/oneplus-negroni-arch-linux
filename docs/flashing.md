@@ -154,7 +154,7 @@ uname -r
 findmnt /
 lsblk -f
 systemctl --failed
-systemctl status sddm NetworkManager ModemManager msm-firmware-loader rmtfs tqftpserv gpu-runtime-active
+systemctl status sddm NetworkManager ModemManager msm-firmware-loader rmtfs tqftpserv gpu-runtime-pm
 cat /sys/bus/platform/devices/3d00000.gpu/power/control
 journalctl -b -p warning
 ```

@@ -1,6 +1,8 @@
 # 7.3 设备修复与源码恢复
 
-当前 `linux` 子模块固定到 `7.3` 修复提交 `ad0c3dbdbde4996f1bd382e6b4c63c7aeab30e9c`，修复 Negroni WCN6855 的信道 12/13：固件接受 CN 后使用其返回的规则，避免初始化 US 规则再次取交集而裁掉信道。2026-11-17 修复模块已热更新，CN/US/CN 信道收紧与恢复、定向扫描及原信道联网通过；12/13 实际关联、整机重启、睡眠和新完整镜像未测，见[Wi-Fi 记录](../../artifacts/wifi-channels-20261117/README.md)。前一提交 `beb56438b3027239b6efd4d20926a133c365c448` 的 NFC 冷态中断修复见下文；`b3a55871a46d9148c77a7dbfbefec24138216a5d` 使两颗 MXM1120 通过中断上报三段声音档位，见[实机记录](../../docs/alert-slider.md)。修复从重新同步的上游 `476a4a8984395a77b6b6508f849dfb7b786d86b3` 直接修改，新增提交均只有一个父提交；没有 merge 或 cherry-pick `7.3-rc2`。之前的本地合并版本不再作为固定内核。
+当前 `linux` 子模块固定到 `7.3` 修复提交 `e0f04ee5b6752bcc21a7d4aad1aeeb0bc30d92a3`。该提交回移 [GPU 恢复锁修复](https://lore.kernel.org/all/20261101175553.53746-2-nicoangelodelacruz@gmail.com/)：恢复持有 `gpu->lock` 时不等待需要同一把锁的故障转储，避免 GPU/SMMU 线程互等。2026-11-17 在 NE2210 复现并取得调用栈，真实 OOB/HFI 函数交错回归、ARM64 DRM/MSM 编译和完整 Image.gz 链接通过；仅刷 `boot_b` 并回读验证后，内核 `#8` 已启动。最初 GMU OOB 超时的根因和实际故障恢复仍待验证，自动省电复测见 [GPU 记录](../../artifacts/gpu-runtime-pm-20261117/README.md)。bundle 保留原两个前置提交及历史 rc2 引用。
+
+前一固定点 `ad0c3dbdbde4996f1bd382e6b4c63c7aeab30e9c` 修复 Negroni WCN6855 的信道 12/13：固件接受 CN 后使用其返回的规则，避免初始化 US 规则再次取交集而裁掉信道。2026-11-17 修复模块已热更新，CN/US/CN 信道收紧与恢复、定向扫描及原信道联网通过；12/13 实际关联、整机重启、睡眠和新完整镜像未测，见[Wi-Fi 记录](../../artifacts/wifi-channels-20261117/README.md)。前一提交 `beb56438b3027239b6efd4d20926a133c365c448` 的 NFC 冷态中断修复见下文；`b3a55871a46d9148c77a7dbfbefec24138216a5d` 使两颗 MXM1120 通过中断上报三段声音档位，见[实机记录](../../docs/alert-slider.md)。修复从重新同步的上游 `476a4a8984395a77b6b6508f849dfb7b786d86b3` 直接修改，新增提交均只有一个父提交；没有 merge 或 cherry-pick `7.3-rc2`。之前的本地合并版本不再作为固定内核。
 
 新增提交为 `835c18d2739`（电池驱动及限充）、`3ca85b51d20`（CPU 参数）和 `1eaec99b04a`（补齐触觉驱动 trace 头文件）。
 

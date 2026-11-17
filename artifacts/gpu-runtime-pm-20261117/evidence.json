@@ -1,0 +1,468 @@
+{
+  "date": "2026-11-17",
+  "kernel_before_fix": "7.3.0-sm8450+",
+  "gpu": "Adreno 730 / FD730",
+  "mesa": "26.2.6",
+  "autosuspend_ms": 66,
+  "baseline": {
+    "policy": "on",
+    "requested_cycles": 3,
+    "autosuspend_ms": 66,
+    "successful_frame_cycles": 3,
+    "completed_successfully": true,
+    "off_seconds": [
+      2.0,
+      5.0,
+      15.0
+    ],
+    "all_off_samples_have_dpms_off": true,
+    "valid_off_samples": 3,
+    "extra_idle_wait_seconds": [
+      0,
+      0,
+      0
+    ],
+    "off_gpu_states": [
+      "active",
+      "active",
+      "active"
+    ],
+    "off_gmu_states": [
+      "active",
+      "active",
+      "active"
+    ],
+    "drm_panel_on_seconds": {
+      "min": 0.1170950719999837,
+      "median": 0.14865676200000166,
+      "max": 0.15435469300001614
+    },
+    "gl_process_seconds": {
+      "min": 0.6212892089999968,
+      "max": 0.6930104250000113
+    },
+    "kernel_messages": "-- No entries --"
+  },
+  "short_auto": {
+    "policy": "auto",
+    "requested_cycles": 20,
+    "autosuspend_ms": 66,
+    "successful_frame_cycles": 20,
+    "completed_successfully": true,
+    "off_seconds": [
+      2.0,
+      5.0,
+      15.0,
+      2.0,
+      5.0,
+      15.0,
+      2.0,
+      5.0,
+      15.0,
+      2.0,
+      5.0,
+      15.0,
+      2.0,
+      5.0,
+      15.0,
+      2.0,
+      5.0,
+      15.0,
+      2.0,
+      5.0
+    ],
+    "all_off_samples_have_dpms_off": true,
+    "valid_off_samples": 20,
+    "extra_idle_wait_seconds": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "off_gpu_states": [
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended"
+    ],
+    "off_gmu_states": [
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended"
+    ],
+    "drm_panel_on_seconds": {
+      "min": 0.07775775700002896,
+      "median": 0.14903045550002503,
+      "max": 0.17592264099999966
+    },
+    "gl_process_seconds": {
+      "min": 0.5917711060000101,
+      "max": 0.7169277870000315
+    },
+    "kernel_messages": "-- No entries --"
+  },
+  "post_deployment_long_failure": {
+    "policy": "auto",
+    "requested_cycles": 3,
+    "autosuspend_ms": 66,
+    "successful_frame_cycles": 2,
+    "completed_successfully": false,
+    "off_seconds": [
+      0.2,
+      1.0,
+      60.0
+    ],
+    "all_off_samples_have_dpms_off": true,
+    "valid_off_samples": 3,
+    "extra_idle_wait_seconds": [
+      0,
+      0,
+      0
+    ],
+    "off_gpu_states": [
+      "suspended",
+      "suspended",
+      "suspending"
+    ],
+    "off_gmu_states": [
+      "suspended",
+      "suspended",
+      "active"
+    ],
+    "drm_panel_on_seconds": {
+      "min": 0.13055376500000193,
+      "median": 0.13176735300001496,
+      "max": 0.132980941000028
+    },
+    "gl_process_seconds": {
+      "min": 0.6812503859999879,
+      "max": 0.6923978209999859
+    },
+    "kernel_messages": "[  459.500432] oneplus-negroni kernel: platform 3d6a000.gmu: [drm:a6xx_gmu_set_oob] *ERROR* Timeout waiting for GMU OOB set GPU_SET: 0x0\n[  460.429453] oneplus-negroni kernel: adreno 3d00000.gpu: [drm:a6xx_irq] *ERROR* gpu fault ring 2 fence 2e4a status 00800005 rb 0000/020b ib1 0000000000000000/0000 ib2 0000000000000000/0000\n[  460.431295] oneplus-negroni kernel: msm_dpu ae01000.display-controller: [drm:recover_worker] *ERROR* 07030001: hangcheck recover!\n[  460.431852] oneplus-negroni kernel: msm_dpu ae01000.display-controller: [drm:recover_worker] *ERROR* 07030001: offending task: kscreenl:gdrv0 (/usr/lib/kscreenlocker_greet --graceTime 5000)\n[  460.432389] oneplus-negroni kernel: *** gpu fault: ttbr0=0000000868b69000 iova=0000000000000000 dir=READ type=TRANSLATION source=CP (3736059565,3736059565,3736059565,3736059565)\n[  461.996901] oneplus-negroni kernel: platform 3d6a000.gmu: GMU watchdog expired"
+  },
+  "deadlock": {
+    "gpu_worker": [
+      "recover_worker (holds gpu->lock)",
+      "a6xx_recover",
+      "a6xx_gmu_pm_suspend",
+      "a6xx_gmu_set_oob",
+      "wait_for_completion(fault_coredump_done)"
+    ],
+    "smmu_fault_thread": [
+      "adreno_fault_handler",
+      "msm_gpu_fault_crashstate_capture",
+      "mutex_lock(gpu->lock)"
+    ],
+    "compositor": [
+      "adreno_get_param",
+      "rpm_resume (waits for suspending GPU)"
+    ]
+  },
+  "recovery_patch": "e0f04ee5b6752bcc21a7d4aad1aeeb0bc30d92a3",
+  "upstream": "https://lore.kernel.org/all/20261101175553.53746-2-nicoangelodelacruz@gmail.com/",
+  "default_policy": "auto; autosuspend 1000 ms; active fallback disabled",
+  "power_savings_watts": null,
+  "conservative_auto_early_sample_failure": {
+    "policy": "auto",
+    "requested_cycles": 20,
+    "autosuspend_ms": 1000,
+    "successful_frame_cycles": 8,
+    "completed_successfully": false,
+    "off_seconds": [
+      2.0,
+      5.0,
+      15.0,
+      60.0,
+      2.0,
+      5.0,
+      15.0,
+      60.0,
+      2.0
+    ],
+    "all_off_samples_have_dpms_off": true,
+    "valid_off_samples": 9,
+    "extra_idle_wait_seconds": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "off_gpu_states": [
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "active"
+    ],
+    "off_gmu_states": [
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "active"
+    ],
+    "drm_panel_on_seconds": {
+      "min": 0.11473102600001539,
+      "median": 0.1504387324999925,
+      "max": 0.15668448200000284
+    },
+    "gl_process_seconds": {
+      "min": 0.6072407649999718,
+      "max": 0.6536343020000004
+    },
+    "kernel_messages": "-- No entries --"
+  },
+  "conservative_auto_final": {
+    "policy": "auto",
+    "requested_cycles": 20,
+    "autosuspend_ms": 1000,
+    "successful_frame_cycles": 20,
+    "completed_successfully": true,
+    "off_seconds": [
+      2.0,
+      5.0,
+      15.0,
+      60.0,
+      2.0,
+      5.0,
+      15.0,
+      60.0,
+      2.0,
+      5.0,
+      15.0,
+      60.0,
+      2.0,
+      5.0,
+      15.0,
+      60.0,
+      2.0,
+      5.0,
+      15.0,
+      60.0
+    ],
+    "all_off_samples_have_dpms_off": true,
+    "valid_off_samples": 20,
+    "extra_idle_wait_seconds": [
+      6.05210000230727e-05,
+      0.000433337999993455,
+      0.0003266710000389139,
+      0.00032276499996442,
+      0.00032333800004380464,
+      0.0003244829999857757,
+      0.0003387550000297779,
+      0.00032302500005698676,
+      0.00014573199996448238,
+      0.00033365100000537495,
+      0.000152554000010241,
+      0.00032714000008127186,
+      0.00031453599990527437,
+      0.0003335989999868616,
+      0.00032234900004368683,
+      0.0003244839999752003,
+      0.00032609799995952926,
+      0.0003406299999824114,
+      0.0003299530001186213,
+      0.0003141189999951166
+    ],
+    "off_gpu_states": [
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended"
+    ],
+    "off_gmu_states": [
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended",
+      "suspended"
+    ],
+    "drm_panel_on_seconds": {
+      "min": 0.08467123699995227,
+      "median": 0.12394578649997356,
+      "max": 0.17476638499999808
+    },
+    "gl_process_seconds": {
+      "min": 0.5654778069999793,
+      "max": 0.6847609369999645
+    },
+    "kernel_messages": "-- No entries --"
+  },
+  "manual_active_fallback_and_return_to_auto": "passed on phone",
+  "final_service_cycle": {
+    "policy": "auto",
+    "requested_cycles": 1,
+    "autosuspend_ms": 1000,
+    "successful_frame_cycles": 1,
+    "completed_successfully": true,
+    "off_seconds": [
+      5.0
+    ],
+    "all_off_samples_have_dpms_off": true,
+    "valid_off_samples": 1,
+    "extra_idle_wait_seconds": [
+      5.50529998690763e-05
+    ],
+    "off_gpu_states": [
+      "suspended"
+    ],
+    "off_gmu_states": [
+      "suspended"
+    ],
+    "drm_panel_on_seconds": {
+      "min": 0.14265557799990347,
+      "median": 0.14265557799990347,
+      "max": 0.14265557799990347
+    },
+    "gl_process_seconds": {
+      "min": 0.6191162139998596,
+      "max": 0.6191162139998596
+    },
+    "kernel_messages": "-- No entries --"
+  },
+  "patched_kernel_long_test": {
+    "policy": "auto",
+    "requested_cycles": 3,
+    "autosuspend_ms": 66,
+    "successful_frame_cycles": 3,
+    "completed_successfully": true,
+    "off_seconds": [
+      60.0,
+      60.0,
+      120.0
+    ],
+    "all_off_samples_have_dpms_off": false,
+    "valid_off_samples": 2,
+    "extra_idle_wait_seconds": [
+      0,
+      0,
+      0
+    ],
+    "off_gpu_states": [
+      "suspended",
+      "suspended",
+      "suspended"
+    ],
+    "off_gmu_states": [
+      "suspended",
+      "suspended",
+      "suspended"
+    ],
+    "drm_panel_on_seconds": {
+      "min": 0.07840612100000044,
+      "median": 0.1606366649999984,
+      "max": 0.162842731000012
+    },
+    "gl_process_seconds": {
+      "min": 0.39140724299997487,
+      "max": 0.7431278329999884
+    },
+    "kernel_messages": "-- No entries --"
+  },
+  "final_phone_policy": {
+    "observed_at": "2026-11-17 23:53 Asia/Shanghai",
+    "gpu_control": "auto",
+    "autosuspend_delay_ms": 1000,
+    "gpu_runtime_status": "suspended",
+    "gmu_runtime_status": "suspended",
+    "dpms": "On",
+    "auto_service": "enabled / active",
+    "active_fallback": "disabled / inactive",
+    "failed_units": 0,
+    "new_gpu_kernel_messages": false,
+    "auto_unit_sha256": "5cb36c0f59d110a013f5da090f1bf06c0e6c02513e51978c8e08a8c8f141094c"
+  }
+}

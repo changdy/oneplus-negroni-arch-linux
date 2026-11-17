@@ -36,7 +36,7 @@ sudo systemctl disable --now negroni-charge-limit.service  # 停止限制并取�
 | 空闲熄屏 | 5 分钟 |
 | 空闲自动休眠 | 关闭 |
 | SDDM 登录前 | 空闲 2 分钟熄屏，短按电源键切换熄屏 / 亮屏 |
-| GPU 电源管理 | 默认启用 `gpu-runtime-active.service`，保持 GPU 处于 active，规避熄屏后慢亮屏；可能增加待机耗电 |
+| GPU 电源管理 | 默认自动省电 `auto` / 1000 ms；恢复死锁补丁已部署，20 轮长短熄屏与亮屏渲染通过。保活入口仍保留，长期稳定性与节电量未测，见 [GPU 说明](docs/gpu.md) |
 | 充电限制运行期间 | 阻止系统挂起与休眠，保证持续监测电量；熄屏和 CPU idle 仍可用，停止服务后解除此限制 |
 
 登录后的屏幕与休眠配置安装到 `/etc/xdg/powerdevilrc`，可在系统设置中修改，已有用户配置优先。SDDM 使用独立的 PowerDevil 配置，在登录界面空闲 120 秒后熄屏，触摸或输入会重新计时；电源键用于亮灭屏。logind 不再将短按电源键作为关机请求，覆盖图形电源管理启动、退出时的交接窗口。锁屏后的独立熄屏时间沿用上游默认值（当前为 60 秒）。详见[屏幕与休眠默认设置](docs/screen-defaults.md)和 [GPU 唤醒诊断](artifacts/wake-latency-20260916/)。

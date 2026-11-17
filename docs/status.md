@@ -1,5 +1,7 @@
 # 设备状态与使用说明
 
+2026-11-17 23:46 GPU 自动省电已部署：回移恢复死锁修复 `e0f04ee5b6`，仅刷 `boot_b` 并启动内核 `#8`；原 ramdisk、vendor_boot 和已安装模块保持原样，B 槽标记正常。锁屏下 `auto` / 1000 ms 完整通过 20 轮 2/5/15/60 秒混合熄屏与亮屏 GL 测试，无新增 GPU/显示错误；最终服务再测 1 轮及手动保活往返通过。自动服务 enabled / active、保活 disabled / inactive，源代码、新建、续建和打包检查均已接通。原 66 ms 方案曾触发 OOB 超时与恢复死锁；原始超时根因、实际 fault 后恢复、长期稳定性、深睡和节电量仍未验收。新完整 rootfs 镜像未构建、未刷入，见 [GPU 记录](../artifacts/gpu-runtime-pm-20261117/README.md)。
+
 2026-11-17 Wi-Fi 信道 12/13：内核 `ad0c3dbdbd` 修复 Negroni WCN6855 将 CN 规则与初始化 US 规则再次取交集的问题。修复模块已手工安装，CN 下 12/13 启用，定向扫描命令成功；US 下正常禁用，恢复 CN 后重新开放。原信道联网通过，附近无 12/13 热点，实际关联、修复版整机重启和睡眠未测。首次热更新回退卸载阻塞，经用户强制关机再开机恢复；新完整镜像未构建、未刷入，见 [Wi-Fi](wifi.md) 与[现场记录](../artifacts/wifi-channels-20261117/README.md)。
 
 2026-11-17 应用户要求将手机 CPU 从 `performance` 切回 `schedutil` 按负载调频，并停用性能服务的开机自启；已确认三组策略生效、Boost 关闭。源码已将均衡服务设为镜像默认值，功耗未测，新完整镜像尚未构建或刷入，见 [CPU 说明](cpu-performance.md)。
@@ -38,7 +40,7 @@ Satellite 退出后 GPS 开关的控制程序已实机验证 `关 → 开 → �
 
 ## 源码、镜像和实机
 
-当前内核源码为 `7.3`，固定到 `ad0c3dbdbde4996f1bd382e6b4c63c7aeab30e9c`，包含 Wi-Fi 国家规则交集修复、NFC 冷态中断修复及此前的三段拨杆、电池、CPU、标准振动反馈、LPASS 录音状态、USB/PD、角色切换修复、AudioReach 通话语音图、超广角 JN1 出流设备树、SN100 参考时钟、SMEM 光线距离项、NFC-A 被动监听和 DMIC3/DMIC4 麦克风路由，历史未合并 `7.3-rc2`。此前 ARM64 内核/模块/DTB 与主机回归通过；本次 Wi-Fi 模块单独编译并热更新到手机，完整新内核与镜像尚未构建、刷入；最近完整内核构建仍对应前一 NFC 提交。手机此前已更新启动内核、设备树、电池模块和 USB 网卡固件，2026-11-14 单独更新振动模块及用户空间；根文件系统沿用既有安装，这不代表完整 rootfs 或整个最新源码内核重新刷入。
+当前内核源码为 `7.3`，固定到 `e0f04ee5b6752bcc21a7d4aad1aeeb0bc30d92a3`，包含 GPU 恢复死锁修复、Wi-Fi 国家规则交集修复、NFC 冷态中断修复及此前的三段拨杆、电池、CPU、标准振动反馈、LPASS 录音状态、USB/PD、角色切换修复、AudioReach 通话语音图、超广角 JN1 出流设备树、SN100 参考时钟、SMEM 光线距离项、NFC-A 被动监听和 DMIC3/DMIC4 麦克风路由，历史未合并 `7.3-rc2`。2026-11-17 从干净的已跟踪内核树构建 Image.gz，仅刷 `boot_b` 并启动内核 `#8`；原 ramdisk、vendor_boot 与已安装模块保持原样，Module.symvers 未变化。GPU 自动省电复测见上文；这不代表完整新 rootfs 镜像已构建、刷入，也不代替其他子系统各自的验收。
 
 带 PD 的 Hub 已验证 USB2 接收器、RTL8153 网卡和充电同时工作，重启后可自动枚举。物理热插拔仍出现过 SMMU `IOVA=0x0c` 与 xHCI 挂死，后续成功拔插不能证明故障消除。电脑端 gadget 的最新实测见下表；无外接供电 OTG、其他 Hub、DP 显示与完整系统深度睡眠仍未覆盖。
 
@@ -77,7 +79,7 @@ ssh oneplus@手机IP
 | --- | --- |
 | 内存容量 | 2026-11-12 只读实机核查：12GB 机型当前 `MemTotal` 为 10.3022 GiB，`free -h` 显示 `10Gi`；运行时内存区间比 12 GiB 少 219 MiB，固定预留 1191.875 MiB，内核等其余开销按差额约 327.70 MiB。预留区回收与内存压测未测，见[内存说明](memory.md) |
 | 登录虚拟键盘 | 使用 KWin 启动 Plasma Keyboard；7.2 已确认可输入，7.3-rc2 登录操作尚待单独记录，见[修复记录](archive/keyboard-fix-2026-09-15.md) |
-| GPU 慢亮屏 | 默认启用 `gpu-runtime-active.service`，将 GPU 的 `power/control` 设为 `on`；这是阻止 GPU runtime suspend 的规避方式，可能增加待机耗电。2026-11-11 在 7.3 上设为 `auto` 的 2 次亮屏未复现 1 s 超时，样本不足，暂不移除，见 [GPU 说明](gpu.md) |
+| GPU 自动省电与亮屏 | 已部署恢复死锁修复与 `auto` / 1000 ms，锁屏下 20 轮混合熄屏和最终服务复测通过；保活默认禁用，长期稳定性、深睡与节电量未测，见 [GPU 说明](gpu.md) |
 | GPU 3D 加速 | 详见 [GPU 说明](gpu.md)。2026-11-11 实机验证可用，内核与固件无需修改：msm/Adreno 730 绑定，`a730_sqe.fw`、`gmu_gen70000.bin` 和 zap shader 正常加载（0.8 秒时 `failed to load a730_sqe.fw` 仅是 rootfs 挂载前的首次尝试，12 秒时加载成功）。Mesa 26.2.6 的 GL ES 3.2 渲染器为 `FD730`，KWin 使用 OpenGL ES 合成，Xwayland GLX 为直接渲染；`glmark2-es2-wayland --off-screen`（1245×2664，build/texture/phong/refract/terrain）得分 900，压测中 devfreq 由 220 MHz 升至 818 MHz，无 GPU fault 或 hangcheck。Vulkan 需安装 `vulkan-freedreno`（已加入镜像软件清单），Turnip 报告 Vulkan 1.4，`vkcube` 300 帧正常；游戏、视频硬解和长时间负载的温控尚未测试 |
 | 触摸 DMA 报错与登录界面消失 | 已修复 I²C 读操作的 TX 环泄漏；实机相同 256 次读取由 8 次 EIO 降为零错误。登录前关闭概览等手势效果；首次界面退出的直接原因仍待进一步定位 |
 | 电池状态图标 | 已修正电流符号及 Oplus 充电状态计算；最终模块已实测 5 V Hub 下充电、限充停止与解除恢复，内核与 UPower 状态正确、外设在线，见[充电说明](charge-limit.md) |

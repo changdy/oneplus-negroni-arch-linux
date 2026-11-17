@@ -46,8 +46,9 @@ fi
 if [[ ! -f "$log_dir/ssh.complete" ]]; then
     sudo env IMAGE_DIR="$image_dir" LOG_DIR="$log_dir" bash scripts/enable-ssh-image.sh
 fi
-if [[ ! -f "$log_dir/gpu-runtime-pm.complete" ]]; then
-    sudo env IMAGE_DIR="$image_dir" LOG_DIR="$log_dir" bash scripts/enable-gpu-runtime-active-image.sh
+if [[ ! -f "$log_dir/gpu-runtime-pm-sources.sha256" ]] ||
+   ! sha256sum --check --status "$log_dir/gpu-runtime-pm-sources.sha256"; then
+    sudo env IMAGE_DIR="$image_dir" LOG_DIR="$log_dir" bash scripts/update-gpu-runtime-pm-image.sh
 fi
 if [[ ! -f "$log_dir/screen-defaults-sources.sha256" ]] ||
    ! sha256sum --check --status "$log_dir/screen-defaults-sources.sha256"; then

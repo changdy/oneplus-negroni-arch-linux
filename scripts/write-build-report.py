@@ -36,9 +36,10 @@ report = {
     },
     "gpu_runtime_pm": {
         "enabled": (log_directory / "gpu-runtime-pm.complete").exists(),
-        "service": "gpu-runtime-active.service",
+        "service": "gpu-runtime-pm.service",
         "device": "/sys/bus/platform/devices/3d00000.gpu",
-        "power_control": "on",
+        "power_control": "auto",
+        "autosuspend_delay_ms": 1000,
     },
     "validation": {
         "kernel_build": True,
