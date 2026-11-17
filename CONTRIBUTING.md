@@ -12,6 +12,8 @@ bash scripts/check.sh --with-kernel
 git diff --check
 ```
 
+上述完整检查在 Linux 环境运行。在 Windows PowerShell 中，直接输入 `bash` 会调用 WSL 的应用别名；日常 Git、Python 和 SSH 操作可用 `pwsh`，并按改动运行适用的单项检查。完整检查包含 Windows Python 不提供的 `time.clock_settime`，不能仅换用 Git Bash 运行。
+
 检查需要 Bash、Python 3、Git；内核测试另需主机 C 编译器（`cc`）、ARM64 交叉编译器、flex 和 bison。`--with-kernel` 会编译并执行阈值状态机测试，以及从真实驱动提取函数、模拟 ADSP 传输的测试；驱动测试覆盖电流极性、温度单位、USB 查询、停充状态、充电许可、通知与恢复任务中的 USB 输入保留、VOOC 补发、电量计初始化重试、连接代次失效及任务停止，并检查锁的使用。检查还会在独立输出目录中验证 Docker 配置的首次生成、续建、幂等性和必需项拒绝行为。服务测试覆盖配置解析、写入顺序、设备重建和退出恢复。
 
 修改 CPU 默认安装或镜像检查时，运行真实 rootfs 安装/校验测试（需要 `systemctl`、`mkfs.ext4`、`debugfs`）：

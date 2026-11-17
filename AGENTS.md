@@ -54,6 +54,8 @@ EOS
 
 ## 构建环境
 
+- Windows 主机上的 Git、Python 和 SSH 等日常命令使用 `pwsh`。运行其他 shell 前先用 `Get-Command <命令>` 确认实际路径；本机直接输入 `bash` 会命中 WindowsApps 的 WSL 启动别名，不要把它当作普通的本机 Bash。
+- `scripts/check.sh` 的完整检查依赖 Linux（其中的 Python 代码使用了 Windows 不提供的 `time.clock_settime`）。Windows 上用 `pwsh` 做当前改动适用的单项检查；完整检查只在确实需要 Linux 构建环境时明确启动 WSL，或交给 CI。未运行完整检查时如实说明。
 - 真正的构建树在 WSL 发行版 **`NegroniBuild-Ubuntu-26.04`** 的 `/opt/negroni-build` 中。Windows 检出的 `linux/` 子模块是空的，内核源码在 `/opt/negroni-build/linux`（浅克隆，分支 `7.3`）。
 - 从 Git Bash 调用 WSL 时，先把命令写成脚本，再这样执行：
   `MSYS_NO_PATHCONV=1 wsl -d NegroniBuild-Ubuntu-26.04 -- bash /mnt/c/...`。
@@ -80,6 +82,8 @@ EOS
 - 只 `git add` 本功能涉及的文件，不要用 `git add -A`。
 - 推送到远端前先征得用户同意。
 - 修改镜像安装/检查时，再运行 `sudo bash scripts/check-image-delivery.sh`；小型 ext4 检查不能代替完整镜像或实机验证。
+
+以下完整检查命令用于 Linux 环境；在 Windows `pwsh` 中不要直接输入 `bash scripts/check.sh`，否则会启动 WSL。
 
 ```sh
 bash scripts/check.sh
