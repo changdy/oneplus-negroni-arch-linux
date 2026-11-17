@@ -8,7 +8,7 @@ import subprocess
 
 def ensure_quick_settings(home):
     state_dir = Path(os.environ.get("XDG_STATE_HOME", home / ".local/state")) / "negroni"
-    state = state_dir / "quicksettings-v2"
+    state = state_dir / "quicksettings-v3"
     if state.exists():
         return
 
@@ -21,21 +21,23 @@ def ensure_quick_settings(home):
     disabled = set(read("disabledQuickSettings"))
     if not enabled:
         enabled = sorted(path.name for path in Path("/usr/share/plasma/quicksettings").iterdir()
-                         if (path / "metadata.json").exists())
+                         if path.name not in disabled and (path / "metadata.json").exists())
 
-    additions = [("org.negroni.quicksetting.gps", "org.negroni.quicksetting.nfc")]
-    if not (state_dir / "quicksettings-v1").exists():
-        additions = [("org.negroni.quicksetting.nfc", "org.kde.plasma.quicksetting.bluetooth"),
-                     ("org.negroni.quicksetting.gyro", "org.kde.plasma.quicksetting.screenrotation")] + additions
+    additions = [("org.negroni.quicksetting.krdp", "org.negroni.quicksetting.gps")]
+    if not (state_dir / "quicksettings-v2").exists():
+        additions.insert(0, ("org.negroni.quicksetting.gps", "org.negroni.quicksetting.nfc"))
+        if not (state_dir / "quicksettings-v1").exists():
+            additions = [("org.negroni.quicksetting.nfc", "org.kde.plasma.quicksetting.bluetooth"),
+                         ("org.negroni.quicksetting.gyro", "org.kde.plasma.quicksetting.screenrotation")] + additions
     for setting, predecessor in additions:
         if setting not in enabled and setting not in disabled:
             position = enabled.index(predecessor) + 1 if predecessor in enabled else len(enabled)
             enabled.insert(position, setting)
 
     subprocess.run(["kwriteconfig6", "--file", "plasmamobilerc", "--group", "QuickSettings",
-                    "--key", "enabledQuickSettings", ",".join(enabled)], check=True, timeout=10)
+                    "--key", "enabledQuickSettings", "--notify", ",".join(enabled)], check=True, timeout=10)
     state.parent.mkdir(parents=True, exist_ok=True)
-    state.write_text("added GPS quick setting\n")
+    state.write_text("registered KRDP quick setting\n")
 
 
 def main():

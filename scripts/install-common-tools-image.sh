@@ -74,7 +74,7 @@ test -x /usr/bin/set-wireless-regdom
 test -r /usr/share/bash-completion/bash_completion
 fc-list :lang=zh family | grep -q 'Noto.*CJK'
 test -x /usr/bin/angelfish
-for app in dolphin kclock kalk koko kdeconnect-app; do
+for app in dolphin kclock kalk koko kdeconnect-app krdpserver; do
     test -x "/usr/bin/$app"
 done
 test -x /usr/bin/snapshot

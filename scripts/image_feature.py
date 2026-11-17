@@ -15,11 +15,13 @@ class Image:
     def __init__(self, image_dir):
         self.path = Path(image_dir) / "root.img"
 
-    def query(self, command):
+    def query(self, command, *, missing_ok=False):
         result = subprocess.run(["debugfs", "-R", command, str(self.path)],
                                 check=True, capture_output=True)
         errors = result.stderr.decode().splitlines()[1:]
         if errors:
+            if missing_ok and all(error.rstrip().endswith("File not found by ext2_lookup") for error in errors):
+                return None
             raise RuntimeError("\n".join(errors))
         return result.stdout
 

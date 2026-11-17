@@ -1,0 +1,12 @@
+{
+  "KPackageStructure": "KPackage/GenericQML",
+  "KPlugin": {
+    "Id": "org.negroni.quicksetting.krdp",
+    "Name": "Remote Desktop",
+    "Name[zh_CN]": "远程桌面",
+    "Description": "Start or stop KRDP over USB",
+    "Description[zh_CN]": "开启或关闭 USB 远程桌面",
+    "Icon": "preferences-system-network-remote",
+    "License": "MIT"
+  }
+}

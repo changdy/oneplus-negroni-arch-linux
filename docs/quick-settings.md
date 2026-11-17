@@ -6,7 +6,9 @@
 
 GPS 项控制 ModemManager 的 `gps-nmea` 和 `gps-raw` 定位源。开启任一源便会启动 GPS 引擎，两个源都关闭后 ModemManager 停止该引擎；蜂窝基带与通话、移动数据仍继续运行。独立的 QMI/AFW 调试客户端不归 ModemManager 管理，开关不能停止它们。GPS 状态从 ModemManager 实时读取，外部应用启用 GPS 时也会显示“开”。当前系统尚未安装 GeoClue，不能将这个开关当成已经完成的应用定位服务。
 
-三个快捷项由 `configure-desktop.sh` 安装到 `/usr/share/plasma/quicksettings/`。首次登录时 `negroni-desktop-defaults.py` 把它们加入下拉栏，尊重已有的禁用列表；用户之后移除快捷项，不会在下次登录时被重新加回。已有 NFC 和陀螺仪设置的用户仅增加 GPS 项。点击快捷项通过 Polkit 只授权当前本机活动会话运行受限的控制程序。普通状态查询不需要提权。
+「远程桌面」项控制当前 Plasma 会话的 KRDP。镜像预装 KRDP，开机和登录时默认关闭；点亮开关后，通过 USB 在 Windows 的 `mstsc` 连接 `10.55.0.1:3389`，使用手机系统账号认证，首次接入按手机提示授权桌面共享。关闭时当前连接会断开，退出 Plasma 也会停止服务。首次打开时在用户目录生成 TLS 证书和私钥。详见[远程桌面说明](optional-apps.md#krdp-远程桌面实机手工安装)。
+
+四个快捷项由 `configure-desktop.sh` 安装到 `/usr/share/plasma/quicksettings/`。首次登录时 `negroni-desktop-defaults.py` 把新项目加入下拉栏，并读取已有的禁用列表。NFC、GPS、陀螺仪通过 Polkit 授权本机活动会话运行受限控制程序；KRDP 直接启停当前用户的服务。普通状态查询无需提权。
 
 手工检查命令：
 
@@ -17,6 +19,7 @@ GPS 项控制 ModemManager 的 `gps-nmea` 和 `gps-raw` 定位源。开启任一
 pkexec /usr/local/libexec/negroni-hardware-control nfc toggle
 pkexec /usr/local/libexec/negroni-hardware-control gyro toggle
 pkexec /usr/local/libexec/negroni-hardware-control gps toggle
+systemctl --user status app-org.kde.krdpserver.service
 ```
 
 关闭 NFC 后应检查 `/sys/bus/i2c/devices/1-0028/driver` 不存在，且 `/proc/interrupts` 中的 `nxp-nci_i2c` 不再增长。关闭陀螺仪后应检查服务为 `inactive`、`disabled`，且角速度采样进程退出。
@@ -24,3 +27,11 @@ pkexec /usr/local/libexec/negroni-hardware-control gps toggle
 2026-11-17 已在手机上手工部署，并验证 NFC 与陀螺仪均能 `关 → 开 → 关`，最终均为关闭。Qt QML 的状态读取及命令执行路径单独通过；图形会话中实际显示、触控与 Polkit 授权尚未测。见[实机记录](../artifacts/quicksettings-20261117/README.md)。完整镜像未构建、未刷入，重启后的默认状态和节电量未测。
 
 GPS 项同日已手工装到手机，状态正确显示 Satellite 使用的 GPS 为“开”。待它结束定位会话后，实机完成 `关 → 开 → 关`；开启时 ModemManager 同时启用 `gps-nmea` 和 `gps-raw`，关闭后两项均消失，ModemManager 保持 active。图形会话中实际触控、重启后状态和节电量仍未测。
+
+2026-11-18 在手机上用临时用户服务和独立端口测试 KRDP 项。QML 连续两轮完成 `关 → 开 → 关`，监听绑定 USB 地址，关闭后端口消失，生成的证书匹配 USB 地址。下拉栏触控、新配置上的 Windows 登录与共享授权，以及新镜像启动未测。
+
+## 其他候选
+
+- **充电限制**适合长期接 USB 或使用扩展坞时快速启停。面板应区分「已开启，正在充电」「已停充」和「错误」，并提示开启期间系统会阻止挂起。[充电限制](charge-limit.md)
+- **CPU 均衡 / 性能**适合经常跑基准测试或串流时临时切换。应读取实际策略，关闭后恢复均衡。[CPU 性能模式](cpu-performance.md)
+- 临时防休眠、热点、截图和录屏已有 Plasma Mobile 快捷项，可在下拉栏编辑界面调整顺序。
