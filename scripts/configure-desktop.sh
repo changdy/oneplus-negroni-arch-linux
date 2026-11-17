@@ -20,8 +20,9 @@ install -o 0 -g 0 -m 0644 "$project_dir/config/desktop/negroni-desktop-defaults.
 install -o 0 -g 0 -m 0755 "$project_dir/config/desktop/negroni-krdp-server.py" \
     "$target_dir/usr/local/libexec/negroni-krdp-server.py"
 install -o 0 -g 0 -m 0644 "$project_dir/config/desktop/krdpserverrc" "$target_dir/etc/xdg/krdpserverrc"
-install -o 0 -g 0 -m 0644 "$project_dir/config/desktop/krdp-usb.conf" \
-    "$target_dir/etc/systemd/user/app-org.kde.krdpserver.service.d/10-negroni-usb.conf"
+krdp_dropins="$target_dir/etc/systemd/user/app-org.kde.krdpserver.service.d"
+install -o 0 -g 0 -m 0644 "$project_dir/config/desktop/krdp-session.conf" "$krdp_dropins/10-negroni-session.conf"
+rm -f "$krdp_dropins/10-negroni-usb.conf"
 install -o 0 -g 0 -m 0755 "$project_dir/config/quicksettings/negroni-hardware-control" \
     "$target_dir/usr/local/libexec/negroni-hardware-control"
 install -o 0 -g 0 -m 0644 "$project_dir/config/quicksettings/org.negroni.hardware-control.policy" \
@@ -35,7 +36,7 @@ for setting in nfc gyro gps krdp; do
     install -o 0 -g 0 -m 0644 "$project_dir/config/quicksettings/$setting/contents/ui/main.qml" "$package/contents/ui/main.qml"
 done
 cd "$project_dir"
-sha256sum config/desktop/*.py config/desktop/*.desktop config/desktop/krdp-usb.conf config/desktop/krdpserverrc \
+sha256sum config/desktop/*.py config/desktop/*.desktop config/desktop/krdp-session.conf config/desktop/krdpserverrc \
     config/quicksettings/negroni-hardware-control \
     config/quicksettings/org.negroni.hardware-control.policy config/quicksettings/nxp-nci-off.conf \
     config/quicksettings/{nfc,gyro,gps,krdp}/metadata.json config/quicksettings/{nfc,gyro,gps,krdp}/contents/ui/main.qml \

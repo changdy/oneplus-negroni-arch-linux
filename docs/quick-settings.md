@@ -6,7 +6,7 @@
 
 GPS 项控制 ModemManager 的 `gps-nmea` 和 `gps-raw` 定位源。开启任一源便会启动 GPS 引擎，两个源都关闭后 ModemManager 停止该引擎；蜂窝基带与通话、移动数据仍继续运行。独立的 QMI/AFW 调试客户端不归 ModemManager 管理，开关不能停止它们。GPS 状态从 ModemManager 实时读取，外部应用启用 GPS 时也会显示“开”。当前系统尚未安装 GeoClue，不能将这个开关当成已经完成的应用定位服务。
 
-「远程桌面」项控制当前 Plasma 会话的 KRDP。镜像预装 KRDP，开机和登录时默认关闭；点亮开关后，通过 USB 在 Windows 的 `mstsc` 连接 `10.55.0.1:3389`，使用手机系统账号认证，首次接入按手机提示授权桌面共享。关闭时当前连接会断开，退出 Plasma 也会停止服务。首次打开时在用户目录生成 TLS 证书和私钥。详见[远程桌面说明](optional-apps.md#krdp-远程桌面实机手工安装)。
+「远程桌面」项启停当前 Plasma 会话的 KRDP。镜像预装 KRDP，开机和登录时默认关闭。开启后使用 KRDP 的默认监听行为，Windows 的 `mstsc` 可连接手机的可达 IP，默认端口为 `3389`。使用手机系统账号认证，首次接入按手机提示授权桌面共享。关闭时当前连接会断开，退出 Plasma 也会停止服务。首次打开时在用户目录生成 TLS 证书和私钥。详见[远程桌面说明](optional-apps.md#krdp-远程桌面实机手工安装)。
 
 四个快捷项由 `configure-desktop.sh` 安装到 `/usr/share/plasma/quicksettings/`。首次登录时 `negroni-desktop-defaults.py` 把新项目加入下拉栏，并读取已有的禁用列表。NFC、GPS、陀螺仪通过 Polkit 授权本机活动会话运行受限控制程序；KRDP 直接启停当前用户的服务。普通状态查询无需提权。
 
@@ -28,7 +28,7 @@ systemctl --user status app-org.kde.krdpserver.service
 
 GPS 项同日已手工装到手机，状态正确显示 Satellite 使用的 GPS 为“开”。待它结束定位会话后，实机完成 `关 → 开 → 关`；开启时 ModemManager 同时启用 `gps-nmea` 和 `gps-raw`，关闭后两项均消失，ModemManager 保持 active。图形会话中实际触控、重启后状态和节电量仍未测。
 
-2026-11-18 在手机上用临时用户服务和独立端口测试 KRDP 项。QML 连续两轮完成 `关 → 开 → 关`，监听绑定 USB 地址，关闭后端口消失，生成的证书匹配 USB 地址。下拉栏触控、新配置上的 Windows 登录与共享授权，以及新镜像启动未测。
+2026-11-18 在手机上用临时用户服务和独立端口测试 KRDP 项。QML 连续两轮完成 `关 → 开 → 关`，关闭后端口消失。移除早期的 USB 固定监听后，在手机的独立网络命名空间确认新版监听 `*:3389` 并接受非 USB 地址上的 TCP 连接。下拉栏触控、新配置上的 Windows 登录与共享授权，以及新镜像启动未测。
 
 ## 其他候选
 

@@ -115,7 +115,7 @@ sudo systemctl enable --now sshd
 
 2026-11-17 将 `dolphin`、`kclock`、`kalk`、`koko`、`kdeconnect` 加入同一默认清单。安装阶段核对五个应用的入口程序，封装前 `verify-desktop-image.py` 核对软件包数据库。手机已通过 USB SSH 安装并用 `pacman -Q` 确认五包存在；图形启动、触屏操作、KDE Connect 配对和闹钟唤醒尚未实测。新完整镜像尚未构建、刷入。
 
-2026-11-18 将 `krdp` 加入默认软件清单。新建和续建均由 `configure-desktop.sh` 安装下拉项、USB 监听的 systemd 用户服务覆盖和认证默认配置。封装前核对软件包、启动程序、配置、下拉项和禁用自启状态。证书与私钥由用户首次开启服务时生成。离线交付检查通过；旧 rootfs 副本的包下载超时，两处镜像站对该副本索引中的 KRDP 6.8.2 包均返回 404。新完整镜像未构建、未刷入。[下拉快捷开关](quick-settings.md)
+2026-11-18 将 `krdp` 加入默认软件清单。新建和续建均由 `configure-desktop.sh` 安装下拉项、systemd 用户服务的会话与 TLS 配置，以及认证默认值。监听地址沿用 KRDP 的默认行为，续建会移除旧的 Negroni USB 监听覆盖。封装前核对软件包、启动程序、配置、下拉项和禁用自启状态。证书与私钥由用户首次开启服务时生成。离线交付检查通过；旧 rootfs 副本的包下载超时，两处镜像站对该副本索引中的 KRDP 6.8.2 包均返回 404。新完整镜像未构建、未刷入。[下拉快捷开关](quick-settings.md)
 
 系统初始语言由 [config/locale/locale.conf](../config/locale/locale.conf) 指定为 `zh_CN.UTF-8`。全新 rootfs 在 `finalize-rootfs.sh` 中生成中英文 locale；已有镜像的源码指纹变化触发 `update-locale-image.sh`，重新生成 locale 并使封装标记失效。`pack-images.sh` 检查 `/etc/locale.conf`、`locale.gen` 和生成的中文 locale。2026-11-17 手机已生成 `zh_CN.utf8` 并将系统默认值改为简体中文；`oneplus` 账号原有的 Plasma 中文设置保持。当前已运行服务不会自动切换语言，下一次正常启动后生效；SDDM 与完整新镜像的中文显示未测。
 

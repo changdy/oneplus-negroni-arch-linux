@@ -6,6 +6,7 @@ import sys
 from image_feature import Image, PROJECT
 
 KRDP_UNIT = "app-org.kde.krdpserver.service"
+KRDP_DROPINS = f"/etc/systemd/user/{KRDP_UNIT}.d"
 
 
 def verify(image_dir, log_dir):
@@ -22,7 +23,7 @@ def verify(image_dir, log_dir):
         "/usr/share/polkit-1/actions/org.negroni.hardware-control.policy": "config/quicksettings/org.negroni.hardware-control.policy",
         "/etc/modprobe.d/nxp-nci-off.conf": "config/quicksettings/nxp-nci-off.conf",
         "/etc/xdg/krdpserverrc": "config/desktop/krdpserverrc",
-        f"/etc/systemd/user/{KRDP_UNIT}.d/10-negroni-usb.conf": "config/desktop/krdp-usb.conf",
+        f"{KRDP_DROPINS}/10-negroni-session.conf": "config/desktop/krdp-session.conf",
     }.items():
         hashes[path] = image.source(path, source, "0755" if path.endswith("/negroni-hardware-control") else "0644")
     path = "/usr/local/libexec/negroni-krdp-server.py"
@@ -42,6 +43,8 @@ def verify(image_dir, log_dir):
     preset = image.file("/usr/lib/systemd/user-preset/00-krdp.preset").decode().splitlines()
     if f"disable {KRDP_UNIT}" not in preset:
         raise RuntimeError("KRDP package must declare a disabled preset")
+    if image.query(f"stat {KRDP_DROPINS}/10-negroni-usb.conf", missing_ok=True) is not None:
+        raise RuntimeError("Obsolete Negroni KRDP USB drop-in must be removed")
     for user_units in ("/etc/systemd/user", "/usr/lib/systemd/user", "/home/oneplus/.config/systemd/user"):
         link = f"{user_units}/plasma-workspace.target.wants/{KRDP_UNIT}"
         if image.query(f"stat {link}", missing_ok=True) is not None:

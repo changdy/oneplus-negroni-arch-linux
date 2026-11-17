@@ -18,7 +18,7 @@ QS.QuickSetting {
     settingsCommand: "kcmshell6 kcm_krdpserver"
     status: {
         switch (serviceState) {
-        case "active": return "USB · 10.55.0.1"
+        case "active": return chinese ? "已开启" : i18n("On")
         case "inactive": return chinese ? "已关闭" : i18n("Off")
         case "activating": return chinese ? "正在开启…" : i18n("Starting…")
         case "deactivating": return chinese ? "正在关闭…" : i18n("Stopping…")

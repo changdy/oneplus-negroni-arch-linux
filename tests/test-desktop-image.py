@@ -10,8 +10,7 @@ verifier = load_verifier("desktop")
 class DesktopImageTests(ImageTest):
     def setUp(self):
         super().setUp()
-        subprocess.run(["bash", str(PROJECT / "scripts/configure-desktop.sh"), str(self.root), str(self.logs)],
-                       check=True, capture_output=True, env=dict(os.environ, SUDO_UID="0", SUDO_GID="0"))
+        self.configure_desktop()
         for name in (PROJECT / "config/packages/common-tools.txt").read_text().splitlines():
             self.put(f"var/lib/pacman/local/{name}-1-1/desc", f"%NAME%\n{name}\n\n%VERSION%\n1-1\n".encode())
         for name in ("usr/bin/angelfish", "usr/bin/snapshot", "usr/bin/cam", "usr/bin/kscreen-doctor",
@@ -21,6 +20,10 @@ class DesktopImageTests(ImageTest):
             self.put(f"usr/bin/{name}", b"delivery fixture", 0o755)
         self.put(f"usr/lib/systemd/user/{verifier.KRDP_UNIT}", b"[Service]\nExecStart=/usr/bin/krdpserver\n")
         self.put("usr/lib/systemd/user-preset/00-krdp.preset", f"disable {verifier.KRDP_UNIT}\n".encode())
+
+    def configure_desktop(self):
+        subprocess.run(["bash", str(PROJECT / "scripts/configure-desktop.sh"), str(self.root), str(self.logs)],
+                       check=True, capture_output=True, env=dict(os.environ, SUDO_UID="0", SUDO_GID="0"))
 
     def verify(self):
         self.image()
@@ -68,6 +71,13 @@ class DesktopImageTests(ImageTest):
         self.put("usr/lib/systemd/user-preset/00-krdp.preset", f"enable {verifier.KRDP_UNIT}\n".encode())
         with self.assertRaisesRegex(RuntimeError, "KRDP package must declare a disabled preset"):
             self.verify()
+
+    def test_update_removes_obsolete_krdp_usb_drop_in(self):
+        self.put(f"{verifier.KRDP_DROPINS}/10-negroni-usb.conf", b"old drop-in\n")
+        with self.assertRaisesRegex(RuntimeError, "Obsolete Negroni KRDP USB drop-in"):
+            self.verify()
+        self.configure_desktop()
+        self.verify()
 
 
 if __name__ == "__main__":

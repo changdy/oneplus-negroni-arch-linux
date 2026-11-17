@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
-"""Start KRDP on the USB address and prepare user-local TLS on first use."""
+"""Start KRDP and prepare user-local TLS on first use."""
 import os
 from pathlib import Path
 import subprocess
 from tempfile import TemporaryDirectory
-
-USB_ADDRESS = "10.55.0.1"
 
 
 def tls_arguments():
@@ -24,8 +22,7 @@ def tls_arguments():
             staging.mkdir(mode=0o700)
             subprocess.run([
                 "/usr/bin/openssl", "req", "-x509", "-newkey", "rsa:2048", "-noenc",
-                "-days", "3650", "-subj", f"/CN={USB_ADDRESS}",
-                "-addext", f"subjectAltName=IP:{USB_ADDRESS}",
+                "-days", "3650", "-subj", "/CN=Negroni KRDP",
                 "-out", str(staging / "krdp.crt"), "-keyout", str(staging / "krdp.key"),
             ], check=True)
             staging.rename(tls_dir)
@@ -34,4 +31,4 @@ def tls_arguments():
 
 if __name__ == "__main__":
     server = "/usr/bin/krdpserver"
-    os.execv(server, [server, "--address", USB_ADDRESS, *tls_arguments()])
+    os.execv(server, [server, *tls_arguments()])
