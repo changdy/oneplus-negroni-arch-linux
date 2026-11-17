@@ -1,6 +1,8 @@
 #!/bin/bash
 # Publish the TCS3701 description, then restart SLPI so it reads SMEM item 130.
 set -euo pipefail
+payload=/usr/lib/negroni/smem-sensor.bin
+[[ $(stat -c %s "$payload") == 5140 ]] || { echo 'invalid SMEM sensor payload size' >&2; exit 1; }
 modprobe smem_sensor
 for _ in $(seq 1 30); do
     [[ -e /sys/kernel/debug/smem_sensor ]] && break
@@ -10,19 +12,33 @@ if [[ ! -e /sys/kernel/debug/smem_sensor ]]; then
     echo 'smem_sensor debugfs node is missing; debugfs must be mounted' >&2
     exit 1
 fi
-dd if=/usr/lib/negroni/smem-sensor.bin of=/sys/kernel/debug/smem_sensor bs=5140 count=1 conv=notrunc status=none
-found=0
+slpi=
 for _ in $(seq 1 30); do
     for rproc in /sys/class/remoteproc/remoteproc*; do
         [[ -e $rproc/firmware ]] || continue
         if [[ $(cat "$rproc/firmware") == slpi.mdt ]]; then
-            echo stop > "$rproc/state"
-            echo start > "$rproc/state"
-            found=1
+            slpi=$rproc
             break
         fi
     done
-    [[ $found == 1 ]] && break
+    [[ -n $slpi ]] && break
     sleep 1
 done
-[[ $found == 1 ]] || { echo 'SLPI remoteproc not found' >&2; exit 1; }
+[[ -n $slpi ]] || { echo 'SLPI remoteproc not found' >&2; exit 1; }
+dd if="$payload" of=/sys/kernel/debug/smem_sensor bs=5140 count=1 conv=notrunc status=none
+cmp "$payload" /sys/kernel/debug/smem_sensor
+case $(cat "$slpi/state") in
+    running) echo stop > "$slpi/state" ;;
+    offline) ;;
+    *) echo 'SLPI is not running or offline' >&2; exit 1 ;;
+esac
+echo start > "$slpi/state"
+for _ in $(seq 1 100); do
+    if [[ -e /dev/fastrpc-sdsp ]]; then
+        echo 'TCS3701 SMEM data verified; SLPI restarted and FastRPC is available'
+        exit 0
+    fi
+    sleep 0.1
+done
+echo 'SLPI restarted but FastRPC did not appear' >&2
+exit 1

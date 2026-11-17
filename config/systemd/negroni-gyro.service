@@ -1,7 +1,7 @@
 [Unit]
 Description=Publish the ICM-4x6xx gyroscope
-After=hexagonrpcd-sdsp.service
-Wants=hexagonrpcd-sdsp.service
+After=hexagonrpcd-sdsp.service negroni-smem-sensor.service
+Wants=hexagonrpcd-sdsp.service negroni-smem-sensor.service
 StartLimitIntervalSec=0
 
 [Service]

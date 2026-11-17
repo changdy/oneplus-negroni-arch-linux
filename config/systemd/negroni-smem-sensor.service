@@ -1,12 +1,14 @@
 [Unit]
 Description=Publish Negroni light and proximity data to SLPI
 After=sys-kernel-debug.mount hexagonrpcd-sdsp.service
-Wants=sys-kernel-debug.mount
+Wants=sys-kernel-debug.mount hexagonrpcd-sdsp.service
+Before=iio-sensor-proxy.service negroni-gyro.service
 
 [Service]
 Type=oneshot
 RemainAfterExit=yes
 ExecStart=/usr/local/sbin/negroni-smem-sensor
+TimeoutStartSec=90
 
 [Install]
 WantedBy=multi-user.target

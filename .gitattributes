@@ -35,6 +35,9 @@ config/gnss/runtime/SHA256SUMS text eol=lf
 artifacts/usb2-gadget-20261113/experiments/*.patch text eol=lf whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab
 *.rules text eol=lf
 *.source text eol=lf
+/config/sensors/negroni-smem-sensor text eol=lf
+/config/sensors/negroni-sensor-files text eol=lf
+/config/sensors/hexagonrpcd-sdsp-wait text eol=lf
 
 # Stock sensor JSON is served to the SLPI byte for byte; two files carry CRLF.
 /config/sensors/qcom/** -text -whitespace

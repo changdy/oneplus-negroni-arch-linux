@@ -1,12 +1,14 @@
 # 传感器（加速度、陀螺仪、磁力、光线、距离）
 
+2026-11-17 后续修复已部署：补装 SMEM 模块、开机板级初始化与文件组装服务，代理和陀螺仪等待初始化完成；代理无传感器退出后自动重试。用户遮挡测试中，SSC 和桌面 D-Bus 都观察到光线由约 100 lux 降至 0–1、距离 `FAR → NEAR → FAR`；仅重新激活服务依赖链后也自动恢复。加速度计与陀螺仪仍有读数，但陀螺仪就绪前的重试尚在。冷启动、深度睡眠、通话贴耳熄屏、自动亮度实际调节与功耗未测，新完整镜像未构建、未刷入，见[修复记录](../artifacts/sensor-recovery-20261117/README.md)。
+
 状态日期：2026-11-14。设备为 OnePlus 10 Pro NE2210（项目 20846，SM8450）。传感器不在应用处理器的 I²C 上，而在 SLPI（`remoteproc0`，固件 `slpi.mdt`，QRTR 节点 9）。Snapdragon Sensor Core 是 QMI 服务 400。本次没有刷写分区，也没有整机重启；只重启过 SLPI。
 
 原厂校准和 ODM `sensor_config.json` 对应的器件是：加速度计 / 陀螺仪 ICM-4x6xx（SPI，bus instance 3），磁力计 MMC56x3x（I²C instance 2，地址 0x30），前向光线 + 距离 TCS3701（通用 `sns_alsps`，I²C instance 5，`slave_config` 70，中断 89，电源 `sensor_vdd` 与 `sensor_vddio`）。后置色温传感器是 TCS3408，不是这次的前向光线传感器。
 
 ## 已在手机上接通的部分
 
-udev 规则、SMEM 描述和换过的 `iio-sensor-proxy` 已接入镜像打包。`prepare-rootfs.sh` 安装发行版 `iio-sensor-proxy`，`configure-sensors.sh` 再换成手机上这份（SHA-256 `babc9af3…`），对应补丁是 [iio-sensor-proxy-3.9-negroni.patch](../config/sensors/iio-sensor-proxy-3.9-negroni.patch)。`hexagonrpc` 0.5.0 和传感器文件也已接入：`prepare-rootfs.sh` 从 `xec` 源安装 `hexagonrpc`；`configure-sensors.sh` 安装 65 份原厂传感器 JSON 和改过的 `sns_reg.conf`（[来源与改动](../config/sensors/qcom.source)），以及开机启用的 `hexagonrpcd-sdsp.service`。注册表是工厂校准，不进 Git。开机时 `negroni-sensor-files.service` 从 `msm-firmware-loader` 挂载的本机 persist 拷贝注册表，把 alsps 的总线和中断改成 2 / 14，补上 `socinfo`，组装到 `/run/negroni-sensors` 再交给 `hexagonrpcd`。2026-11-14 23 时在手机上把这个脚本指向 `/tmp` 试跑，生成的配置、`sns_reg.conf`、329 个注册表文件和 `socinfo` 与手机正在服务的 `/usr/share/qcom` 一致（alsps 只有 JSON 空白不同）。`hexagonrpcd` 改服务 `/run/negroni-sensors` 之后的实机启动未测。桌面 `autoRotation=Always` 原先只在本机；2026-11-15 增加首次登录默认设置，见下节。打包路径已接入，新镜像未构建、未刷入。
+udev 规则、SMEM 描述和换过的 `iio-sensor-proxy` 已接入镜像打包。`prepare-rootfs.sh` 安装发行版 `iio-sensor-proxy`，`configure-sensors.sh` 再换成手机上这份（SHA-256 `babc9af3…`），对应补丁是 [iio-sensor-proxy-3.9-negroni.patch](../config/sensors/iio-sensor-proxy-3.9-negroni.patch)。`hexagonrpc` 0.5.0 和传感器文件也已接入：`prepare-rootfs.sh` 从 `xec` 源安装 `hexagonrpc`；`configure-sensors.sh` 安装 65 份原厂传感器 JSON 和改过的 `sns_reg.conf`（[来源与改动](../config/sensors/qcom.source)），以及开机启用的 `hexagonrpcd-sdsp.service`。注册表是工厂校准，不进 Git。开机时 `negroni-sensor-files.service` 从 `msm-firmware-loader` 挂载的本机 persist 拷贝注册表，把 alsps 的总线和中断改成 2 / 14，补上 `socinfo`，组装到 `/run/negroni-sensors` 再交给 `hexagonrpcd`。2026-11-14 23 时在手机上把这个脚本指向 `/tmp` 试跑，生成的配置、`sns_reg.conf`、329 个注册表文件和 `socinfo` 与手机正在服务的 `/usr/share/qcom` 一致（alsps 只有 JSON 空白不同）。2026-11-17 已把 `/run/negroni-sensors` 部署到手机并通过服务依赖链重新激活，整机冷启动未测。桌面 `autoRotation=Always` 原先只在本机；2026-11-15 增加首次登录默认设置，见下节。打包路径已接入，新镜像未构建、未刷入。
 
 - 安装了 `hexagonrpc` 0.5.0，并用 `hexagonrpcd-sdsp.service` 向 `/dev/fastrpc-sdsp` 提供传感器文件。虚拟文件系统只映射 `/vendor/etc/sensors/config`、`/persist/sensors/registry/registry` 和 `/sys/devices/soc0`，没有 `/odm`。因此把原厂 `sns_reg_config` 的配置目录改成 `/vendor/etc/sensors/config`，并把 ODM 的 `waipio_qrd_*.json` 放进 `/usr/share/qcom/sensors/config`。`socinfo` 写成 `hw_platform=QRD`、`soc_id=457`。
 - SLPI 重启后会打开 `waipio_qrd_alsps.json`、`alsps_platform.config`、`icm4x6xx_0_platform.config` 和 `mmc56x3x_0_platform.config`。注册表写入被只读文件系统拒绝，已有校准文件仍可读。
@@ -26,7 +28,7 @@ udev 规则、SMEM 描述和换过的 `iio-sensor-proxy` 已接入镜像打包�
 
 22:22 `ssccli` 读到光线约 291–304 lux，距离为 `FAR`。22:27 用户盖住手机后，光线降到约 42–43 lux，距离变为 `NEAR`。22:28 进一步遮严后，光线在 0 和 1 lux 之间，距离仍是 `NEAR`。加速度计仍约 Z 9.82 m/s²，磁力计仍约 X −194、Y −16、Z 152 µT，安装矩阵仍是全 0。SLPI 停止时 `iio-sensor-proxy` 失败退出，手动拉起后 `HasAccelerometer`、`HasAmbientLight`、`HasProximity` 都是 true。SSH 没有 seat，polkit 拒绝认领，所以总线上的 `LightLevel` 仍是 0；这不是传感器没出数。
 
-这项共享内存在内存里，重启手机会丢掉。内核 `472db17c1a3b` 提供 `smem_sensor`，镜像用 `negroni-smem-sensor.service` 在开机时写入 5140 字节并按固件名 `slpi.mdt` 重启 SLPI。SSH 没有 seat，总线上的 `LightLevel` 仍会是 0。新镜像未构建、未刷入。
+这项共享内存在内存里，重启手机会丢掉。内核 `472db17c1a3b` 提供 `smem_sensor`，镜像用 `negroni-smem-sensor.service` 在开机时写入 5140 字节并按固件名 `slpi.mdt` 重启 SLPI。2026-11-17 该服务、模块与 `/run/negroni-sensors` 文件组装已部署到手机，服务依赖链重新激活通过；代理等初始化结束后启动，无传感器退出时自动重试。普通 SSH 会话没有 seat，认领可能被 polkit 拒绝；本次 root 的 `monitor-sensor` 已能认领并读到光线和距离变化。完整镜像和整机冷启动未测。
 
 ## 还没对上的部分
 

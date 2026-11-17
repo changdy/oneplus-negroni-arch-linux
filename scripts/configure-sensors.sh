@@ -36,6 +36,7 @@ install -o 0 -g 0 -m 0755 "$project_dir/config/sensors/iio-sensor-proxy" "$proxy
 install -d -o 0 -g 0 -m 0755 \
     "$target_dir/etc/udev/rules.d" \
     "$target_dir/etc/systemd/system" \
+    "$target_dir/etc/systemd/system/iio-sensor-proxy.service.d" \
     "$target_dir/usr/lib/negroni" \
     "$target_dir/usr/local/libexec" \
     "$target_dir/usr/local/sbin" \
@@ -69,6 +70,8 @@ install -o 0 -g 0 -m 0644 "$project_dir/config/systemd/negroni-smem-sensor.servi
     "$target_dir/etc/systemd/system/negroni-smem-sensor.service"
 install -o 0 -g 0 -m 0644 "$project_dir/config/systemd/negroni-gyro.service" \
     "$target_dir/etc/systemd/system/negroni-gyro.service"
+install -o 0 -g 0 -m 0644 "$project_dir/config/systemd/iio-sensor-proxy.service.d/negroni.conf" \
+    "$target_dir/etc/systemd/system/iio-sensor-proxy.service.d/negroni.conf"
 systemctl --root="$target_dir" enable hexagonrpcd-sdsp.service
 systemctl --root="$target_dir" enable negroni-smem-sensor.service
 systemctl --root="$target_dir" enable negroni-gyro.service
@@ -84,5 +87,6 @@ sha256sum config/sensors/qcom/config/*.json config/sensors/qcom/sns_reg.conf \
     config/sensors/negroni-gyro.c config/sensors/negroni-gyro \
     config/sensors/negroni-gyro.source config/sensors/org.negroni.Gyroscope.conf \
     config/systemd/negroni-smem-sensor.service config/systemd/negroni-gyro.service \
+    config/systemd/iio-sensor-proxy.service.d/negroni.conf \
     scripts/configure-sensors.sh > "$log_dir/sensors-sources.sha256"
 chown "${SUDO_UID:-1000}:${SUDO_GID:-1000}" "$log_dir/sensors-sources.sha256"

@@ -33,6 +33,11 @@ class SensorImageTests(ImageTest):
         with self.assertRaisesRegex(RuntimeError, "mismatch"):
             self.verify()
 
+    def test_missing_proxy_boot_order_is_rejected(self):
+        (self.root / "etc/systemd/system/iio-sensor-proxy.service.d/negroni.conf").unlink()
+        with self.assertRaises(RuntimeError):
+            self.verify()
+
 
 if __name__ == "__main__":
     unittest.main()

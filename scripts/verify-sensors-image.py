@@ -10,6 +10,8 @@ import sys
 PROJECT = Path(__file__).resolve().parents[1]
 UNITS = ("hexagonrpcd-sdsp.service", "negroni-gyro.service", "negroni-smem-sensor.service")
 FILES = {
+    "/etc/systemd/system/iio-sensor-proxy.service.d/negroni.conf": (
+        "config/systemd/iio-sensor-proxy.service.d/negroni.conf", "0644"),
     "/etc/udev/rules.d/81-negroni-ssc.rules": ("config/sensors/81-negroni-ssc.rules", "0644"),
     "/usr/lib/negroni/smem-sensor.bin": ("config/sensors/smem-sensor.bin", "0644"),
     "/usr/local/sbin/negroni-smem-sensor": ("config/sensors/negroni-smem-sensor", "0755"),
@@ -82,9 +84,10 @@ def verify(image_dir, log_dir):
         "installed_file_sha256": checksums,
         "enablement_links": links,
         "hardware_tested": (
-            "2026-11-14 NE2210: gyroscope stationary sample over the file and system bus; "
-            "accelerometer auto-rotation, light and proximity with a hand-installed hexagonrpc "
-            "serving /usr/share/qcom. The /run/negroni-sensors boot assembly is untested."),
+            "2026-11-17 NE2210: /run/negroni-sensors assembly and SMEM service activation; "
+            "hand-cover light 0-118 lux and FAR/NEAR/FAR over SSC and desktop D-Bus; "
+            "service dependency chain reactivation recovered all three sensor flags. "
+            "Whole-phone cold boot, deep sleep, and power consumption are untested."),
     }
     log_dir.mkdir(parents=True, exist_ok=True)
     (log_dir / "sensors-verification.json").write_text(json.dumps(verification, indent=2) + "\n")
