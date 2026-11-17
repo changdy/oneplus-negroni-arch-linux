@@ -85,9 +85,10 @@ def verify(image_dir, log_dir):
         "enablement_links": links,
         "hardware_tested": (
             "2026-11-17 NE2210: /run/negroni-sensors assembly and SMEM service activation; "
-            "hand-cover light 0-118 lux and FAR/NEAR/FAR over SSC and desktop D-Bus; "
-            "service dependency chain reactivation recovered all three sensor flags. "
-            "Whole-phone cold boot, deep sleep, and power consumption are untested."),
+            "hand-cover light 0-118 lux and FAR/NEAR/FAR over SSC and desktop D-Bus. "
+            "Normal phone reboot restored light/proximity automatically, but the "
+            "accelerometer was absent and gyroscope repeatedly crashed. "
+            "Power-off cold boot, full deep-sleep recovery, and power consumption are untested."),
     }
     log_dir.mkdir(parents=True, exist_ok=True)
     (log_dir / "sensors-verification.json").write_text(json.dumps(verification, indent=2) + "\n")
