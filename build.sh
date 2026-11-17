@@ -88,6 +88,10 @@ if [[ ! -f "$log_dir/usb-debug-sources.sha256" ]] ||
    ! sha256sum --check --status "$log_dir/usb-debug-sources.sha256"; then
     sudo env IMAGE_DIR="$image_dir" LOG_DIR="$log_dir" bash scripts/update-usb-debug-image.sh
 fi
+if [[ ! -f "$log_dir/rtc-sources.sha256" ]] ||
+   ! sha256sum --check --status "$log_dir/rtc-sources.sha256"; then
+    sudo env IMAGE_DIR="$image_dir" LOG_DIR="$log_dir" bash scripts/update-rtc-image.sh
+fi
 for feature in camera nfc desktop gnss; do
     if [[ ! -f "$log_dir/$feature-sources.sha256" ]] ||
        ! sha256sum --check --status "$log_dir/$feature-sources.sha256"; then

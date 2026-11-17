@@ -1,0 +1,9 @@
+[Unit]
+Description=Watch for first network time synchronization on Negroni
+
+[Path]
+PathExists=/run/systemd/timesync/synchronized
+Unit=negroni-rtc-sync.service
+
+[Install]
+WantedBy=multi-user.target

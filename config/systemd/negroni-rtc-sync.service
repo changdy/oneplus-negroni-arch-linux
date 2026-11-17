@@ -1,0 +1,12 @@
+[Unit]
+Description=Save synchronized UTC offset for Negroni PMIC RTC
+ConditionPathExists=/run/systemd/timesync/synchronized
+ConditionPathExists=/sys/class/rtc/rtc0/since_epoch
+After=systemd-timesyncd.service
+StartLimitIntervalSec=1h
+StartLimitBurst=2
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/libexec/negroni-rtc-clock save
+RemainAfterExit=yes

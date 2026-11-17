@@ -1,0 +1,15 @@
+[Unit]
+Description=Restore Negroni system time from PMIC RTC counter
+ConditionPathExists=/var/lib/negroni-rtc/state.json
+DefaultDependencies=no
+After=local-fs.target systemd-udev-trigger.service
+Before=systemd-timesyncd.service sysinit.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/libexec/negroni-rtc-clock restore
+RemainAfterExit=yes
+TimeoutStartSec=25
+
+[Install]
+WantedBy=sysinit.target

@@ -1,0 +1,122 @@
+#!/usr/bin/env python3
+"""Use the PMIC's read-only seconds counter with a rootfs-persisted epoch offset."""
+import json
+import os
+from pathlib import Path
+import sys
+import tempfile
+import time
+from datetime import datetime, timezone
+
+
+RTC = Path("/sys/class/rtc/rtc0/since_epoch")
+STATE = Path("/var/lib/negroni-rtc/state.json")
+SYNC_MARKER = Path("/run/systemd/timesync/synchronized")
+MIN_UNIX = 1577836800  # 2020-01-01 UTC
+MAX_UNIX = 4102444800  # 2100-01-01 UTC
+
+
+def read_raw(path=RTC):
+    raw = int(path.read_text().strip())
+    if not 0 <= raw <= 0xffffffff:
+        raise ValueError(f"invalid PMIC RTC counter: {raw}")
+    return raw
+
+
+def wait_for_raw(path):
+    for attempt in range(60):
+        try:
+            return read_raw(path)
+        except FileNotFoundError:
+            if attempt == 59:
+                raise
+            time.sleep(0.25)
+
+
+def read_state(path=STATE):
+    data = json.loads(path.read_text())
+    if (data.get("version") != 1 or
+            any(type(data.get(key)) is not int for key in
+                ("offset_seconds", "raw_at_sync", "unix_at_sync"))):
+        raise ValueError("invalid RTC offset state")
+    raw = data["raw_at_sync"]
+    unix = data["unix_at_sync"]
+    if not 0 <= raw <= 0xffffffff or not MIN_UNIX <= unix < MAX_UNIX:
+        raise ValueError("RTC offset state outside supported range")
+    if abs(raw + data["offset_seconds"] - unix) > 1:
+        raise ValueError("inconsistent RTC offset state")
+    return data
+
+
+def save(state=STATE, rtc=RTC, marker=SYNC_MARKER, now=time.time):
+    if not marker.is_file():
+        raise RuntimeError("systemd-timesyncd has not synchronized the clock")
+    raw = read_raw(rtc)
+    unix = round(now())
+    if not MIN_UNIX <= unix < MAX_UNIX:
+        raise ValueError("synchronized system time outside supported range")
+    data = {"version": 1, "offset_seconds": unix - raw,
+            "raw_at_sync": raw, "unix_at_sync": unix}
+    state.parent.mkdir(parents=True, exist_ok=True, mode=0o755)
+    descriptor, temporary = tempfile.mkstemp(prefix=".state-", dir=state.parent)
+    try:
+        with os.fdopen(descriptor, "w") as stream:
+            json.dump(data, stream, sort_keys=True)
+            stream.write("\n")
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.chmod(temporary, 0o644)
+        os.replace(temporary, state)
+        directory = os.open(state.parent, os.O_RDONLY | os.O_DIRECTORY)
+        try:
+            os.fsync(directory)
+        finally:
+            os.close(directory)
+    finally:
+        if os.path.exists(temporary):
+            os.unlink(temporary)
+    print(f"saved PMIC RTC offset {data['offset_seconds']} seconds at {unix}")
+    return data
+
+
+def restore(state=STATE, rtc=RTC, now=time.time, set_clock=time.clock_settime):
+    if not state.is_file():
+        print("no persisted PMIC RTC offset yet")
+        return False
+    data = read_state(state)
+    raw = wait_for_raw(rtc)
+    if raw < data["raw_at_sync"]:
+        print("PMIC RTC counter reset; ignoring stale offset")
+        return False
+    unix = raw + data["offset_seconds"]
+    if not MIN_UNIX <= unix < MAX_UNIX:
+        raise ValueError("derived RTC time outside supported range")
+    if unix <= now() + 2:
+        print("system clock is already at or ahead of PMIC RTC time")
+        return False
+    set_clock(time.CLOCK_REALTIME, float(unix))
+    print(f"restored UTC from PMIC RTC: {datetime.fromtimestamp(unix, timezone.utc).isoformat()}")
+    return True
+
+
+def show(state=STATE, rtc=RTC):
+    data = read_state(state)
+    raw = read_raw(rtc)
+    if raw < data["raw_at_sync"]:
+        raise RuntimeError("PMIC RTC counter reset; stored offset is stale")
+    unix = raw + data["offset_seconds"]
+    print(datetime.fromtimestamp(unix, timezone.utc).isoformat())
+    print(f"raw={raw} offset={data['offset_seconds']}")
+
+
+def main(argv):
+    if len(argv) != 2 or argv[1] not in ("save", "restore", "show"):
+        raise SystemExit("Usage: negroni-rtc-clock save|restore|show")
+    try:
+        {"save": save, "restore": restore, "show": show}[argv[1]]()
+    except (OSError, ValueError, RuntimeError) as exc:
+        raise SystemExit(f"negroni-rtc-clock: {exc}") from exc
+
+
+if __name__ == "__main__":
+    main(sys.argv)
