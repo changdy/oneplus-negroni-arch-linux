@@ -110,7 +110,9 @@ bash scripts/build-voice-topology.sh ...同上四个参数...
 
 ### 安装与使用
 
-镜像里的 `/usr/lib/firmware/qcom/sm8450/OnePlus-10-Pro-tplg.bin` 就是上表那份通话语音 + 录音 + 放音拓扑（`5fb6fba6…`）。`scripts/build-audio-topology.sh` 只生成桌面拓扑，不能单独再现这个文件。`configure-audio.sh` 会安装这份拓扑，并把通话服务装到 `/usr/local/libexec/negroni-voice/`、设为开机自启。2026-11-14 这次只把打包路径接上，没有构建新镜像，也没有刷入手机。手机上已有的服务和拓扑保持原样。换拓扑或语音模块后必须重启（见下文“不能热更新”）。
+2026-11-17 服务修复：上一次声卡探测失败的启动中，WCD9380 初始化超时（`-110`）导致整张声卡和 MultiMedia5/6 PCM 缺失，通话服务因此重启 234 次。服务现会每 5 秒等待 PCM，在通话期间 PCM 暂时消失时恢复桌面声卡 profile 并重试。15:58 已在手机上安装并重启服务，当前有 8 个 PCM、服务 `active` 且 `NRestarts=0`；更新后的实际通话及手机上缺 PCM 后恢复未测。等待逻辑不能修复 WCD9380 偶发探测失败，详见[服务排查记录](../artifacts/call-audio-service-20261117/README.md)。
+
+镜像里的 `/usr/lib/firmware/qcom/sm8450/OnePlus-10-Pro-tplg.bin` 就是上表那份通话语音 + 录音 + 放音拓扑（`5fb6fba6…`）。`scripts/build-audio-topology.sh` 只生成桌面拓扑，不能单独再现这个文件。`configure-audio.sh` 会安装这份拓扑，并把通话服务装到 `/usr/local/libexec/negroni-voice/`、设为开机自启。2026-11-14 只把打包路径接上，没有构建新镜像，也没有刷入手机。11 月 17 日仅手工更新服务脚本，拓扑未改；换拓扑或语音模块后必须重启（见下文“不能热更新”）。
 
 通话音频服务的行为：
 

@@ -243,6 +243,25 @@ def make_session(voice, busy=card_busy, wait=time.sleep, idle_timeout=8.0, outpu
     return Session(voice, voice.Alsa(), voice.Mixer(card), card, rx, tx, output=output)
 
 
+def wait_for_voice_card(voice, stopped, interval=5.0):
+    """Stay alive while an absent or failed sound card has no voice PCMs."""
+    last_error = None
+    while not stopped.is_set():
+        try:
+            card = voice.find_pcms()[0]
+        except (OSError, RuntimeError) as exc:
+            error = str(exc)
+            if error != last_error:
+                log(f"waiting for voice PCMs: {error}")
+                last_error = error
+            stopped.wait(interval)
+            continue
+        if last_error is not None:
+            log(f"voice PCMs ready on card {card}")
+        return card
+    return None
+
+
 CARD_BLOCK = re.compile(r"^Card #", re.M)
 CARD_NAME = re.compile(r"^\s*Name:\s*(\S+)", re.M)
 CARD_ALSA = re.compile(r'^\s*alsa\.card\s*=\s*"(\d+)"', re.M)
@@ -361,12 +380,20 @@ class Daemon:
     def open(self):
         if self.desktop is not None:
             self.desktop.release()
-        session = self.factory()
+        try:
+            session = self.factory()
+        except (OSError, RuntimeError) as exc:
+            log(f"voice PCMs unavailable: {exc}")
+            if self.desktop is not None:
+                self.desktop.restore()
+            return False
         try:
             session.open()
         except Exception as exc:
             errors = session.close()
             log(f"opening voice graphs failed: {exc}; cleanup errors: {errors}")
+            if self.desktop is not None:
+                self.desktop.restore()
             return False
         self.session = session
         log("voice graphs open")
@@ -462,8 +489,11 @@ def main():
 
     for sig in (signal.SIGINT, signal.SIGTERM):
         signal.signal(sig, stop)
+    card = wait_for_voice_card(voice, stopped)
+    if card is None:
+        return 0
     threading.Thread(target=watch_signals, args=(wake, stopped), daemon=True).start()
-    desktop = Desktop(voice.find_pcms()[0])
+    desktop = Desktop(card)
     desktop.recover()
     publish_route_file(ROUTE_FILE)
     output = open_amp_route()

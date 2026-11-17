@@ -140,6 +140,75 @@ class DaemonTest(unittest.TestCase):
             status.write_text("closed\n")
             self.assertEqual(daemon.card_busy(0, proc), [])
 
+    def test_missing_pcm_during_call_retries_without_stopping_daemon(self):
+        class Desktop:
+            def __init__(self):
+                self.releases = 0
+                self.restores = 0
+
+            def release(self):
+                self.releases += 1
+
+            def restore(self):
+                self.restores += 1
+
+        desktop = Desktop()
+        self.states = ["active"]
+
+        def unavailable():
+            raise RuntimeError("matching MultiMedia5/6 Voice PCMs are missing")
+
+        self.daemon.factory = unavailable
+        self.daemon.desktop = desktop
+        self.assertEqual(self.daemon.step(), 2.0)
+        self.assertIsNone(self.daemon.session)
+        self.assertEqual((desktop.releases, desktop.restores), (1, 1))
+        self.daemon.factory = self.factory
+        self.assertEqual(self.daemon.step(), 1.0)
+        self.assertEqual(self.sessions, 1)
+
+
+class CardWaitTest(unittest.TestCase):
+    def test_missing_pcm_waits_in_process_then_recovers(self):
+        class Voice:
+            attempts = 0
+
+            def find_pcms(self):
+                self.attempts += 1
+                if self.attempts < 3:
+                    raise RuntimeError("matching MultiMedia5/6 Voice PCMs are missing")
+                return 0, 4, 5
+
+        class Stopped:
+            waits = []
+
+            def is_set(self):
+                return False
+
+            def wait(self, delay):
+                self.waits.append(delay)
+
+        voice, stopped = Voice(), Stopped()
+        self.assertEqual(daemon.wait_for_voice_card(voice, stopped), 0)
+        self.assertEqual(voice.attempts, 3)
+        self.assertEqual(stopped.waits, [5.0, 5.0])
+
+    def test_stop_while_pcm_missing_exits_cleanly(self):
+        class Voice:
+            def find_pcms(self):
+                raise FileNotFoundError("/proc/asound/pcm")
+
+        class Stopped:
+            stopped = False
+
+            def is_set(self):
+                return self.stopped
+
+            def wait(self, _delay):
+                self.stopped = True
+
+        self.assertIsNone(daemon.wait_for_voice_card(Voice(), Stopped()))
+
 
 CARDS = """Card #43
 \tName: alsa_card.platform-sound
