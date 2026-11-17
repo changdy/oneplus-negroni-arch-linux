@@ -36,6 +36,8 @@ sudo bash scripts/install-optional-apps.sh sunshine
 systemctl --user daemon-reload
 systemctl --user enable --now negroni-sunshine.service
 ```
+同日，当前手机已装下拉开关并禁用 KRDP 自启。服务当前运行，使用 KRDP 默认监听。Windows 已分别通过 USB 和 Wi-Fi 地址的 TCP 检查，改动后的 RDP 登录未测。[实机记录](../artifacts/krdp-20261118/README.md)
+
 
 脚本固定安装 ARM64 AppImage `2026.914.233613`，来源为 Sunshine 官方发布路径，下载后核对 SHA-256 `d352134d9e6161ac1e3d7d1699fb0e5eff0a3460eee4d5cc131d52b04cb91152`。该哈希于 2026-11-15 从手机之前下载并运行的原始安装包只读核对。安装包和完整提取目录不入 Git；包内原有许可文件随提取目录保留。
 
