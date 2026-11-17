@@ -11,7 +11,7 @@ class SensorImageTests(ImageTest):
     def setUp(self):
         super().setUp()
         for path in ("usr/local/bin/hexagonrpcd", "usr/local/lib/libhexagonrpc.so.0.5",
-                     "usr/lib/libssc.so.2", "usr/lib/iio-sensor-proxy"):
+                     "usr/lib/libssc.so.2", "usr/bin/ssccli", "usr/lib/iio-sensor-proxy"):
             self.put(path, b"dependency fixture", 0o755)
         subprocess.run(["bash", str(PROJECT / "scripts/configure-sensors.sh"), str(self.root), str(self.logs)],
                        check=True, capture_output=True, env=dict(os.environ, SUDO_UID="0", SUDO_GID="0"))

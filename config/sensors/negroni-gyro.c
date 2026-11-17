@@ -16,6 +16,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 #include <glib.h>
@@ -262,7 +263,8 @@ int main(int argc, char **argv)
 
 	watch = g_thread_new("gyro-watchdog", watchdog, NULL);
 	if (open_gyro(&error) < 0) {
-		g_printerr("negroni-gyro: %s\n", error->message);
+		g_printerr("negroni-gyro: %s\n",
+			error ? error->message : "SSC did not publish the gyroscope");
 		return 1;
 	}
 

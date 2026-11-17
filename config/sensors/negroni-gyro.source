@@ -1,4 +1,5 @@
 negroni-gyro
 built on the phone from config/sensors/negroni-gyro.c
 linked against libssc 0.4.4
-sha256 ff7a849d4a64bcf65170354bfddb623a053ddb36250a6bccb0d83313f505a825
+build cc -O2 -g -Wall -Wextra -Werror negroni-gyro.c -o negroni-gyro $(pkg-config --cflags --libs libssc)
+sha256 b2b19080a1f4167bd65c7b60cd1628fe1eb87600325628b94ddfa92dc7c901c2

@@ -27,18 +27,38 @@ done
 [[ -n $slpi ]] || { echo 'SLPI remoteproc not found' >&2; exit 1; }
 dd if="$payload" of=/sys/kernel/debug/smem_sensor bs=5140 count=1 conv=notrunc status=none
 cmp "$payload" /sys/kernel/debug/smem_sensor
-case $(cat "$slpi/state") in
-    running) echo stop > "$slpi/state" ;;
-    offline) ;;
-    *) echo 'SLPI is not running or offline' >&2; exit 1 ;;
-esac
-echo start > "$slpi/state"
-for _ in $(seq 1 100); do
-    if [[ -e /dev/fastrpc-sdsp ]]; then
-        echo 'TCS3701 SMEM data verified; SLPI restarted and FastRPC is available'
-        exit 0
-    fi
-    sleep 0.1
-done
-echo 'SLPI restarted but FastRPC did not appear' >&2
+echo 'TCS3701 SMEM data verified'
+
+start_slpi() {
+    case $(cat "$slpi/state") in
+        running) echo stop > "$slpi/state" ;;
+        offline) ;;
+        *) echo 'SLPI is not running or offline' >&2; exit 1 ;;
+    esac
+    echo start > "$slpi/state"
+}
+
+# FastRPC can appear long before SSC publishes sensors. A partially discovered
+# device set can persist in both the firmware and the running desktop proxy.
+wait_for_imu() {
+    local deadline=$((SECONDS + 75)) accel
+    while (( SECONDS < deadline )); do
+        if [[ -e /dev/fastrpc-sdsp ]] &&
+            accel=$(LC_ALL=C timeout -k 1 8 ssccli --sensor=accelerometer --timeout=1 2>/dev/null) &&
+            [[ $accel == *'Accelerometer sensor measurement: X='* ]] &&
+            timeout -k 1 8 /usr/local/sbin/negroni-gyro --once >/dev/null 2>&1; then
+            echo 'SSC delivered accelerometer and gyroscope samples'
+            return 0
+        fi
+        sleep 2
+    done
+    return 1
+}
+
+start_slpi
+if wait_for_imu; then exit 0; fi
+echo 'SSC did not deliver both IMU samples; restarting SLPI once' >&2
+start_slpi
+if wait_for_imu; then exit 0; fi
+echo 'IMU unavailable after SLPI recovery' >&2
 exit 1

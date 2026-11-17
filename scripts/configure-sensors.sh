@@ -24,6 +24,7 @@ if [[ ! -x $target_dir/usr/local/bin/hexagonrpcd || ! -e $target_dir/usr/local/l
     printf 'hexagonrpc is not installed in the rootfs\n' >&2
     exit 1
 fi
+[[ -x $target_dir/usr/bin/ssccli ]] || { echo 'libssc sensor CLI is missing' >&2; exit 1; }
 if [[ -f $target_dir/usr/lib/iio-sensor-proxy ]]; then
     proxy_dest=$target_dir/usr/lib/iio-sensor-proxy
 elif [[ -f $target_dir/usr/libexec/iio-sensor-proxy ]]; then

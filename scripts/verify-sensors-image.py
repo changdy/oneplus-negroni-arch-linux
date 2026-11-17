@@ -55,6 +55,7 @@ def verify(image_dir, log_dir):
             raise RuntimeError(f"{target} must be regular, root-owned, mode {mode}")
         checksums[target] = hashlib.sha256(installed).hexdigest()
     debugfs("stat /usr/lib/libssc.so.2")
+    debugfs("stat /usr/bin/ssccli")
     proxy_path = "/usr/lib/iio-sensor-proxy"
     # Match configure-sensors.sh, which supports both distribution locations.
     try:
@@ -86,8 +87,8 @@ def verify(image_dir, log_dir):
         "hardware_tested": (
             "2026-11-17 NE2210: /run/negroni-sensors assembly and SMEM service activation; "
             "hand-cover light 0-118 lux and FAR/NEAR/FAR over SSC and desktop D-Bus. "
-            "Normal phone reboot restored light/proximity automatically, but the "
-            "accelerometer was absent and gyroscope repeatedly crashed. "
+            "After the IMU readiness fix, one normal phone reboot published the accelerometer "
+            "and gyroscope at 71 s with zero publisher restarts. Light and proximity also sampled. "
             "Power-off cold boot, full deep-sleep recovery, and power consumption are untested."),
     }
     log_dir.mkdir(parents=True, exist_ok=True)
