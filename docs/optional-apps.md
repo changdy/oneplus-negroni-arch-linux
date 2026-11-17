@@ -1,6 +1,12 @@
 # 按需安装与调试应用
 
-状态日期：2026-11-15。默认镜像包含硬件依赖、系统修复、中文字体、Angelfish 浏览器和 Snapshot 相机；游戏串流及专门调试工具由用户选择安装。下列脚本在手机的仓库副本中执行，不参与镜像构建。
+状态日期：2026-11-17。默认镜像包含硬件依赖、系统修复、中文字体、Angelfish 浏览器和 Snapshot 相机；游戏串流及专门调试工具由用户选择安装。下列脚本在手机的仓库副本中执行，不参与镜像构建。
+
+## 微信朋友圈退出（实机诊断）
+
+2026-11-17，手机安装的 Linux 微信为 `wechat-bin 4.1.13.26-1`。在 Plasma Mobile Wayland 下点击朋友圈，16:22:45 微信主进程报告 `xdg_toplevel#44: error 2: minimum height can't be bigger than the maximum height`，同时 KWin 报告与该进程通信出错，微信以状态 1 退出；此前四次退出记录是同类的最小宽度大于最大宽度错误。没有微信的内核段错误或 core dump。当前内屏为 1080×2412、缩放 2.5，逻辑尺寸约 432×965；屏幕尺寸是否触发该客户端缺陷尚未单独验证。
+
+临时以 `QT_QPA_PLATFORM=xcb` 经 XWayland 启动微信后，其内嵌浏览器进程选择 `--ozone-platform=x11`，用户再次点击朋友圈确认正常打开。手机上已创建用户级 `~/.local/share/applications/wechat.desktop`，将菜单启动命令改为 `Exec=env QT_QPA_PLATFORM=xcb /opt/wechat/wechat %U`，系统包的桌面文件保持原样；该入口通过 `desktop-file-validate`。当前会话的朋友圈已验证，后续从菜单重新启动、长期使用及其他功能未测。手工安装和这个用户级入口尚未接入镜像。
 
 ## 硬件检查工具
 
