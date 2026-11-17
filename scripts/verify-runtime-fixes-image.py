@@ -6,13 +6,13 @@ from pathlib import Path
 import re
 import subprocess
 import sys
-from runtime_fixes import AUTOSTART, BAD_MODEM, FILES, MANIFEST, PROJECT, QMLDIR, autostart_fixed, qmldir_fixed
+from runtime_fixes import AUTOSTART, BAD_MODEM, FILES, MANIFEST, PROJECT, QMLDIR, SLIDER_UNIT, autostart_fixed, qmldir_fixed
 
 
 DEPENDENCIES = ('/usr/lib/modem-daemon', '/usr/bin/systemctl', '/usr/lib/kde-telephony-daemon',
                 '/usr/lib/kactivitymanagerd', '/usr/bin/xembedsniproxy',
                 '/usr/bin/gmenudbusmenuproxy', '/usr/lib/org_kde_powerdevil', '/usr/bin/btmgmt',
-                '/usr/lib/feedbackd', '/usr/bin/fbcli')
+                '/usr/lib/feedbackd', '/usr/bin/fbcli', '/usr/lib/fbd-alert-slider')
 
 
 def verify(image_dir, log_dir):
@@ -49,6 +49,8 @@ def verify(image_dir, log_dir):
         mode = re.search(r'Type:\s+regular\s+Mode:\s+([0-7]+)', metadata)
         if not mode or not int(mode[1], 8) & 0o111:
             raise RuntimeError('Missing executable dependency: '+target)
+    if not debugfs('cat '+SLIDER_UNIT).strip():
+        raise RuntimeError('Missing feedbackd slider unit: '+SLIDER_UNIT)
     module = debugfs('cat '+QMLDIR)
     if qmldir_fixed(module) != module:
         raise RuntimeError('QML resource preference bypasses managed source')

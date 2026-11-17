@@ -26,6 +26,7 @@
 | [蓝牙](bluetooth.md) | WCN6855 缺少 public address 的修复与验证范围 |
 | [NFC](nfc.md) | 已读到 UID `CD 27 FC DB`，手机可监听申报该 UID；门禁未测 |
 | [振动反馈](haptics.md) | PM8350B 自动加载、标准 FF 接口、feedbackd / Plasma 接入与实机验证边界 |
+| [三段拨杆](alert-slider.md) | MXM1120 双霍尔、三档声音模式及桌面反馈验证 |
 | [传感器](sensors.md) | 自动旋转方向已确认。陀螺仪已能读，单位 rad/s。镜像安装 hexagonrpc、原厂传感器 JSON、udev、换过的 iio-sensor-proxy、SMEM 光线距离服务和陀螺仪程序。注册表开机从本机 persist 拷贝 |
 | [GPU](gpu.md) | Adreno 730 3D/Vulkan 实测、runtime PM 与慢亮屏规避 |
 | [相机](camera.md) | 四摄 RAW、超广角应用、实验摄像头入口、首次/续建与 ABI 检查；新完整镜像未构建 |

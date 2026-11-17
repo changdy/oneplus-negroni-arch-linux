@@ -20,6 +20,9 @@ def verify(image_dir, log_dir):
     files = sorted(p for p in source.rglob("*") if p.is_file() and not p.is_symlink())
     if not files or not (source / "modules.dep").is_file():
         raise RuntimeError("the installed kernel module tree is incomplete")
+    slider = source / "kernel/drivers/input/misc/mxm1120-slider.ko"
+    if not any(Path(str(slider) + suffix).is_file() for suffix in ("", ".xz", ".zst", ".gz")):
+        raise RuntimeError("the kernel module tree is missing the MXM1120 alert slider")
     hashes = {}
     for path in files:
         name = str(path.relative_to(source))

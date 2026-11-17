@@ -1,0 +1,6 @@
+[Unit]
+Description=Watch for the OnePlus alert slider
+PartOf=graphical-session.target
+
+[Path]
+PathExists=/dev/input/negronislider

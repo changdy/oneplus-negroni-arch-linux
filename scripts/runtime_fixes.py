@@ -16,7 +16,12 @@ QMLDIR = QML_MODULE+'/qmldir'
 ORIGINAL_QML_SHA256 = '04efb09e0ed16082294c4c2d7c1c32cc93d4bdab3ffec9b30d0bffa8cbaa8b40'
 AUTOSTART = '/etc/xdg/autostart/org.kde.modem.daemon.desktop'
 ORIGINAL_LOADER_SHA256 = 'c68f181a550f662a75091af6e5600953fe950c050ff5398168c2b490977cd459'
+SLIDER_UNIT = '/usr/lib/systemd/user/fbd-alert-slider.service'
 FILES = {
+    '/etc/udev/rules.d/72-negroni-alert-slider.rules': ('config/alert-slider/72-negroni-alert-slider.rules', 0o644),
+    '/etc/systemd/user/fbd-alert-slider.path': ('config/alert-slider/fbd-alert-slider.path', 0o644),
+    '/etc/systemd/user/graphical-session.target.d/negroni-slider.conf': ('config/alert-slider/negroni-slider.conf', 0o644),
+    '/etc/systemd/user/fbd-alert-slider.service.d/negroni-device.conf': ('config/alert-slider/negroni-device.conf', 0o644),
     '/etc/udev/rules.d/72-negroni-haptics.rules': ('config/haptics/72-negroni-haptics.rules', 0o644),
     QUICK_SETTINGS: ('config/quicksettings/QuickSettings.qml', 0o644),
     LOADER: ('config/firmware-loader/msm-firmware-loader.sh', 0o755),
@@ -97,10 +102,12 @@ def plan(root):
     for executable in ('/usr/lib/modem-daemon', '/usr/bin/systemctl', '/usr/lib/kde-telephony-daemon',
                        '/usr/lib/kactivitymanagerd', '/usr/bin/xembedsniproxy',
                        '/usr/bin/gmenudbusmenuproxy', '/usr/lib/org_kde_powerdevil', '/usr/bin/btmgmt',
-                       '/usr/lib/feedbackd', '/usr/bin/fbcli'):
+                       '/usr/lib/feedbackd', '/usr/bin/fbcli', '/usr/lib/fbd-alert-slider'):
         if (not (root/executable.lstrip('/')).is_file()
                 or not (root/executable.lstrip('/')).stat().st_mode & 0o111):
             raise RuntimeError('Missing dependency: '+executable)
+    if not (root/SLIDER_UNIT.lstrip('/')).is_file():
+        raise RuntimeError('Missing feedbackd slider unit: '+SLIDER_UNIT)
     return changes
 
 

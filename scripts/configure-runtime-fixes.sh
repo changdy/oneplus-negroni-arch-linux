@@ -14,7 +14,7 @@ python3 "$project_dir/scripts/runtime_fixes.py" "$target_dir"
 sh -n "$target_dir/usr/bin/msm-firmware-loader.sh"
 sh -n "$target_dir/usr/local/libexec/negroni-bt-address"
 cd "$project_dir"
-sha256sum config/firmware-loader/* config/telephony/* config/quicksettings/* config/portal-apps/* config/bluetooth/* config/haptics/* config/systemd/negroni-modem-daemon.service \
+sha256sum config/firmware-loader/* config/telephony/* config/quicksettings/* config/portal-apps/* config/bluetooth/* config/haptics/* config/alert-slider/* config/systemd/negroni-modem-daemon.service \
     scripts/runtime_fixes.py scripts/configure-runtime-fixes.sh \
     scripts/update-runtime-fixes-image.sh scripts/verify-runtime-fixes-image.py \
     > "$log_dir/runtime-fixes-sources.sha256"

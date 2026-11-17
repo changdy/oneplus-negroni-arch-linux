@@ -1,0 +1,1 @@
+SUBSYSTEM=="input", KERNEL=="event*", DRIVERS=="mxm1120-slider", TAG+="uaccess", TAG+="systemd", ENV{FEEDBACKD_TYPE}="alert-slider", SYMLINK+="input/negronislider"
