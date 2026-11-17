@@ -3,7 +3,7 @@
     "http://www.freedesktop.org/standards/PolicyKit/1.0/policyconfig.dtd">
 <policyconfig>
   <action id="org.negroni.hardware.control">
-    <description>Switch NFC or the gyroscope on this phone</description>
+    <description>Switch NFC, GPS or the gyroscope on this phone</description>
     <message>Authentication is required to switch phone hardware</message>
     <defaults>
       <allow_any>no</allow_any>

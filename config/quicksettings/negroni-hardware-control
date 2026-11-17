@@ -1,5 +1,5 @@
 #!/bin/sh
-# Restricted backend for the Plasma Mobile NFC and gyroscope quick settings.
+# Restricted backend for the Plasma Mobile NFC, GPS and gyroscope quick settings.
 set -eu
 
 if [ "$#" -ne 2 ]; then
@@ -22,6 +22,17 @@ state() {
             ;;
         gyro)
             if systemctl is-active --quiet negroni-gyro.service; then
+                printf 'on\n'
+            else
+                printf 'off\n'
+            fi
+            ;;
+        gps)
+            if ! location=$(mmcli -K -m any --location-status 2>/dev/null); then
+                printf 'unavailable\n'
+            elif ! printf '%s\n' "$location" | grep -Eq '^modem\.location\.capabilities\.value\[[0-9]+\][[:space:]]*:[[:space:]]*gps-(raw|nmea)$'; then
+                printf 'unavailable\n'
+            elif printf '%s\n' "$location" | grep -Eq '^modem\.location\.enabled\.value\[[0-9]+\][[:space:]]*:[[:space:]]*gps-(raw|nmea)$'; then
                 printf 'on\n'
             else
                 printf 'off\n'
@@ -67,6 +78,14 @@ case "$device:$action" in
         ;;
     gyro:off)
         systemctl disable --now negroni-gyro.service
+        [ "$(state)" = off ]
+        ;;
+    gps:on)
+        mmcli -m any --location-enable-gps-nmea --location-enable-gps-raw
+        [ "$(state)" = on ]
+        ;;
+    gps:off)
+        mmcli -m any --location-disable-gps-nmea --location-disable-gps-raw
         [ "$(state)" = off ]
         ;;
 esac

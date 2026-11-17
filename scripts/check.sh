@@ -91,6 +91,9 @@ python3 -B tests/test-charge-limit-service.py
 printf 'Running GNSS assistance protocol checks...\n'
 python3 -B tests/test-gnss-assist.py
 
+printf 'Running GPS quick-setting state checks...\n'
+python3 -B tests/test-gps-quicksetting.py
+
 printf 'Running PMIC RTC offset checks...\n'
 python3 -B tests/test-rtc-clock.py
 

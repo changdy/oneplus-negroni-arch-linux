@@ -21,7 +21,7 @@ def verify(image_dir, log_dir):
         "/etc/modprobe.d/nxp-nci-off.conf": "config/quicksettings/nxp-nci-off.conf",
     }.items():
         hashes[path] = image.source(path, source, "0755" if path.endswith("/negroni-hardware-control") else "0644")
-    for setting in ("nfc", "gyro"):
+    for setting in ("nfc", "gyro", "gps"):
         base = f"/usr/share/plasma/quicksettings/org.negroni.quicksetting.{setting}"
         source = f"config/quicksettings/{setting}"
         hashes[f"{base}/metadata.json"] = image.source(f"{base}/metadata.json", f"{source}/metadata.json", "0644")
@@ -34,7 +34,7 @@ def verify(image_dir, log_dir):
               "scope": "Offline delivery check; fresh-image desktop, touch and rotation are untested",
               "hardware_tested": False}
     report.write_text(json.dumps(result, indent=2) + "\n")
-    print("Desktop image verified: packages, rotation defaults, NFC and gyroscope quick settings")
+    print("Desktop image verified: packages, rotation defaults, NFC, GPS and gyroscope quick settings")
     return result
 
 

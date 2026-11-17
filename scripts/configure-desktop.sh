@@ -22,7 +22,7 @@ install -o 0 -g 0 -m 0644 "$project_dir/config/quicksettings/org.negroni.hardwar
     "$target_dir/usr/share/polkit-1/actions/org.negroni.hardware-control.policy"
 install -o 0 -g 0 -m 0644 "$project_dir/config/quicksettings/nxp-nci-off.conf" \
     "$target_dir/etc/modprobe.d/nxp-nci-off.conf"
-for setting in nfc gyro; do
+for setting in nfc gyro gps; do
     package="$target_dir/usr/share/plasma/quicksettings/org.negroni.quicksetting.$setting"
     install -d -o 0 -g 0 -m 0755 "$package/contents/ui"
     install -o 0 -g 0 -m 0644 "$project_dir/config/quicksettings/$setting/metadata.json" "$package/metadata.json"
@@ -31,7 +31,7 @@ done
 cd "$project_dir"
 sha256sum config/desktop/*.py config/desktop/*.desktop config/quicksettings/negroni-hardware-control \
     config/quicksettings/org.negroni.hardware-control.policy config/quicksettings/nxp-nci-off.conf \
-    config/quicksettings/{nfc,gyro}/metadata.json config/quicksettings/{nfc,gyro}/contents/ui/main.qml \
+    config/quicksettings/{nfc,gyro,gps}/metadata.json config/quicksettings/{nfc,gyro,gps}/contents/ui/main.qml \
     config/packages/common-tools.txt scripts/configure-desktop.sh \
     scripts/verify-desktop-image.py scripts/image_feature.py scripts/update-feature-image.sh \
     > "$log_dir/desktop-sources.sha256"

@@ -40,6 +40,11 @@ class DesktopImageTests(ImageTest):
         with self.assertRaises(RuntimeError):
             self.verify()
 
+    def test_missing_gps_quick_setting_is_rejected(self):
+        (self.root / "usr/share/plasma/quicksettings/org.negroni.quicksetting.gps/contents/ui/main.qml").unlink()
+        with self.assertRaises(RuntimeError):
+            self.verify()
+
 
 if __name__ == "__main__":
     unittest.main()

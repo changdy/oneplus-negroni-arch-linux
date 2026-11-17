@@ -11,3 +11,9 @@
 - 最终手机状态为 NFC `off`、陀螺仪 `off`；`/etc/modprobe.d/nxp-nci-off.conf` 已安装。后续整机重启是否保持 NFC 关闭还未验证。
 
 新的完整镜像未构建、未刷入。手机下拉栏的实际显示、触控操作、Polkit 活动会话授权、重启后状态和节电量未测。离线安装与缺件拒绝测试分别由 `tests/test-desktop-image.py`、`tests/test-sensors-image.py` 覆盖。
+
+## GPS 快捷项补充（2026-11-17）
+
+GPS 项在 `negroni-hardware-control` 中读取 ModemManager 的 `--location-status -K`；只有 `gps-nmea` 或 `gps-raw` 出现在 `enabled` 中才显示“开”。手机最初查询时两项均未启用，稍后 Satellite 进程通过 ModemManager 启用 `gps-nmea`，新状态程序读取为“开”，证明外部应用变化能反映到开关。手机上的 Qt QML `executable` 引擎运行真实 GPS 状态命令，输出也是 `on`。GPS 快捷项、控制脚本和 Polkit 策略已手工安装，用户的快捷设置列表已加入 GPS。Satellite 当时正在使用 GPS，因此没有执行关开往返，也没有触碰 ModemManager 服务或蜂窝连接。图形触控与 Polkit 活动会话授权未测。完整镜像未构建、未刷入。
+
+Satellite 会话结束后补做实机 `off → on → off`：开启后 ModemManager 的 enabled 列表同时出现 `gps-raw`、`gps-nmea`；关闭后只剩 `3gpp-lac-ci` 和 `cdma-bs`，ModemManager 服务保持 `active`。最后再次只读核对 GPS 状态为 off。没有重启 ModemManager 或手机；图形触控、实际定位、重启持久性与功耗仍未测。

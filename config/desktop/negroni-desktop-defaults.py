@@ -7,7 +7,8 @@ import subprocess
 
 
 def ensure_quick_settings(home):
-    state = Path(os.environ.get("XDG_STATE_HOME", home / ".local/state")) / "negroni/quicksettings-v1"
+    state_dir = Path(os.environ.get("XDG_STATE_HOME", home / ".local/state")) / "negroni"
+    state = state_dir / "quicksettings-v2"
     if state.exists():
         return
 
@@ -22,8 +23,11 @@ def ensure_quick_settings(home):
         enabled = sorted(path.name for path in Path("/usr/share/plasma/quicksettings").iterdir()
                          if (path / "metadata.json").exists())
 
-    for setting, predecessor in (("org.negroni.quicksetting.nfc", "org.kde.plasma.quicksetting.bluetooth"),
-                                 ("org.negroni.quicksetting.gyro", "org.kde.plasma.quicksetting.screenrotation")):
+    additions = [("org.negroni.quicksetting.gps", "org.negroni.quicksetting.nfc")]
+    if not (state_dir / "quicksettings-v1").exists():
+        additions = [("org.negroni.quicksetting.nfc", "org.kde.plasma.quicksetting.bluetooth"),
+                     ("org.negroni.quicksetting.gyro", "org.kde.plasma.quicksetting.screenrotation")] + additions
+    for setting, predecessor in additions:
         if setting not in enabled and setting not in disabled:
             position = enabled.index(predecessor) + 1 if predecessor in enabled else len(enabled)
             enabled.insert(position, setting)
@@ -31,7 +35,7 @@ def ensure_quick_settings(home):
     subprocess.run(["kwriteconfig6", "--file", "plasmamobilerc", "--group", "QuickSettings",
                     "--key", "enabledQuickSettings", ",".join(enabled)], check=True, timeout=10)
     state.parent.mkdir(parents=True, exist_ok=True)
-    state.write_text("added hardware quick settings\n")
+    state.write_text("added GPS quick setting\n")
 
 
 def main():
