@@ -1,0 +1,128 @@
+diff --git a/src/mm-base-manager.c b/src/mm-base-manager.c
+index 84c450e..38e74c3 100644
+--- a/src/mm-base-manager.c
++++ b/src/mm-base-manager.c
+@@ -126,6 +126,7 @@ struct _MMBaseManagerPrivate {
+ #if defined WITH_QRTR
+     /* The Qrtr Bus Watcher */
+     MMQrtrBusWatcher *qrtr_bus_watcher;
++    gboolean qrtr_scan_started;
+ #endif
+ };
+ 
+@@ -859,6 +860,15 @@ mm_base_manager_start (MMBaseManager *self,
+         return;
+     }
+ 
++#if defined WITH_QRTR
++    if (self->priv->qrtr_bus_watcher) {
++        /* The watcher's initial discovery already emits added events. */
++        if (self->priv->qrtr_scan_started)
++            mm_qrtr_bus_watcher_rescan (self->priv->qrtr_bus_watcher);
++        self->priv->qrtr_scan_started = TRUE;
++    }
++#endif
++
+ #if defined WITH_UDEV
+     if (!mm_context_get_test_no_udev ()) {
+         mm_obj_dbg (self, "starting %s device scan...", manual_scan ? "manual" : "automatic");
+@@ -1122,7 +1132,7 @@ manager_cleanup_context_maybe_complete (ManagerCleanupContext *ctx,
+          * all fall through.
+          */
+         for (iter = ctx->devices_to_remove; iter; iter = iter->next)
+-            g_hash_table_remove (ctx->self->priv->devices, mm_device_get_uid (device));
++            g_hash_table_remove (ctx->self->priv->devices, mm_device_get_uid (MM_DEVICE (iter->data)));
+         g_slist_free (ctx->devices_to_remove);
+ 
+         mm_obj_dbg (ctx->self, "cleanup complete");
+diff --git a/src/mm-qrtr-bus-watcher.c b/src/mm-qrtr-bus-watcher.c
+index e0a62eb..aa4e244 100644
+--- a/src/mm-qrtr-bus-watcher.c
++++ b/src/mm-qrtr-bus-watcher.c
+@@ -33,6 +33,8 @@ struct _MMQrtrBusWatcherPrivate {
+ 
+     /* Map of NodeNumber -> QRTR nodes available */
+     GHashTable *nodes;
++    /* Nodes whose required services have completed discovery. */
++    GHashTable *ready_nodes;
+ };
+ 
+ enum {
+@@ -74,6 +76,12 @@ qrtr_node_services_ready (QrtrNode      *node,
+     guint32 node_id;
+ 
+     node_id = qrtr_node_get_id (node);
++    /* A removed node (or a replacement with the same ID) must not be
++     * published by a stale asynchronous services callback. */
++    if (g_hash_table_lookup (ctx->self->priv->nodes, GUINT_TO_POINTER (node_id)) != node) {
++        device_context_free (ctx);
++        return;
++    }
+     if (!qrtr_node_wait_for_services_finish (node, res, NULL)) {
+         mm_obj_dbg (ctx->self,
+                     "qrtr node %u doesn't have required services to be considered a control node",
+@@ -83,6 +91,7 @@ qrtr_node_services_ready (QrtrNode      *node,
+         return;
+     }
+ 
++    g_hash_table_add (ctx->self->priv->ready_nodes, GUINT_TO_POINTER (node_id));
+     mm_obj_dbg (ctx->self, "qrtr services ready for node %u", node_id);
+     g_signal_emit (ctx->self, signals[QRTR_DEVICE_ADDED], 0, node_id);
+     device_context_free (ctx);
+@@ -151,6 +160,7 @@ handle_qrtr_node_removed (QrtrBus          *qrtr_bus,
+         return;
+     }
+ 
++    g_hash_table_remove (self->priv->ready_nodes, GUINT_TO_POINTER (node_id));
+     g_hash_table_remove (self->priv->nodes, GUINT_TO_POINTER (node_id));
+     mm_obj_dbg (self, "qrtr node %u removed", node_id);
+ 
+@@ -159,6 +169,19 @@ handle_qrtr_node_removed (QrtrBus          *qrtr_bus,
+ 
+ /*****************************************************************************/
+ 
++void
++mm_qrtr_bus_watcher_rescan (MMQrtrBusWatcher *self)
++{
++    GHashTableIter iter;
++    gpointer node_id;
++
++    g_return_if_fail (MM_IS_QRTR_BUS_WATCHER (self));
++    /* Pending nodes will emit their normal added signal when ready. */
++    g_hash_table_iter_init (&iter, self->priv->ready_nodes);
++    while (g_hash_table_iter_next (&iter, &node_id, NULL))
++        g_signal_emit (self, signals[QRTR_DEVICE_ADDED], 0, GPOINTER_TO_UINT (node_id));
++}
++
+ QrtrNode *
+ mm_qrtr_bus_watcher_peek_node (MMQrtrBusWatcher *self,
+                                guint32           node_id)
+@@ -276,6 +299,7 @@ mm_qrtr_bus_watcher_init (MMQrtrBusWatcher *self)
+                                               MM_TYPE_QRTR_BUS_WATCHER,
+                                               MMQrtrBusWatcherPrivate);
+     /* Setup internal lists of device and node objects */
++    self->priv->ready_nodes = g_hash_table_new (g_direct_hash, g_direct_equal);
+     self->priv->nodes = g_hash_table_new_full (g_direct_hash,
+                                                g_direct_equal,
+                                                NULL,
+@@ -287,6 +311,7 @@ finalize (GObject *object)
+ {
+     MMQrtrBusWatcher *self = MM_QRTR_BUS_WATCHER (object);
+ 
++    g_hash_table_destroy (self->priv->ready_nodes);
+     g_hash_table_destroy (self->priv->nodes);
+ 
+     if (self->priv->node_added_id)
+diff --git a/src/mm-qrtr-bus-watcher.h b/src/mm-qrtr-bus-watcher.h
+index b727544..5085af6 100644
+--- a/src/mm-qrtr-bus-watcher.h
++++ b/src/mm-qrtr-bus-watcher.h
+@@ -61,6 +61,8 @@ gboolean mm_qrtr_bus_watcher_start_finish (MMQrtrBusWatcher    *self,
+                                            GAsyncResult        *res,
+                                            GError             **error);
+ 
++void      mm_qrtr_bus_watcher_rescan    (MMQrtrBusWatcher *self);
++
+ QrtrNode *mm_qrtr_bus_watcher_peek_node (MMQrtrBusWatcher *self,
+                                          guint32           node_id);
+ 

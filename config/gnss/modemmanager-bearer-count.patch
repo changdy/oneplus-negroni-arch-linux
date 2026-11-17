@@ -1,0 +1,18 @@
+diff --git a/src/mm-iface-modem.c b/src/mm-iface-modem.c
+index d9b2e00..ee2d32f 100644
+--- a/src/mm-iface-modem.c
++++ b/src/mm-iface-modem.c
+@@ -6776,7 +6776,12 @@ mm_iface_modem_count_bearers (MMIfaceModem                   *self,
+         max = mm_bearer_list_get_max_active (list);
+ 
+     mm_bearer_list_foreach (list, (MMBearerListForeachFunc)bearer_count, &ctx);
+-    g_assert (max >= ctx.count);
++    /* Modems may report a limit smaller than the number of bearers that
++     * are already active (for example, an IMS bearer and a data bearer).
++     * Keep the observed count so callers can still make safe decisions. */
++    if (ctx.count > max)
++        mm_obj_warn (self, "active bearer count %u exceeds reported limit %u",
++                     ctx.count, max);
+ 
+     if (out_max)
+         *out_max = max;

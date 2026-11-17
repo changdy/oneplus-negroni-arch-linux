@@ -4,6 +4,8 @@ libqmi 1.38.0 https://github.com/linux-mobile-broadband/libqmi e3d79ed3f7fdc6a7f
 ModemManager 1.24.2 https://github.com/linux-mobile-broadband/ModemManager f2b9ab1ad78d322f32134a444b5b54c6e8160e19
   daemon: GPL-2.0-or-later; libmm-glib: LGPL-2.0-or-later
   patch: modemmanager-afw.patch is a local change to src/mm-shared-qmi.c
+  patches: modemmanager-qrtr-resume.patch, modemmanager-netlink-lifetime.patch,
+    modemmanager-bearer-count.patch fix QRTR rescanning and cleanup crashes
 Build: scripts/build-gnss-stack.sh (native aarch64, prefix /opt/negroni-gnss)
 2026-11-12 deployed sha256:
   ModemManager e3904776942e8a18a4dbd1ecc8f4934369d2d2c44d5a0e96423b0fafc704a149
@@ -18,3 +20,5 @@ Build: scripts/build-gnss-stack.sh (native aarch64, prefix /opt/negroni-gnss)
   Original hashes above; delivered hashes and license copies in runtime/SHA256SUMS.
   configure-gnss.sh installs the private prefix, service override and on-demand assistance helper.
   New complete image build/boot and valid coordinates remain untested.
+2026-11-17: rebuilt ModemManager with the above patches on the phone and stripped
+  debug sections; runtime/ModemManager sha256 5cefe7ac92af190c630d46ba932293e363bb49c76fa4382e6b955ddd7e138206.

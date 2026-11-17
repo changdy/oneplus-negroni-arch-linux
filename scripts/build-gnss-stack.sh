@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Build the experimental userspace GNSS fix on the aarch64 phone.
+# Build the GNSS and cellular resume fixes on the aarch64 phone.
 set -euo pipefail
 
 repo_dir=$(cd "$(dirname "$0")/.." && pwd)
@@ -18,7 +18,8 @@ mkdir -p "$build_dir"
 build_dir=$(cd "$build_dir" && pwd)
 
 prepare_source() {
-    local name=$1 tag=$2 commit=$3 patch=$4
+    local name=$1 tag=$2 commit=$3 patch
+    shift 3
     local source_dir="$build_dir/$name"
     if [[ ! -d "$source_dir/.git" ]]; then
         git clone --depth 1 --branch "$tag" \
@@ -28,17 +29,23 @@ prepare_source() {
         printf 'Unexpected source revision: %s\n' "$source_dir" >&2
         exit 1
     }
-    if ! git -C "$source_dir" apply --reverse --check "$patch" 2>/dev/null; then
-        git -C "$source_dir" diff --exit-code
-        git -C "$source_dir" apply --check "$patch"
+    for patch in "$@"; do
+        patch="$repo_dir/config/gnss/$patch"
+        if git -C "$source_dir" apply --reverse --check "$patch" 2>/dev/null; then
+            continue
+        fi
+        # Patches touch disjoint files. Refuse local changes to the files this
+        # patch needs, while allowing earlier patches in the same build tree.
+        git -C "$source_dir" apply --index --check "$patch"
         git -C "$source_dir" apply "$patch"
-    fi
+    done
 }
 
 prepare_source libqmi 1.38.0 e3d79ed3f7fdc6a7fa8b374860b1c23a8f172812 \
-    "$repo_dir/config/gnss/libqmi-afw.patch"
+    libqmi-afw.patch
 prepare_source ModemManager 1.24.2 f2b9ab1ad78d322f32134a444b5b54c6e8160e19 \
-    "$repo_dir/config/gnss/modemmanager-afw.patch"
+    modemmanager-afw.patch modemmanager-qrtr-resume.patch \
+    modemmanager-netlink-lifetime.patch modemmanager-bearer-count.patch
 
 qmi_build="$build_dir/libqmi/build"
 setup_args=()

@@ -1,5 +1,7 @@
 # 已验证的 GNSS 用户空间运行文件
 
+2026-11-17：`ModemManager` 已在手机重编译，加入 QRTR 唤醒重枚举、netlink 事务生命周期与承载计数修复。当前文件及补丁见 [sources.txt](../sources.txt) 和 [SHA256SUMS](SHA256SUMS)；下方原始哈希仅描述此前版本。新完整镜像尚未构建或刷入。
+
 2026-11-15 通过 USB SSH 只读取回 NE2210 正在使用的 ModemManager 和 libqmi。原文件 SHA-256 与 [sources.txt](../sources.txt) 的 2026-11-12 部署记录一致；没有重新编译、改手机配置或启动新的定位会话。
 
 | 文件 | 原始部署 SHA-256 |

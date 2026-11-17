@@ -1,5 +1,7 @@
 # 基带（MPSS）、SIM、移动数据与 VoLTE
 
+2026-11-17 实机复测通过。修复后的 ModemManager 在开机约第 37 秒完成 LTE 注册和分组附着。两轮 deep 唤醒后，恢复扫描都重新找到了 QRTR 控制端口，约 24–31 秒后数据承载自动连接。两轮均通过绑定蜂窝接口的 IPv4 和 IPv6 请求，IMS 承载也自动恢复。第二轮直接查询 IMSA，确认 IMS 已在 WWAN 注册、语音服务可用。本轮未拨打电话。[实测时间线](../artifacts/modem-resume-20261117/README.md)
+
 2026-11-17 再次重启复现了蜂窝设备丢失。第 32 秒已注册并附着，第 34 秒 UPower 请求休眠。唤醒后 ModemManager 无法识别 `qcom-soc`，直到第 265 秒仍无设备。与此同时基带 remoteproc 在运行，QRTR 的 NAS、UIM、WDS 服务可见。IMS 持续重试，移动数据与通话未测。[重启时间线](../artifacts/boot-audit-20261117-repeat/README.md)
 
 状态日期：2026-11-12。设备 NE2210，内核 `7.3.0-sm8450+`，实测用中国电信卡。
@@ -46,10 +48,11 @@
 
 ## 3. 移动数据
 
-NetworkManager 连接 `ct-lte`：APN `ctnet`，用户名 `ctnet@mycdma.cn`，数据接口为 `qmapmux0.0`。镜像里不预置这个连接，各运营商需要自己添加：
+本机使用中国电信连接 `ct-lte`。镜像用户需按自己的运营商建立配置。需要开机和唤醒后自动联网时，将该连接设为自动连接。数据接口名会随重新枚举而变化，可从已连接的 `ctnet` 承载读取 `bearer.status.interface`。
 
 ```sh
 sudo nmcli con add type gsm ifname '*' con-name ct-lte gsm.apn ctnet gsm.username ctnet@mycdma.cn
+sudo nmcli con modify ct-lte connection.autoconnect yes
 ```
 
 ## 4. VoLTE
@@ -97,7 +100,7 @@ sudo python3 /usr/local/libexec/negroni-ims-recovery.py --check
 - **拨号 / 通话**：拨 10000（电信自动服务号）走通 `dialing → ringing-out → active`，`negroni-call-audio` 语音图打开，8 秒通话录音下行声道 RMS 2816、峰值 19804；上行声道全 0（已知内置麦克风无信号，非本次回归）。通话已正常挂断并删除 call 对象。
 - 仍未测：全新完整镜像未构建（本机 WSL 被安全策略禁止、Windows 无 `debugfs`）；构建链已静态核查并补齐续建触发，实际构建与封装校验待在 WSL 执行。
 
-其它要点：IMSA / IMS settings 查询即使在能打电话时也返回 `InvalidOperation`，不能用来判断 IMS 是否注册。打电话不需要把 IMS 接口拉起来。81voltd 是在手机上编译的二进制，来源、补丁和校验和见 [81voltd.source](../config/volte/81voltd.source)。安装与限制见[构建集成说明](build-integration.md)。
+本机直接运行 `qmicli -d qrtr://0 --imsa-get-ims-registration-status` 会返回 `InvalidOperation`。在同一个 QRTR socket 上先绑定 IMSA 的 binding 0，再查询注册和语音服务状态即可读到实际结果。将[查询脚本](../artifacts/modem-resume-20261117/imsa-status.py)复制到手机，用 `oneplus` 运行 `python imsa-status.py`。81voltd 的来源、补丁、校验和及镜像安装方式见 [81voltd.source](../config/volte/81voltd.source) 和[构建集成说明](build-integration.md)。
 
 通话音频不在本文展开：语音图、自动开关服务、通话录音与放音、麦克风问题和排查方法都在[通话语音](call-audio.md)。与基带相关的一点结论是：基带语音服务与 ADSP 的 VCPM 之间通信正常，通话无声的原因曾经在主机一侧的图结构，不在基带。
 
