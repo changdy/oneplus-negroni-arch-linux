@@ -1,5 +1,7 @@
 # 基带（MPSS）、SIM、移动数据与 VoLTE
 
+2026-11-17 再次重启复现了蜂窝设备丢失。第 32 秒已注册并附着，第 34 秒 UPower 请求休眠。唤醒后 ModemManager 无法识别 `qcom-soc`，直到第 265 秒仍无设备。与此同时基带 remoteproc 在运行，QRTR 的 NAS、UIM、WDS 服务可见。IMS 持续重试，移动数据与通话未测。[重启时间线](../artifacts/boot-audit-20261117-repeat/README.md)
+
 状态日期：2026-11-12。设备 NE2210，内核 `7.3.0-sm8450+`，实测用中国电信卡。
 
 | 功能 | 状态 |
