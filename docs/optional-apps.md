@@ -14,6 +14,14 @@ sudo bash scripts/install-optional-apps.sh diagnostics
 
 qpwgraph 先用于观察；手工改连线前阅读[音频](audio.md)，当前声卡曾因路由和 SoundWire 问题崩溃。相机、传感器、NFC 和定位的实际测试入口分别在对应硬件文档中，避免多个进程同时占用设备。
 
+## KRDP 远程桌面（实机手工安装）
+
+2026-11-17 在当前手机上通过 USB SSH 安装 Arch Linux ARM 的 `krdp 6.8.3-1` 及依赖，并启用 `app-org.kde.krdpserver.service` 用户服务。服务使用手机系统账号认证，生成的自签 TLS 证书与私钥只保存在手机的 `/home/oneplus/.local/share/krdpserver/`。用户服务覆盖配置把监听地址限定为 USB NCM 的 `10.55.0.1:3389`；Windows 侧 TCP 连接检查通过。`systemctl --user is-active` 为 `active`，`is-enabled` 为 `enabled`。KRDP 需要已登录的 Plasma 会话，不能远程操作 SDDM 登录界面。
+
+首次从 Windows `mstsc` 连接时，证书提示后直接断开。14:31 手机日志有一次 `oneplus` 的 PAM 认证失败；`mstsc /prompt` 仍未显示账号输入框。Windows 凭据管理器为 `TERMSRV/10.55.0.1` 保存手机账号凭据后，14:35 的连接通过 PAM、进入软件 H.264 编码，用户确认已进入远程桌面。手机端桌面共享权限存储当时没有 `remote-desktop` 条目；随后按 KDE KRDP 设置模块的方式为 `org.kde.krdpserver` 写入 `kde-authorized/remote-desktop=yes`，读回正确，后续连接是否免确认未测。键鼠操作、熄屏后的连接、重新登录后的自启动和长期负载未单独验证。
+
+Windows 可运行 `mstsc`，连接 `10.55.0.1:3389`，使用手机系统账号登录；若手机登录密码更改，Windows 保存的凭据也需要更新。当前只监听 USB 地址，Wi-Fi IP 不提供 RDP。手工安装、用户配置和证书尚未接进镜像打包；新镜像未构建、未刷入。未来若要经 Wi-Fi 使用，应先在 Plasma「系统设置 → 安全与隐私 → 远程桌面」设置独立的远程凭据并核对监听范围，不要把手机当前登录凭据或 TLS 私钥纳入 Git。
+
 ## Sunshine 串流服务
 
 ```sh
