@@ -6,6 +6,8 @@ PMK8350 的 `rtc-pm8xxx` 可读，原始秒数在关机和重启之间持续递�
 
 曾按主线 `rtc-pm8xxx` 的 NVMEM offset 机制，在 PMK8350 SDAM1 `0x7c–0x7f` 声明 offset。经用户同意写入 `vendor_boot_b` 并重启后，RTC 能读取该位置，但系统尝试写入时 PMIC 返回 `-EPERM`，约 3 分钟出现数百条错误。对同一 SDAM 的 `0x70` 及另一块未占用 SDAM 的 `0x7c` 做同值写入测试也都返回 `-EPERM`，说明这不是单个地址的越界或权限位问题。先在运行中解绑实验驱动，随后经用户同意写回原 `vendor_boot_b` 并重启；RTC 驱动恢复，启动日志没有新的 SDAM 写入错误。失败的设备树改动保存在[实验记录](../artifacts/rtc-20261117/README.md)，默认构建不使用它。原始 PMIC 计数器没有被修改。
 
+进一步的[直接写入权限实验](../artifacts/rtc-20261117/direct-write-probe/README.md)在不改日期的前提下，尝试向 RTC 控制寄存器 `0x6146` 写回原值 `0x80`，SPMI Arbiter 明确拒绝 `sid=0, addr=0x6146`，返回 `EPERM`。这说明当前 Linux 执行环境没有该 RTC 外设的写拥有权；设备树添加 `allow-set-time` 也无法改变仲裁权限，且原厂 NE2210 设备树本来没有启用它。UEFI 变量接口在本机不可用。PMIC 原始 RTC 在当前固件权限下仍不能由 Linux 设置为真实日期；已验证的用户空间偏移方案继续用于开机校时。
+
 ## 文件持久化偏移方案
 
 `negroni-rtc-clock` 将 PMIC 原始秒数与 NTP 校准后的 UTC 相减，把偏移量原子写入 `/var/lib/negroni-rtc/state.json`。下次开机时，`negroni-rtc-restore.service` 在 `systemd-timesyncd` 之前读取原始秒数和偏移量；只有推算时间晚于当前系统时间时才向前设置系统时钟。若 PMIC 计数器回退，服务拒绝旧偏移量。这样断网开机也能利用硬件计数器经过的时间；PMIC 无需写入，系统时间不会被旧文件倒拨。

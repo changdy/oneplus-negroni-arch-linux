@@ -21,3 +21,5 @@ USB `10.55.0.1` SSH 只读检查：`rtc-pm8xxx c400000.spmi:pmic@0:rtc@6100` 注
 15:20 通过 USB SSH 将[文件持久化偏移方案](../../docs/rtc.md)的脚本和三个 systemd 单元安装到当前 rootfs；`systemd-analyze verify` 通过，恢复服务与同步 path 均为 enabled。NTP 标记出现后，保存服务成功写入 `/var/lib/negroni-rtc/state.json`：`raw_at_sync=73609`、`unix_at_sync=1794900004`、`offset_seconds=1794826395`。`negroni-rtc-clock show` 为 `2026-11-17T07:20:11+00:00`，与当时系统 UTC 一致；原始 RTC 仍为 1970 年，未写入受保护的 PMIC SDAM。
 
 15:21 获用户同意再次重启，boot ID 为 `7479d6fb-0f18-48da-8c94-22a05e9f57c9`。恢复服务于启动第 4.74 秒开始，在第 10.44 秒从 PMIC 计数器推算并设置 `2026-11-17T07:21:47+00:00`；`systemd-timesyncd` 于第 10.79 秒才启动。检查时 NTP 同步标记仍不存在，因而这次恢复不依赖网络校时。服务因启动事务重复运行一次，第二次检测到时钟已领先，没有回拨；随后加上 `RemainAfterExit=yes`，在手机重新安装并通过 `systemd-analyze verify`，防止后续重复执行。该单元调整尚未经过另一次重启。随后 NTP 同步正常，换算 UTC 与系统 UTC 一致，`systemctl --failed` 为空，启动日志没有 SDAM 写入错误；`qbootctl` 显示 B 槽仍为 Active / Successful / Bootable。完整断网启动、完全断电和闹钟唤醒未测；新完整镜像尚未构建或刷入。
+
+同日继续调查 RTC 直接设时：经用户同意，仅向 PMK8350 RTC 控制寄存器写回相同的 `0x80`，SPMI Arbiter 即拒绝 `sid=0, addr=0x6146`，返回 `EPERM`。RTC 计数和系统时间正常，未改动计数器、闹钟或分区。[实验源码、复现与结论](direct-write-probe/README.md)。
