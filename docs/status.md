@@ -90,7 +90,7 @@ ssh oneplus@手机IP
 | 内屏分辨率 | 2026-11-12 只读实机核查：屏幕原生为 1440×3216，当前 DRM/KWin 仅提供 1080×2412 @ 60/90/120 Hz，选择 120 Hz。面板驱动的 DSC 分块宽度固定为 540，内核日志确认 1440 宽模式无法通过整除校验；原生分辨率恢复与 4:3 串流未测，见 [GPU/显示说明](gpu.md) |
 | 显示、触摸、Wi-Fi 综合验证 | 仍需对当前完整镜像逐项记录，已有桌面或 SSH 使用记录不能替代完整兼容性测试 |
 
-SDDM 默认使用 Plasma Mobile、Wayland 与 Breeze；镜像语言为 `en_US.UTF-8`，时区为 `Asia/Shanghai`。配置来源见 [config/sddm/10-mobile.conf](../config/sddm/10-mobile.conf)、[SSH 配置](../config/ssh/00-negroni.conf)和[软件清单](../config/packages/common-tools.txt)。
+SDDM 默认使用 Plasma Mobile、Wayland 与 Breeze；后续镜像的系统语言设为 `zh_CN.UTF-8`，时区为 `Asia/Shanghai`。2026-11-17 手机已安装 Dolphin、KClock、Kalk、Koko、KDE Connect，并生成中文 locale；应用图形操作、KDE Connect 配对和闹钟唤醒未测，新完整镜像未构建、未刷入。配置来源见 [默认语言](../config/locale/locale.conf)、[config/sddm/10-mobile.conf](../config/sddm/10-mobile.conf)、[SSH 配置](../config/ssh/00-negroni.conf)和[软件清单](../config/packages/common-tools.txt)。
 
 报告问题时请附设备型号、固件升级历史、父仓库与内核提交、复现步骤和相关日志，说明运行的是哪次镜像；详见[贡献指南](../CONTRIBUTING.md)。
 

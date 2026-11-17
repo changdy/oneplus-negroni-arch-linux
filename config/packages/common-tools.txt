@@ -26,6 +26,11 @@ wireless-regdb
 noto-fonts-cjk
 feedbackd
 angelfish
+dolphin
+kclock
+kalk
+koko
+kdeconnect
 libcamera
 libcamera-ipa
 libcamera-tools

@@ -113,6 +113,10 @@ sudo systemctl enable --now sshd
 
 常用软件统一维护在 [config/packages/common-tools.txt](../config/packages/common-tools.txt)：`nano`、`zip`、`unzip`、`curl`、`wget`、`htop`、`rsync`、`git`、`less`、`file`、`tree`、`jq`、`tmux`、`ripgrep`、`fd`、`bash-completion`、`lsof`、`strace`、`which`。`build.sh` 在 SSH 配置之后、打包之前调用 [scripts/install-common-tools-image.sh](../scripts/install-common-tools-image.sh)，为最终 rootfs 安装软件并执行 ARM64/QEMU 检查。
 
+2026-11-17 将 `dolphin`、`kclock`、`kalk`、`koko`、`kdeconnect` 加入同一默认清单。安装阶段核对五个应用的入口程序，封装前 `verify-desktop-image.py` 核对软件包数据库。手机已通过 USB SSH 安装并用 `pacman -Q` 确认五包存在；图形启动、触屏操作、KDE Connect 配对和闹钟唤醒尚未实测。新完整镜像尚未构建、刷入。
+
+系统初始语言由 [config/locale/locale.conf](../config/locale/locale.conf) 指定为 `zh_CN.UTF-8`。全新 rootfs 在 `finalize-rootfs.sh` 中生成中英文 locale；已有镜像的源码指纹变化触发 `update-locale-image.sh`，重新生成 locale 并使封装标记失效。`pack-images.sh` 检查 `/etc/locale.conf`、`locale.gen` 和生成的中文 locale。2026-11-17 手机已生成 `zh_CN.utf8` 并将系统默认值改为简体中文；`oneplus` 账号原有的 Plasma 中文设置保持。当前已运行服务不会自动切换语言，下一次正常启动后生效；SDDM 与完整新镜像的中文显示未测。
+
 完成后将清单写入 `logs/7.3/common-tools.list`；它与配置清单一致时续建跳过该阶段，清单改变时重新安装、验证并打包。从清单删除条目不会自动卸载软件。脚本使用现有仓库数据库执行 `pacman -S --needed`，不执行整套系统升级。构建环境和最终镜像均使用 [config/pacman/mirrorlist](../config/pacman/mirrorlist)，优先选择 `de3.mirror.archlinuxarm.org`，加拿大镜像站为备用，保留 TLS 和包签名校验。
 
 2026-11-12 将 `noto-fonts-cjk` 加入同一清单，补齐中文等 CJK 字形；普通 `noto-fonts` 不包含这部分。全新构建会安装，已有镜像续建会因清单变化重新运行安装阶段。本机已通过 USB SSH 补装并验证 Qt/Pango 中文渲染，新完整镜像未构建，详见 [字体说明](fonts.md)。

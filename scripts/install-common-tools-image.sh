@@ -74,6 +74,9 @@ test -x /usr/bin/set-wireless-regdom
 test -r /usr/share/bash-completion/bash_completion
 fc-list :lang=zh family | grep -q 'Noto.*CJK'
 test -x /usr/bin/angelfish
+for app in dolphin kclock kalk koko kdeconnect-app; do
+    test -x "/usr/bin/$app"
+done
 test -x /usr/bin/snapshot
 test -x /usr/bin/cam
 echo 'Common tools verified: ARM executables, ZIP round trip, rsync copy, JSON, search, and Git repository.'

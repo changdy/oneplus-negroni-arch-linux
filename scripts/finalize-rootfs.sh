@@ -29,9 +29,7 @@ cp linux/output/System.map "$target_dir/boot/System.map-$kernel_release"
 chroot "$target_dir" depmod -a "$kernel_release"
 printf 'oneplus-negroni\n' > "$target_dir/etc/hostname"
 printf 'KEYMAP=us\n' > "$target_dir/etc/vconsole.conf"
-printf 'LANG=en_US.UTF-8\n' > "$target_dir/etc/locale.conf"
-sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' "$target_dir/etc/locale.gen"
-chroot "$target_dir" locale-gen
+bash "$project_dir/scripts/configure-locale.sh" "$target_dir" "$project_dir/$log_dir"
 ln -sfn /usr/share/zoneinfo/Asia/Shanghai "$target_dir/etc/localtime"
 cat > "$target_dir/etc/fstab" <<'EOF'
 LABEL=root / ext4 defaults,noatime 0 1
