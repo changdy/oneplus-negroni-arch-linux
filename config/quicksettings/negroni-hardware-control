@@ -1,0 +1,72 @@
+#!/bin/sh
+# Restricted backend for the Plasma Mobile NFC and gyroscope quick settings.
+set -eu
+
+if [ "$#" -ne 2 ]; then
+    exit 2
+fi
+
+device=$1
+action=$2
+
+state() {
+    case "$device" in
+        nfc)
+            if [ ! -d /sys/bus/i2c/devices/1-0028 ]; then
+                printf 'unavailable\n'
+            elif [ -L /sys/bus/i2c/devices/1-0028/driver ]; then
+                printf 'on\n'
+            else
+                printf 'off\n'
+            fi
+            ;;
+        gyro)
+            if systemctl is-active --quiet negroni-gyro.service; then
+                printf 'on\n'
+            else
+                printf 'off\n'
+            fi
+            ;;
+        *) exit 2 ;;
+    esac
+}
+
+case "$action" in
+    status) state; exit 0 ;;
+    on|off|toggle) [ "$(id -u)" -eq 0 ] || exit 1 ;;
+    *) exit 2 ;;
+esac
+
+if [ "$action" = toggle ]; then
+    case "$(state)" in
+        on) action=off ;;
+        off) action=on ;;
+        *) exit 1 ;;
+    esac
+fi
+
+case "$device:$action" in
+    nfc:on)
+        if [ -d /sys/module/nxp_nci_i2c ] && [ "$(state)" = off ]; then
+            modprobe -r nxp_nci_i2c
+        fi
+        modprobe nxp_nci_i2c
+        [ "$(state)" = on ]
+        ;;
+    nfc:off)
+        if [ -d /sys/module/nxp_nci_i2c ]; then
+            modprobe -r nxp_nci_i2c
+        fi
+        [ "$(state)" = off ]
+        ;;
+    gyro:on)
+        if ! systemctl enable --now negroni-gyro.service || [ "$(state)" != on ]; then
+            systemctl disable --now negroni-gyro.service
+            exit 1
+        fi
+        ;;
+    gyro:off)
+        systemctl disable --now negroni-gyro.service
+        [ "$(state)" = off ]
+        ;;
+esac

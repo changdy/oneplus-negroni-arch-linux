@@ -1,5 +1,7 @@
 # NFC
 
+2026-11-17 新增 Plasma Mobile 下拉栏 NFC 开关与开机默认关闭的打包配置。关闭会卸载 `nxp_nci_i2c`，避免空闲中断风暴；本次实机 `关 → 开 → 关` 可用，打开时中断计数仍为 0，未复现先前的风暴。见[快捷开关](quick-settings.md)及[实机记录](../artifacts/quicksettings-20261117/README.md)。新完整镜像未构建、未刷入，开关的图形触控、重启持久性与长时间功耗未测。
+
 本机是 NXP SN100，挂在 I²C 地址 `0x28`（运行时节点 `1-0028`）。原厂项目 20846 的配置是 PLL 时钟、19.2 MHz，参考时钟来自 PMK8350 的 `LN_BB_CLK2`。主线驱动是 `nxp-nci` / `nxp-nci_i2c`，用户空间走 NFC generic netlink，不是原厂的 `/dev/nq-nci`。
 
 ## 2026-11-14 实机

@@ -75,7 +75,7 @@ install -o 0 -g 0 -m 0644 "$project_dir/config/systemd/iio-sensor-proxy.service.
     "$target_dir/etc/systemd/system/iio-sensor-proxy.service.d/negroni.conf"
 systemctl --root="$target_dir" enable hexagonrpcd-sdsp.service
 systemctl --root="$target_dir" enable negroni-smem-sensor.service
-systemctl --root="$target_dir" enable negroni-gyro.service
+systemctl --root="$target_dir" disable negroni-gyro.service
 cd "$project_dir"
 sha256sum config/sensors/qcom/config/*.json config/sensors/qcom/sns_reg.conf \
     config/sensors/qcom.source config/sensors/negroni-sensor-files \

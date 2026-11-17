@@ -6,8 +6,37 @@ from pathlib import Path
 import subprocess
 
 
+def ensure_quick_settings(home):
+    state = Path(os.environ.get("XDG_STATE_HOME", home / ".local/state")) / "negroni/quicksettings-v1"
+    if state.exists():
+        return
+
+    def read(key):
+        result = subprocess.run(["kreadconfig6", "--file", "plasmamobilerc", "--group", "QuickSettings", "--key", key],
+                                capture_output=True, text=True, check=True, timeout=10)
+        return [item for item in result.stdout.strip().split(",") if item]
+
+    enabled = read("enabledQuickSettings")
+    disabled = set(read("disabledQuickSettings"))
+    if not enabled:
+        enabled = sorted(path.name for path in Path("/usr/share/plasma/quicksettings").iterdir()
+                         if (path / "metadata.json").exists())
+
+    for setting, predecessor in (("org.negroni.quicksetting.nfc", "org.kde.plasma.quicksetting.bluetooth"),
+                                 ("org.negroni.quicksetting.gyro", "org.kde.plasma.quicksetting.screenrotation")):
+        if setting not in enabled and setting not in disabled:
+            position = enabled.index(predecessor) + 1 if predecessor in enabled else len(enabled)
+            enabled.insert(position, setting)
+
+    subprocess.run(["kwriteconfig6", "--file", "plasmamobilerc", "--group", "QuickSettings",
+                    "--key", "enabledQuickSettings", ",".join(enabled)], check=True, timeout=10)
+    state.parent.mkdir(parents=True, exist_ok=True)
+    state.write_text("added hardware quick settings\n")
+
+
 def main():
     home = Path.home()
+    ensure_quick_settings(home)
     state = Path(os.environ.get("XDG_STATE_HOME", home / ".local/state")) / "negroni/rotation-v1"
     if state.exists():
         return

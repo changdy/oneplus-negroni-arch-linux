@@ -1,0 +1,10 @@
+{
+  "KPackageStructure": "KPackage/GenericQML",
+  "KPlugin": {
+    "Id": "org.negroni.quicksetting.nfc",
+    "Name": "NFC",
+    "Description": "Switch the Negroni NFC driver",
+    "Icon": "network-wireless",
+    "License": "MIT"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "KPackageStructure": "KPackage/GenericQML",
+  "KPlugin": {
+    "Id": "org.negroni.quicksetting.gyro",
+    "Name": "Gyroscope",
+    "Description": "Switch continuous gyroscope sampling",
+    "Icon": "rotation-allowed",
+    "License": "MIT"
+  }
+}

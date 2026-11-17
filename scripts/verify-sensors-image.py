@@ -8,7 +8,7 @@ import subprocess
 import sys
 
 PROJECT = Path(__file__).resolve().parents[1]
-UNITS = ("hexagonrpcd-sdsp.service", "negroni-gyro.service", "negroni-smem-sensor.service")
+UNITS = ("hexagonrpcd-sdsp.service", "negroni-smem-sensor.service")
 FILES = {
     "/etc/systemd/system/iio-sensor-proxy.service.d/negroni.conf": (
         "config/systemd/iio-sensor-proxy.service.d/negroni.conf", "0644"),
@@ -76,6 +76,13 @@ def verify(image_dir, log_dir):
                 or match[1] not in (f"/etc/systemd/system/{unit}", f"../{unit}")):
             raise RuntimeError(f"{unit} must be enabled: {link}")
         links[link] = match[1]
+    gyro_link = "/etc/systemd/system/multi-user.target.wants/negroni-gyro.service"
+    try:
+        gyro_meta = debugfs(f"stat {gyro_link}").decode()
+    except RuntimeError:
+        gyro_meta = ""
+    if "Type: symlink" in gyro_meta:
+        raise RuntimeError("negroni-gyro.service must start disabled for on-demand sampling")
     verification = {
         "image": str(image),
         "services_enabled": list(UNITS),
@@ -93,7 +100,7 @@ def verify(image_dir, log_dir):
     }
     log_dir.mkdir(parents=True, exist_ok=True)
     (log_dir / "sensors-verification.json").write_text(json.dumps(verification, indent=2) + "\n")
-    print("Sensor image verified: hexagonrpc files, stock sensor JSON, gyroscope, units, and boot enablement")
+    print("Sensor image verified: sensor files, on-demand gyroscope, units, and boot enablement")
     return verification
 
 

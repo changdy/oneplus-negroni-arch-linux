@@ -38,6 +38,12 @@ class SensorImageTests(ImageTest):
         with self.assertRaises(RuntimeError):
             self.verify()
 
+    def test_gyroscope_is_off_by_default(self):
+        link = self.root / "etc/systemd/system/multi-user.target.wants/negroni-gyro.service"
+        link.symlink_to("../negroni-gyro.service")
+        with self.assertRaisesRegex(RuntimeError, "on-demand"):
+            self.verify()
+
 
 if __name__ == "__main__":
     unittest.main()

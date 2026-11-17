@@ -39,6 +39,7 @@ artifacts/usb2-gadget-20261113/experiments/*.patch text eol=lf whitespace=-blank
 /config/sensors/negroni-smem-sensor text eol=lf
 /config/sensors/negroni-sensor-files text eol=lf
 /config/sensors/hexagonrpcd-sdsp-wait text eol=lf
+/config/quicksettings/negroni-hardware-control text eol=lf
 
 # Stock sensor JSON is served to the SLPI byte for byte; two files carry CRLF.
 /config/sensors/qcom/** -text -whitespace

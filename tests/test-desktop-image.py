@@ -35,6 +35,11 @@ class DesktopImageTests(ImageTest):
         with self.assertRaisesRegex(RuntimeError, "angelfish"):
             self.verify()
 
+    def test_missing_nfc_control_is_rejected(self):
+        (self.root / "usr/local/libexec/negroni-hardware-control").unlink()
+        with self.assertRaises(RuntimeError):
+            self.verify()
+
 
 if __name__ == "__main__":
     unittest.main()
