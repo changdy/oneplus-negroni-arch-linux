@@ -1,6 +1,6 @@
 # 7.3 设备修复与源码恢复
 
-当前 `linux` 子模块固定到 `7.3` 修复提交 `b3a55871a46d9148c77a7dbfbefec24138216a5d`。该提交使两颗 MXM1120 通过中断上报三段声音档位，见[实机记录](../../docs/alert-slider.md)。修复从重新同步的上游 `476a4a8984395a77b6b6508f849dfb7b786d86b3` 直接修改，新增提交均只有一个父提交；没有 merge 或 cherry-pick `7.3-rc2`。之前的本地合并版本不再作为固定内核。
+当前 `linux` 子模块固定到 `7.3` 修复提交 `beb56438b3027239b6efd4d20926a133c365c448`，其 NFC 冷态中断修复见下文。前一提交 `b3a55871a46d9148c77a7dbfbefec24138216a5d` 使两颗 MXM1120 通过中断上报三段声音档位，见[实机记录](../../docs/alert-slider.md)。修复从重新同步的上游 `476a4a8984395a77b6b6508f849dfb7b786d86b3` 直接修改，新增提交均只有一个父提交；没有 merge 或 cherry-pick `7.3-rc2`。之前的本地合并版本不再作为固定内核。
 
 新增提交为 `835c18d2739`（电池驱动及限充）、`3ca85b51d20`（CPU 参数）和 `1eaec99b04a`（补齐触觉驱动 trace 头文件）。
 
@@ -37,6 +37,8 @@ SN100 `fff7de955691` 在控制器打开期间使用 `LN_BB_CLK2`，并把中断�
 SMEM 光线距离 `472db17c1a3b` 分配 Oplus SMEM 项 130，并通过 debugfs 写入 5140 字节。NE2210 写入 TCS3701 描述并重启 SLPI 后，遮住传感器时光线降到约 0 lux，距离为 NEAR，加速度计和磁力计仍有读数。父仓库用 `negroni-smem-sensor.service` 在开机时做同样的写入，`hexagonrpc` 也由父仓库装进镜像。DMIC 路由和 NFC 被动监听没有混入。bundle 保留原两个前置提交与历史 rc2 引用，见[传感器说明](../../docs/sensors.md)。
 
 NFC-A 被动监听 `b7385d286e` 在目标协议只有 MIFARE、没有发起方协议时写入 `LA_NFCID1` 和 `SEL_INFO 0x08`，再以模式 `0x80` 监听。NE2210 的 SN100 接受了 UID `CD 27 FC DB`、ATQA `00 04` 和 SEL_INFO `0x08`，并保持监听 20 秒。旁边没有读卡器，空中身份未证实。Classic 加密扇区没有实现。这一提交只改 `nci`。bundle 保留原两个前置提交与历史 rc2 引用，见 [NFC](../../docs/nfc.md)。
+
+NFC 冷态中断修复 `beb56438b3` 让 `nxp-nci_i2c` 请求 IRQ 时先保持禁用，控制器关闭和模式切换期间屏蔽 IRQ，上电稳定后再启用。Negroni 使用 GPIO 46 高电平触发；旧启动设备树的触发类型为 0，驱动明确采用板级已知类型。先前关闭状态约 8.9 万次/秒的风暴因此不会反复进入空帧处理。2026-11-17 手机热更新模块后，三轮启停与快捷开关重新加载通过，高电平 IRQ 关闭状态 90 秒无增长；重启、睡眠、读卡和长期功耗未测。bundle 保留原两个前置提交及历史 rc2 引用，见[实机记录](../../artifacts/thermal-nfc-20261117/README.md)。
 
 内置麦克风路由 `cba22a622ac0` 按原厂把 DEC0/DEC1 接到 DMIC3/DMIC4：DMIC3 用 GPIO8/9 和 MIC BIAS3，DMIC4 用 GPIO12/13 和 MIC BIAS1，VA DMIC 时钟 2.4 MHz，两路 TX DMIC 依赖 VA DMIC 门控和 `VA_MCLK`，`VA Capture` 改用 `VA_CODEC_DMA_TX_0`。内容等于 [sm8450-oneplus-negroni-dmic.patch](../../config/audio/sm8450-oneplus-negroni-dmic.patch) 加 [sm8450-oneplus-negroni-dmic34-va.patch](../../config/audio/sm8450-oneplus-negroni-dmic34-va.patch)。手机能录音时运行的设备树（`vendor_boot` 字节补丁）同时带着这两份补丁和 `67d9e35c9ac0`。2026-11-14 23:10 读取实机 `/sys/firmware/devicetree`：14 条 DMIC 路由、VA 时钟、两组引脚和 VA DAI 编号 110，与这次编译出的 DTB 一致。单靠 `67d9e35c9ac0` 的设备树没有 DMIC 引脚复用，没有实测。用这一提交重新构建的镜像未构建、未刷入。bundle 保留原两个前置提交与历史 rc2 引用，见[音频说明](../../docs/audio.md)。
 

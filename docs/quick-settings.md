@@ -2,7 +2,7 @@
 
 2026-11-17：Plasma Mobile 6.8.2 的下拉栏已有 Wi-Fi、蓝牙、飞行模式、手电筒和“自动旋转”开关。本机的“自动旋转”控制 KWin 的旋转策略；它不关闭 SLPI，也不代表加速度计、光线、距离等传感器全部断电。光线和距离供自动亮度、贴耳熄屏等功能使用，不能随意与旋转绑在一起关闭。
 
-本项目新增 NFC、GPS 和陀螺仪快捷项。NFC 关闭时卸载 `nxp_nci_i2c`，使 `1-0028` 不再绑定驱动；镜像通过 `blacklist nxp_nci_i2c` 默认阻止自动加载。开启时显式加载模块，读卡和监听仍需对应程序主动运行；若先前的 GPIO 46 中断风暴复发，应立即关闭 NFC。陀螺仪项控制 `negroni-gyro.service` 并持久设置开机状态；默认关闭常驻角速度采样。SMEM 初始化、`hexagonrpcd` 和 `iio-sensor-proxy` 继续服务其他传感器。
+本项目新增 NFC、GPS 和陀螺仪快捷项。NFC 关闭时卸载 `nxp_nci_i2c`，使 `1-0028` 不再绑定驱动；镜像通过 `blacklist nxp_nci_i2c` 默认阻止自动加载。开启时显式加载模块，读卡和监听仍需对应程序主动运行。2026-11-17 驱动已修复关闭状态的 GPIO 46 中断风暴，开关重新加载修复版模块通过，仍默认关闭以节省空闲资源；重启和长期功耗未测，见 [NFC](nfc.md)。陀螺仪项控制 `negroni-gyro.service` 并持久设置开机状态；默认关闭常驻角速度采样。SMEM 初始化、`hexagonrpcd` 和 `iio-sensor-proxy` 继续服务其他传感器。
 
 GPS 项控制 ModemManager 的 `gps-nmea` 和 `gps-raw` 定位源。开启任一源便会启动 GPS 引擎，两个源都关闭后 ModemManager 停止该引擎；蜂窝基带与通话、移动数据仍继续运行。独立的 QMI/AFW 调试客户端不归 ModemManager 管理，开关不能停止它们。GPS 状态从 ModemManager 实时读取，外部应用启用 GPS 时也会显示“开”。当前系统尚未安装 GeoClue，不能将这个开关当成已经完成的应用定位服务。
 
