@@ -8,6 +8,7 @@
 | --- | --- |
 | [构建指南](building.md) | 主机依赖、子模块、rootfs 输入、凭据和续建 |
 | [刷机说明](flashing.md) | 固件限制、分区映射、校验、刷入和首次启动 |
+| [GitHub Actions 镜像发布](image-release.md) | 版本触发、发布流程和下载校验 |
 | **[USB 调试通道](usb-debug.md)** | **不依赖 Wi-Fi 的 USB 网络 SSH（`ssh oneplus@10.55.0.1`）与 USB 串口；调试首选** |
 | [设备状态](status.md) | 已验证功能、已知问题、SSH 和 GPU 配置 |
 | [项目成果与记录](project-records.md) | 对话含归档的核对清单、入库与默认启用规则、交付和验收范围 |
