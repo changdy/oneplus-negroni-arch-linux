@@ -14,7 +14,8 @@ concurrency:
 
 jobs:
   host-checks:
-    runs-on: ubuntu-24.04
+    # Match the release runner. Ubuntu 24.04's mkbootimg package is missing gki.
+    runs-on: ubuntu-26.04
     timeout-minutes: 20
     steps:
       - name: Check out the project
