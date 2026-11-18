@@ -50,7 +50,7 @@ if pacman -Q linux-aarch64 >/dev/null 2>&1; then
 fi
 mapfile -t firmware < <(pacman -Qq | grep '^linux-firmware' || true)
 if (( ${#firmware[@]} )); then pacman -Rdd --noconfirm "${firmware[@]}"; fi
-pacman -Syu --needed --noconfirm archlinuxarm-keyring archinstall arch-install-scripts mkinitcpio
+pacman -Syu --needed --noconfirm archlinuxarm-keyring archinstall arch-install-scripts mkinitcpio fakeroot
 CHROOT
 if [[ ! -f "$image_dir/root.img" ]]; then
     mkdir -p "$image_dir"
@@ -58,11 +58,19 @@ if [[ ! -f "$image_dir/root.img" ]]; then
     mkfs.ext4 -F -L root "$image_dir/root.img"
 fi
 mount -o loop "$image_dir/root.img" alarm/mnt
+install -Dm644 config/packages/hexagonrpc/PKGBUILD alarm/usr/local/share/negroni-build/hexagonrpc/PKGBUILD
 chroot alarm /bin/bash -euo pipefail <<'CHROOT'
 pacstrap -c /mnt --needed --noconfirm base e2fsprogs util-linux pacman archlinuxarm-keyring systemd-sysvcompat networkmanager dnsmasq iw wireless-regdb openssh python usbutils linux-firmware-realtek msm-firmware-loader msm-modem-uim-selection linux-firmware-oplus-negroni rmtfs-oplus tqftpserv qrtr-git
 pacstrap -c /mnt --needed --noconfirm sddm plasma-mobile plasma-desktop powerdevil bluedevil spacebar qmlkonsole plasma-dialer plasma-settings kscreen plasma-nm modemmanager mkinitcpio sudo qt6-virtualkeyboard iio-sensor-proxy
-# The xec hexagonrpc package installs under /usr/local and also lists /usr/local/share/man, which filesystem owns.
-pacstrap -c /mnt --needed --noconfirm --overwrite /usr/local/share/man hexagonrpc
+# The xec package lists usr/local/share/man as a directory. Arch owns it as a symlink.
+build_dir=$(mktemp -d)
+trap 'rm -rf -- "$build_dir"' EXIT
+cd "$build_dir"
+cp /usr/local/share/negroni-build/hexagonrpc/PKGBUILD .
+chown nobody "$build_dir"
+runuser -u nobody -- makepkg --noconfirm
+hexagonrpc_pkg=$(runuser -u nobody -- makepkg --packagelist)
+pacstrap -c -U /mnt --needed --noconfirm "$hexagonrpc_pkg"
 systemctl --root=/mnt enable sddm NetworkManager ModemManager msm-modem-uim-selection bluetooth systemd-timesyncd msm-firmware-loader msm-firmware-loader-unpack rmtfs tqftpserv
 CHROOT
 cp alarm/etc/pacman.conf alarm/mnt/etc/pacman.conf

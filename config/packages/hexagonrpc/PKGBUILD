@@ -1,0 +1,18 @@
+# Repackage the xec ARM64 build with its manual page under Arch's real man directory.
+pkgname=hexagonrpc
+pkgver=0.5.0
+pkgrel=1.1
+pkgdesc='Qualcomm Hexagon RPC daemon and library'
+arch=(aarch64)
+url='https://github.com/linux-msm/hexagonrpc'
+license=(GPL-3.0-or-later)
+depends=(glibc)
+options=(!strip !debug !zipman)
+_xec_commit=8bebc2fb1d1db5c5c521261abe326f5bbbfe4dd9
+source=("https://raw.githubusercontent.com/xlie-electronic-customs/xec-arch-repo/$_xec_commit/$pkgname-$pkgver-1-aarch64.pkg.tar.xz")
+sha256sums=(e0f65b35514b1724c45d3b8a190904a02327b532948979c8348377a3d91ceb2b)
+
+package() {
+    cp -a "$srcdir/usr" "$pkgdir/"
+    mv "$pkgdir/usr/local/share/man" "$pkgdir/usr/local/man"
+}
