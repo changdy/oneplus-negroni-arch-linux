@@ -106,7 +106,7 @@ ssh oneplus@手机IP
 | NFC 读标签 | SN100 可重复启停，读到 Classic UID；控制器接受过被动监听配置，外部读卡器未验证。四个工具、时钟配置及续建/检查已接通，NDEF/扇区认证未完成，见[NFC](nfc.md) |
 | 自动旋转、光线与距离 | 11 月 17 日补齐 SMEM 和 IMU 就绪检查。一次正常重启后加速度、陀螺仪、光线、距离均实测出数，桌面代理与陀螺仪服务零重试。此前遮挡实测 FAR → NEAR → FAR。本轮未测手持转屏、完全断电启动、睡眠、实际自动亮度、通话熄屏和功耗。[传感器](sensors.md) |
 | 红外遥控 | NE2210 没有红外发射器：无 `oplus,kookong` 节点，SPI 未启用，无 `/dev/lirc`。原厂 kookong 模块不能绑定。TCS3701 的红外 LED 只做距离感应。镜像不包含遥控驱动，见[红外](infrared.md) |
-| 内屏分辨率 | 已从本机原厂 DTBO 校对并实现 1440×3216 的 DSC、PPS、TE 和三档时序，1080×2412 @ 120 Hz 仍为首选。ARM64 测试内核待刷入，WQHD+ 实机未测，见 [GPU/显示说明](gpu.md) |
+| 内屏分辨率 | 11 月 18 日 B 槽启动测试内核 `#9`。用户确认 1440×3216 @ 120 Hz 桌面正常显示和更新，切回 1080×2412 时登录界面正常。熄屏前 60/120 Hz 测到对应 vblank，90 Hz 节拍约 61–80 Hz。熄屏后 TE 恢复待查，见[实测记录](../artifacts/display-native-20261118/README.md) |
 | 显示、触摸、Wi-Fi 综合验证 | 仍需对当前完整镜像逐项记录，已有桌面或 SSH 使用记录不能替代完整兼容性测试 |
 
 SDDM 默认使用 Plasma Mobile、Wayland 与 Breeze；后续镜像的系统语言设为 `zh_CN.UTF-8`，时区为 `Asia/Shanghai`。2026-11-17 手机已安装 Dolphin、KClock、Kalk、Koko、KDE Connect，并生成中文 locale；应用图形操作、KDE Connect 配对和闹钟唤醒未测，新完整镜像未构建、未刷入。配置来源见 [默认语言](../config/locale/locale.conf)、[config/sddm/10-mobile.conf](../config/sddm/10-mobile.conf)、[SSH 配置](../config/ssh/00-negroni.conf)和[软件清单](../config/packages/common-tools.txt)。

@@ -2,7 +2,7 @@
 
 当前 `linux` 子模块固定到 `7.3` 修复提交 `6b8abef3c1abc770c654139027b89ca6b57d53a0`。S5KJN1 分别报告 8192×6176 可读像素区与 8160×6144 有效成像区，通过 ARM64 模块编译和真实回调的主机回归。新增驱动模块实机待验证，见[相机专项](../../docs/camera.md#相机优化与修复专项)。
 
-前一固定点 `0948d67289306333f07d920b6892ad9968fa5497` 使内屏 DSC 配置随模式选择，保留 1080×2412 与 1440×3216 各三档，使用本机原厂 DTBO 对应的 PPS 与 TE 命令。1080×2412 @ 120 Hz 优先。修复版内核实机未测，见[显示说明](../../docs/gpu.md)。
+前一固定点 `0948d67289306333f07d920b6892ad9968fa5497` 使内屏 DSC 配置随模式选择，保留 1080×2412 与 1440×3216 各三档，使用本机原厂 DTBO 对应的 PPS 与 TE 命令。1080×2412 @ 120 Hz 优先。NE2210 已启动该测试内核，实测 WQHD+ 60/120 Hz 的活动 CRTC 与 vblank，用户确认 WQHD+ 120 Hz 桌面正常显示和更新。固定 90 Hz 节拍与熄屏后的 TE 同步待验收。见[实测记录](../../artifacts/display-native-20261118/README.md)。
 
 前一固定点 `e0f04ee5b6752bcc21a7d4aad1aeeb0bc30d92a3` 回移 [GPU 恢复锁修复](https://lore.kernel.org/all/20261101175553.53746-2-nicoangelodelacruz@gmail.com/)：恢复持有 `gpu->lock` 时不等待需要同一把锁的故障转储，避免 GPU/SMMU 线程互等。2026-11-17 在 NE2210 复现并取得调用栈，真实 OOB/HFI 函数交错回归、ARM64 DRM/MSM 编译和完整 Image.gz 链接通过；仅刷 `boot_b` 并回读验证后，内核 `#8` 已启动。最初 GMU OOB 超时的根因和实际故障恢复仍待验证，自动省电复测见 [GPU 记录](../../artifacts/gpu-runtime-pm-20261117/README.md)。bundle 保留原两个前置提交及历史 rc2 引用。
 
