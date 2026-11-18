@@ -6,7 +6,7 @@
 
 | 镜头 | 已实测路径 | 主要待办 |
 | --- | --- | --- |
-| S5KJN1 超广角 | 4080×3072 RAW10、GRBG；1080p 应用路径；独立 JPEG 和持续补光 | libcamera 裁剪区实机复测、曝光时序、颜色校准和长时运行 |
+| S5KJN1 超广角 | 4080×3072 RAW10、GRBG；1080p 应用路径；独立 JPEG 和持续补光；两种模式的裁剪区实机通过 | 曝光软件包、颜色校准和长时运行 |
 | IMX789 主摄 | 4000×3008 RAW10、BGGR、三组 C-PHY；单帧实拍 | 正常拍摄模式、标准曝光/增益控制、AF/OIS |
 | OV08A10 长焦 | 3264×1836 RAW10、两通道 D-PHY；单帧实拍 | 确认 Bayer 相位、标准曝光/增益控制、AF/OIS |
 | IMX615 前摄 | 3280×2464 RAW10、RGGB；色条与实拍 | 用交付入口复测、应用枚举及前后摄切换 |
@@ -19,7 +19,7 @@
 
 | 顺序 | 工作 | 验收依据 |
 | --- | --- | --- |
-| 1 | 完成 JN1 裁剪区复测，将已验证的 libcamera 曝光修复纳入软件包 | 同一 1080p 流从两种初始 sensor 模式进入时，四个 selection 查询正确，曝光微秒值与当前模式行长一致，正常出帧并释放供电 |
+| 1 | JN1 裁剪区已部署，将已验证的 libcamera 曝光修复纳入软件包 | 两种 sensor 模式已通过四个 selection 查询。完整软件包需要复测两种初始模式下的曝光微秒值、桌面出帧及停流后的 runtime PM |
 | 2 | 改善 JN1 自动曝光、白平衡和色彩 | 先核对增益换算与生效延迟，再用同光照下的 RAW、灰卡/色卡和应用输出对照。记录暗部、亮部裁剪及不同光照下的偏色 |
 | 3 | 验收启停、休眠和功耗 | 先测 JN1，再用交付入口逐镜头捕获和卸载。记录帧序号及间隔、停流后各设备 runtime PM、同条件空闲功耗、启动 ID、CCI/CSID/SMMU 错误；另做冷启动及休眠后的首开 |
 | 4 | 接入其余三摄与 AF/OIS | 先补标准 V4L2 控制，再验相机应用枚举与前后摄切换。对照本机原厂正常模式、执行器供电及固件，逐项验证对焦、防抖和高分辨率模式 |
@@ -41,11 +41,21 @@
 
 四次运行处于同一 boot ID。系统版第二次及候选版最后一次停流后确认 JN1、CCI、CAMSS、CAMCC 都是 `auto / suspended`。冷启动、系统休眠和实际功耗未测。原始输出留在本机忽略的 `logs/camera-20261118/`。
 
-- **裁剪区。** 旧驱动用模式宽度填入裁剪矩形的高度，缺少 `CROP_DEFAULT`，libcamera 在全分辨率初始格式下报 `PixelArraySize=8160x8160`。两套现有寄存器表的模拟读出均为 `(0, 0)/8192×6176`，数字偏移换算回传感器坐标均裁去四边各 16 像素。修复后 `CROP`、`CROP_BOUNDS` 和 `NATIVE_SIZE` 报告完整读出，`CROP_DEFAULT` 报告 `(16, 16)/8160×6144`。这两个尺寸在 ACTIVE 与 TRY 中都固定，输出分辨率仍由 pad format 决定。ARM64 `s5kjn1.ko` 的 `W=1` 构建和真实回调的主机回归通过，模块尚未换到手机。 [libcamera 驱动要求](https://docs.libcamera.org/master/sensor_driver_requirements.html)
+- **裁剪区。** 旧驱动用模式宽度填入裁剪矩形的高度，缺少 `CROP_DEFAULT`，libcamera 在全分辨率初始格式下报 `PixelArraySize=8160x8160`。两套现有寄存器表的模拟读出均为 `(0, 0)/8192×6176`，数字偏移换算回传感器坐标均裁去四边各 16 像素。修复后 `CROP`、`CROP_BOUNDS` 和 `NATIVE_SIZE` 报告完整读出，`CROP_DEFAULT` 报告 `(16, 16)/8160×6144`。这两个尺寸在 ACTIVE 与 TRY 中都固定，输出分辨率仍由 pad format 决定。ARM64 `s5kjn1.ko` 的 `W=1` 构建和真实回调的主机回归通过，实机结果见下节。 [libcamera 驱动要求](https://docs.libcamera.org/master/sensor_driver_requirements.html)
 - **曝光元数据。** 4080 模式行长为 4352 像素，像素率为 560 MHz，4266 行曝光为约 33152 µs。66183 µs 对应全分辨率模式的 8688 像素行长。v0.7.2 Software ISP 初始化时读取 `sensorInfo`，配置时更新曝光控制范围却沿用初始化的行长。v0.8.0 软件 ISP 的配置路径也沿用初始化缓存的时序，尚未在本机运行。候选补丁在设置 ACTIVE 格式后读取当前 `sensorInfo`，随配置传给 IPA。候选在 WSL 和手机临时目录均编译成功，两种初始模式的曝光读数一致。 [v0.7.2 Software ISP](https://github.com/libcamera-org/libcamera/blob/v0.7.2/src/libcamera/software_isp/software_isp.cpp#L153) · [v0.7.2 IPA](https://github.com/libcamera-org/libcamera/blob/v0.7.2/src/ipa/simple/soft_simple.cpp#L202) · [v0.8.0 IPA](https://github.com/libcamera-org/libcamera/blob/v0.8.0/src/ipa/softisp/softisp.cpp#L192)
 - **色彩。** 四次采集均使用 `uncalibrated.yaml`，静态属性、增益 helper 与控制生效延迟的警告仍在。曝光读数的修复已经验证，成像标定仍在专项内继续。
 
 [曝光补丁](../artifacts/camera-20261118/libcamera-v0.7.2-active-sensor-timing.patch)以 libcamera v0.7.2 的 `191e202178f02430b5942397c70d215cdd2056fa` 为基准。它改动 IPA IPC 配置结构，测试时使用同一次构建的 libcamera、simple IPA 和 `cam`。系统包、WirePlumber 和 Snapshot 沿用原安装，候选暂未接入默认打包。验收软件包时还需检查 Snapshot 预览、拍照、录像及两种初始模式，确保 PipeWire 加载匹配的 IPA。
+
+### JN1 裁剪区实机部署（2026-11-18 上午）
+
+内核 `#9` 经 USB SSH 热更新 `s5kjn1.ko`。无活动音视频流时短暂停止 WirePlumber。停止后旧驱动仍有一个内核引用，解绑 I²C 设备 `6-0010` 后归零，才卸载旧模块并加载新模块。新模块通过实测后写入模块目录，SHA-256 为 `e55f87a6ffb0a55e65ab4cb28c5c1c6b37a0eb015e2a75a2b80be13fbe3613da`，原件 `3f60e14a…` 留在手机 `~/camtest/jn1-geometry.bBFz8N/s5kjn1.before.ko`。
+
+- 4080×3072 和 8160×6144 分别通过四个 ACTIVE selection 查询。libcamera 报 `PixelArraySize=8192x6176` 和 `PixelArrayActiveAreas=(16,16)/8160x6144`，裁剪区回退告警消失。
+- `cam` 的 1080p 短测连续交付 90 帧。WirePlumber 恢复后重新枚举相机及音频设备，PipeWire → GStreamer 路径再以 1080p、30 fps 协商连续做三轮各 90 帧采集，均正常到达 EOS。每轮停流后 JN1、CCI、CAMSS、CAMCC 均回到 runtime suspend。启动 ID 一致，未刷写或重启。
+- 卸载旧模块时出现一次 `cam_cc_mclk1_clk status stuck at 'off'`。调用栈经过 `unbind_store → device_release_driver_internal → rpm_resume → s5kjn1_power_on`，发生在旧模块解绑前的 runtime resume。随后正常采集和停流通过。该告警的电源与时钟恢复顺序仍待定位。
+
+新模块已持久安装，重启加载、冷启动及系统休眠仍未测。原始日志保存在忽略的 `logs/camera-20261118/`。
 
 ## 镜像交付与操作入口（2026-11-15）
 
