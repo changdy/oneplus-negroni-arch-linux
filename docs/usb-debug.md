@@ -128,7 +128,9 @@ sudo python3 /tmp/negroni-usb2-recover.py --apply   # 核对状态后只清 PHY_
 
 本轮重启后没有复制或执行 `/tmp/negroni-usb2-recover.py`，也没有自动清寄存器的用户空间服务。恢复来自新内核；只读采集的状态转换与内核 PHY 恢复日志相互印证。
 
-完整镜像重建、完全断电后的启动、OTG host / PD Hub / 挂起恢复未测。实机仍保留之前的 `snps,usb2-gadget-lpm-disable` 实验属性，移除该属性的对照未测，不能声称已经验证不带此属性的新 DTB。原始输出与完整分区备份在忽略的 `logs/usb2-driver-20261113/`，整理后的 [验证记录](../artifacts/usb2-gadget-20261113/driver-evidence.json) 与 [构建报告](../artifacts/usb2-gadget-20261113/driver-build.json) 可供复核。
+该轮未测完整镜像重建、完全断电后的启动、OTG host / PD Hub / 挂起恢复，设备树当时保留 `snps,usb2-gadget-lpm-disable` 实验属性。原始输出与完整分区备份在忽略的 `logs/usb2-driver-20261113/`，整理后的 [验证记录](../artifacts/usb2-gadget-20261113/driver-evidence.json) 与 [构建报告](../artifacts/usb2-gadget-20261113/driver-build.json) 可供复核。
+
+2026-11-18 使用不含该 LPM 属性的正式 DTB 启动，USB3 NCM SSH 在一次重启及一次 38.4 秒深睡唤醒后均恢复，设备端为 `super-speed`。USB2 和 OTG 挂起恢复仍未测。[该次深睡记录](camera.md#正式-dtb-刷写与整机深睡2026-11-18)
 
 ## USB SSH 意外断连排查（2026-11-13 22:34–22:45）
 

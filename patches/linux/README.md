@@ -1,6 +1,6 @@
 # 7.3 设备修复与源码恢复
 
-当前 `linux` 子模块固定到 `7.3` 修复提交 `5b7d2c4bc450929fa5a876c47e607f321c0a3001`。Negroni JN1 声明 MCLK1 所需的 `TITAN_TOP_GDSC`，独立 runtime resume 和解绑前恢复都可先开电源域。正式 DTB 编译通过，与实测 RAM overlay 的合并结果一致。手机 `#10` 上的独立上电、解绑和短采集均通过，完整 DTB 尚未刷入。[相机专项](../../docs/camera.md#相机优化与修复专项)
+当前 `linux` 子模块固定到 `7.3` 修复提交 `5b7d2c4bc450929fa5a876c47e607f321c0a3001`。Negroni JN1 声明 MCLK1 所需的 `TITAN_TOP_GDSC`，独立 runtime resume 和解绑前恢复都可先开电源域。2026-11-18 正式 DTB 已刷入 `vendor_boot_b`。在运行内核 `#10` 上验证深睡 38.4 秒后首次 1080p 采集及再次打开，停流后恢复挂起。[实机记录](../../docs/camera.md#正式-dtb-刷写与整机深睡2026-11-18)
 
 前一固定点 `3d1c9125328cfa49ebbcbfa1dec36e1a2171faee` 使 DPU 运行时恢复重写缓存的中断掩码。NE2210 已启动 `#10`，六轮 DPMS 熄屏与亮屏中 DPU 实际挂起，恢复后有 TE 中断与 FD730 渲染。见[实测记录](../../artifacts/display-te-20261118/README.md)。
 

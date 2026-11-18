@@ -21,7 +21,7 @@
 | --- | --- | --- |
 | 1 | 已部署 JN1 裁剪区和 libcamera 曝光软件包 | 两种 sensor 模式的 selection、曝光微秒值、PipeWire 出帧及停流后的 runtime PM 已验。Snapshot 拍照、录像及新镜像集成待验 |
 | 2 | 改善 JN1 自动曝光、白平衡和色彩 | 先核对增益换算与生效延迟，再用同光照下的 RAW、灰卡/色卡和应用输出对照。记录暗部、亮部裁剪及不同光照下的偏色 |
-| 3 | 验收启停、休眠和功耗 | JN1 的 MCLK 上电顺序已修正并通过短启停。继续用交付入口逐镜头捕获和卸载，记录帧序号、停流后的 runtime PM、空闲功耗及 CCI/CSID/SMMU 错误，再测冷启动和系统休眠后的首开 |
+| 3 | 验收启停、休眠和功耗 | 正式 DTB 下 JN1 通过一次整机深睡后的首开和再次开启。继续逐镜头检查启停、冷启动、多轮休眠、空闲功耗及 CCI/CSID/SMMU 错误 |
 | 4 | 接入其余三摄与 AF/OIS | 先补标准 V4L2 控制，再验相机应用枚举与前后摄切换。对照本机原厂正常模式、执行器供电及固件，逐项验证对焦、防抖和高分辨率模式 |
 
 专项复核了本地 Codex 对话《继续推送摄像头驱动》《移植安卓相机驱动》《分析刷回一加系统对驱动的帮助》。Cursor 的重启、应用和功能补齐讨论沿用此前的[项目对话清单](../artifacts/project-audit-20261115/conversations.json)。旧对话中的硬重启结论见[后续 CSID 修复](#启停硬重启修复2026-11-14-下午)。偏绿的早期预览已用同帧白平衡对照定位，Snapshot 的曝光和色彩仍需独立验证。原厂回采优先沿已有 sensormodule、tuning、DNG 矩阵及 EEPROM 解析继续，回到 Android 采集运行时数据作为本地资料不足时的备选。原厂 5.10 模块保留作离线参考。[颜色核查](#预览偏绿的离线核查2026-11-13) · [原厂资料](stock-hardware.md#相机)
@@ -75,9 +75,25 @@ Negroni 的 JN1 节点现声明 `power-domains = <&camcc TITAN_TOP_GDSC>`，S5KJ
 
 - 在手机内核 `#10` 用 RAM overlay 验证同一属性。最终一轮从全部挂起开始，三轮独立唤醒 JN1 均成功，CCI 与 CAMSS 保持挂起。每次改回 `auto`，JN1 恢复挂起且 `TITAN_TOP_GDSC` 关闭。
 - 三轮 `cam` 各收 90 帧 1080p，序号连续，约 30 fps。另一次从空闲解绑及重新绑定均通过，未见原 MCLK 或 CCI 超时。WirePlumber 恢复后，PipeWire → GStreamer 又完成三轮 1080p 采集，每轮停流后设备都回到挂起。
-- 手机当前保留本轮 RAM overlay，启动 ID 未变，电源策略均为 `auto`。内核曾提示移除加到活动设备树的属性 overlay 可能泄漏内存，此提示来自测试机制。正式 DTB 直接带属性。临时 overlay 随重启消失，重启后仍使用原启动 DTB，直到刷入新的 DTB。
+- 该轮结束时手机保留 RAM overlay，启动 ID 未变，电源策略均为 `auto`。内核曾提示移除加到活动设备树的属性 overlay 可能泄漏内存。正式 DTB 直接带属性，后续刷写见下节。
 
-本轮未刷写或重启，整机冷启动、系统休眠和历史主摄 CCI 超时仍待验证。原始对照、overlay 构建和采集日志在忽略的 `logs/camera-20261118/`。
+原始对照、overlay 构建和采集日志在忽略的 `logs/camera-20261118/`。
+
+### 正式 DTB 刷写与整机深睡（2026-11-18）
+
+经授权给 B 槽刷入由内核 `5b7d2c4bc450` 构建的正式板级 DTB。先在手机和电脑各保存一份完整的 192 MiB `vendor_boot_b`，两份及原分区的 SHA-256 均为 `2714b634cc0fadbc96378c9c71f92851c41357a92ed4635476389e3b65473703`。写入范围为该分区前 184320 字节，包含原 v4 头部更新后的 DTB 长度、新 DTB 和页对齐。全分区回读 SHA-256 为 `90bbeeb53f71d087e90380ed3ea87b0a0446aba1d27e7997f7a5b77566659d0f`，`boot_b` 哈希核对一致。备份及刷写日志位于电脑的 `logs/camera-20261118-dtb-suspend/`，手机备份位置记录在该目录的 `phone-dir.txt`。[AOSP vendor_boot 格式](https://source.android.com/docs/core/architecture/partitions/vendor-boot-partitions)
+
+重启后内核运行为 `#10`，USB3 SSH 恢复。运行中的 JN1 节点由设备树指向 CAMCC 的 `TITAN_TOP_GDSC`（ID 8），测试 overlay 已随重启消失。系统 libcamera 0.7.2-4.1 枚举出超广角，并读取到正确的裁剪属性。正式板级 DTB 也带有仓库内的 NFC 配置和超广角只读 EEPROM 地址修正，音频路由的连接集合一致，旧 USB2 LPM 实验属性从启动 DTB 中移除。
+
+11:26 在登录界面保持 USB3 连接，设 38 秒 RTC 闹钟，通过 `systemctl suspend` 进入默认 `deep`。内核记录进入和退出，`CLOCK_BOOTTIME - CLOCK_MONOTONIC` 增加 **38.420 秒**，唤醒前后 boot ID 一致，挂起计数从 0 成功 / 0 失败变为 1 成功 / 0 失败，RTC 闹钟已清。USB3 SSH 恢复，B 槽仍为 Active / Successful / Bootable。[Linux 睡眠状态](https://docs.kernel.org/admin-guide/pm/sleep-states.html)
+
+| JN1 采集 | 1080p 帧数 | 平均帧率 | 最大帧间隔 |
+| --- | --- | --- | --- |
+| 深睡前 | 90，序号连续 | 30.010 fps | 33.87 ms |
+| 唤醒后第一次打开 | 90，序号连续 | 30.009 fps | 33.90 ms |
+| 唤醒后再次打开 | 30，序号连续 | 约 30 fps | — |
+
+每次采集后 JN1、CCI、CAMSS 和 CAMCC 均返回 runtime suspend。首轮停流后确认 `TITAN_TOP_GDSC` 关闭，无 MCLK 启用超时或 CCI 超时。首次唤醒采集结束附近有一次 CAMSS `Received wm done for unmapped index` 日志，90 帧均已收到，再次打开也成功。测试走系统 `cam` 的 libcamera 路径。Snapshot 界面、其它三摄、完全断电冷启动及长时间或多轮休眠仍未测。
 
 ## 镜像交付与操作入口（2026-11-15）
 
