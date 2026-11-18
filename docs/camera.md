@@ -21,7 +21,7 @@
 | --- | --- | --- |
 | 1 | 已部署 JN1 裁剪区和 libcamera 曝光软件包 | 两种 sensor 模式的 selection、曝光微秒值、PipeWire 出帧及停流后的 runtime PM 已验。Snapshot 拍照、录像及新镜像集成待验 |
 | 2 | 改善 JN1 自动曝光、白平衡和色彩 | 先核对增益换算与生效延迟，再用同光照下的 RAW、灰卡/色卡和应用输出对照。记录暗部、亮部裁剪及不同光照下的偏色 |
-| 3 | 验收启停、休眠和功耗 | 先测 JN1，再用交付入口逐镜头捕获和卸载。记录帧序号及间隔、停流后各设备 runtime PM、同条件空闲功耗、启动 ID、CCI/CSID/SMMU 错误；另做冷启动及休眠后的首开 |
+| 3 | 验收启停、休眠和功耗 | JN1 的 MCLK 上电顺序已修正并通过短启停。继续用交付入口逐镜头捕获和卸载，记录帧序号、停流后的 runtime PM、空闲功耗及 CCI/CSID/SMMU 错误，再测冷启动和系统休眠后的首开 |
 | 4 | 接入其余三摄与 AF/OIS | 先补标准 V4L2 控制，再验相机应用枚举与前后摄切换。对照本机原厂正常模式、执行器供电及固件，逐项验证对焦、防抖和高分辨率模式 |
 
 专项复核了本地 Codex 对话《继续推送摄像头驱动》《移植安卓相机驱动》《分析刷回一加系统对驱动的帮助》。Cursor 的重启、应用和功能补齐讨论沿用此前的[项目对话清单](../artifacts/project-audit-20261115/conversations.json)。旧对话中的硬重启结论见[后续 CSID 修复](#启停硬重启修复2026-11-14-下午)。偏绿的早期预览已用同帧白平衡对照定位，Snapshot 的曝光和色彩仍需独立验证。原厂回采优先沿已有 sensormodule、tuning、DNG 矩阵及 EEPROM 解析继续，回到 Android 采集运行时数据作为本地资料不足时的备选。原厂 5.10 模块保留作离线参考。[颜色核查](#预览偏绿的离线核查2026-11-13) · [原厂资料](stock-hardware.md#相机)
@@ -53,7 +53,7 @@
 
 - 4080×3072 和 8160×6144 分别通过四个 ACTIVE selection 查询。libcamera 报 `PixelArraySize=8192x6176` 和 `PixelArrayActiveAreas=(16,16)/8160x6144`，裁剪区回退告警消失。
 - `cam` 的 1080p 短测连续交付 90 帧。WirePlumber 恢复后重新枚举相机及音频设备，PipeWire → GStreamer 路径再以 1080p、30 fps 协商连续做三轮各 90 帧采集，均正常到达 EOS。每轮停流后 JN1、CCI、CAMSS、CAMCC 均回到 runtime suspend。启动 ID 一致，未刷写或重启。
-- 卸载旧模块时出现一次 `cam_cc_mclk1_clk status stuck at 'off'`。调用栈经过 `unbind_store → device_release_driver_internal → rpm_resume → s5kjn1_power_on`，发生在旧模块解绑前的 runtime resume。随后正常采集和停流通过。该告警的电源与时钟恢复顺序仍待定位。
+- 卸载旧模块时出现一次 `cam_cc_mclk1_clk status stuck at 'off'`。调用栈经过 `unbind_store → device_release_driver_internal → rpm_resume → s5kjn1_power_on`，发生在旧模块解绑前的 runtime resume。随后正常采集和停流通过。电源依赖的修复见下节。
 
 10:28 系统日志记录了另一条 `systemctl reboot` 发起的有序重启。内核 `#10` 启动后自动加载相同哈希的 JN1 模块，libcamera 再次读回正确的两个像素区。完全断电冷启动与系统休眠仍未测。原始日志保存在忽略的 `logs/camera-20261118/`。
 
@@ -66,6 +66,18 @@
 - 当前手机保留四个补丁包，与原始发行包分开存放。构建产物在手机 `~/camtest/libcamera-pkg.RHsOqa/`，原四个 0.7.2-4 发行包及签名仍在 `/var/cache/pacman/pkg/`。需要回退时应在相机空闲时一次恢复四个原包。
 
 在配好 Arch Linux ARM `base-devel` 和配方声明的依赖后，把 `PKGBUILD` 及同目录的曝光补丁复制到同一构建目录，用普通用户运行 `makepkg --verifysource` 和 `makepkg`。包的源码与补丁有固定 SHA-256。该配方针对本轮 0.7.2，新的发行版本需重新核对补丁及 IPA。当前已验证系统包的命令行与 PipeWire 路径，Snapshot 界面拍照和录像、长期运行、默认镜像接入和整机休眠仍待验收。 [makepkg 手册](https://man.archlinux.org/man/makepkg.8.en)
+
+### JN1 MCLK 与电源域顺序修复（2026-11-18）
+
+JN1 的 runtime resume 会先开 MCLK1，此时可能还没有 CCI 传输，也没有活动的 CAMSS 流。旧 DT 只声明时钟，没声明 MCLK1 需要 `TITAN_TOP_GDSC`。空闲时该域关闭，对应此前解绑触发的 MCLK 启用超时。对照中只暂时唤醒 CCI 就能打开该域，CAMSS 保持 suspended 时 JN1 仍可单独上电。
+
+Negroni 的 JN1 节点现声明 `power-domains = <&camcc TITAN_TOP_GDSC>`，S5KJN1 binding 允许一个可选电源域。I²C 核心在传感器恢复前上电，传感器挂起后释放该域。ARM64 板级 DTB 编译通过，合并测试 overlay 后的设备树与正式编译结果逐属性一致。[Linux 电源域说明](https://docs.kernel.org/next/driver-api/pm/devices.html#device-power-management-domains)
+
+- 在手机内核 `#10` 用 RAM overlay 验证同一属性。最终一轮从全部挂起开始，三轮独立唤醒 JN1 均成功，CCI 与 CAMSS 保持挂起。每次改回 `auto`，JN1 恢复挂起且 `TITAN_TOP_GDSC` 关闭。
+- 三轮 `cam` 各收 90 帧 1080p，序号连续，约 30 fps。另一次从空闲解绑及重新绑定均通过，未见原 MCLK 或 CCI 超时。WirePlumber 恢复后，PipeWire → GStreamer 又完成三轮 1080p 采集，每轮停流后设备都回到挂起。
+- 手机当前保留本轮 RAM overlay，启动 ID 未变，电源策略均为 `auto`。内核曾提示移除加到活动设备树的属性 overlay 可能泄漏内存，此提示来自测试机制。正式 DTB 直接带属性。临时 overlay 随重启消失，重启后仍使用原启动 DTB，直到刷入新的 DTB。
+
+本轮未刷写或重启，整机冷启动、系统休眠和历史主摄 CCI 超时仍待验证。原始对照、overlay 构建和采集日志在忽略的 `logs/camera-20261118/`。
 
 ## 镜像交付与操作入口（2026-11-15）
 
