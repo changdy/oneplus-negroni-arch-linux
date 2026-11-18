@@ -1,6 +1,6 @@
 # GitHub Actions 镜像发布
 
-在仓库的 **Settings → Secrets and variables → Actions** 添加 `IMAGE_LOGIN_PASSWORD`，用于发布镜像中 `oneplus` 的首次登录。root 密码由构建随机生成。发布镜像的使用者应在首次登录后运行 `passwd`，更换初始密码。
+发布镜像中的 `oneplus` 使用[项目默认初始密码](../scripts/image_credentials.py)，适用于桌面登录、SSH 和 `sudo`。root 密码由每次构建随机生成。
 
 修改根目录的 [`IMAGE_VERSION`](../IMAGE_VERSION) 并随本次发布内容推送到 `main`。版本使用 `主版本.次版本.修订号`，例如 `0.1.1`，每次发布使用尚未发布的版本号。只有版本值发生变化的推送才会开始打包。也可以在 Actions 的 **Build and publish image** 中选择 `main` 后手动运行。
 

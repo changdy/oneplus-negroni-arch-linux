@@ -60,22 +60,15 @@ jobs:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - name: Set the image login passwords
-        env:
-          IMAGE_LOGIN_PASSWORD: ${{ secrets.IMAGE_LOGIN_PASSWORD }}
+      - name: Generate the root account password
         run: |
+          umask 077
           python3 - <<'PY'
           import json
-          import os
           import secrets
 
-          password = os.environ.get("IMAGE_LOGIN_PASSWORD")
-          if not password or any(char in password for char in "\r\n\0"):
-              raise SystemExit("Set a nonempty, single-line IMAGE_LOGIN_PASSWORD Actions secret.")
-          fd = os.open("image-credentials.json", os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
-          with os.fdopen(fd, "w", encoding="utf-8") as stream:
-              json.dump({"username": "oneplus", "password": password,
-                         "root_password": secrets.token_urlsafe(24)}, stream)
+          with open("image-credentials.json", "x", encoding="utf-8") as stream:
+              json.dump({"root_password": secrets.token_urlsafe(24)}, stream)
           PY
       - name: Free disk space and install build dependencies
         run: |

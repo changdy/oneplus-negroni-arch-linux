@@ -48,18 +48,16 @@ sha256sum downloads/ArchLinuxARM-aarch64-latest.tar.gz > logs/rootfs-input.sha25
 
 ## 4. 创建本地登录凭据
 
-在全新工作区执行一次，生成权限为 `0600` 的 `image-credentials.json`。命令拒绝覆盖已有文件，也不会输出密码：
+在全新工作区执行一次，为 root 生成随机密码并写入权限为 `0600` 的 `image-credentials.json`。命令拒绝覆盖已有文件，密码保存在该文件中。
 
 ```sh
 python3 - <<'PY'
 import json
 import os
 import secrets
-import string
 
 credentials = {
     "username": "oneplus",
-    "password": "".join(secrets.choice(string.digits) for _ in range(10)),
     "root_password": secrets.token_urlsafe(15),
 }
 fd = os.open("image-credentials.json", os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
@@ -69,7 +67,7 @@ with os.fdopen(fd, "w") as stream:
 PY
 ```
 
-当前账号创建、SSH 和桌面配置均使用 `oneplus`，请保留这个用户名。密码在 rootfs 配置阶段写入镜像；仅修改 JSON 不会改变已完成镜像或手机上的密码。该文件已被 Git 忽略，请单独妥善保存。
+新镜像的 `oneplus` 初始密码由 [`scripts/image_credentials.py`](../scripts/image_credentials.py) 提供，桌面登录、SSH 和 `sudo` 共用该密码。要覆盖默认值，在本地 JSON 中设置 `password` 字段。旧配置里的 `password` 字段也会继续作为覆盖值，移除该字段即可在全新构建中使用默认值。配置在 rootfs 首次构建时写入镜像。该文件已被 Git 忽略，请单独妥善保存。
 
 ## 5. 构建与续建
 

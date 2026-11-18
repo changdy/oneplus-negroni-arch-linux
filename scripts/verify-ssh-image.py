@@ -19,18 +19,18 @@ import time
 
 import pexpect
 
+from image_credentials import load_image_credentials
+
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("image", type=Path)
 parser.add_argument("log_directory", type=Path)
 args = parser.parse_args()
-project = Path(__file__).resolve().parent.parent
 image = args.image.resolve()
 logs = args.log_directory.resolve()
 assert os.geteuid() == 0
 assert os.readlink("/proc/self/ns/net") != os.readlink("/proc/1/ns/net"), "Use a private network namespace"
-credentials = json.loads((project / "image-credentials.json").read_text())
-assert credentials["username"] == "oneplus"
+password, _ = load_image_credentials()
 logs.mkdir(parents=True, exist_ok=True)
 
 
@@ -70,7 +70,7 @@ with tempfile.TemporaryDirectory(prefix="negroni-ssh-test-") as temporary:
         libcrypt = ctypes.CDLL(ctypes.util.find_library("crypt"))
         libcrypt.crypt.argtypes = (ctypes.c_char_p, ctypes.c_char_p)
         libcrypt.crypt.restype = ctypes.c_char_p
-        assert libcrypt.crypt(credentials["password"].encode(), stored_hash) == stored_hash
+        assert libcrypt.crypt(password.encode(), stored_hash) == stored_hash
         report["existing_password_hash_matches"] = True
         key_directory = target / "run/ssh-test"
         key_directory.mkdir(mode=0o700)
@@ -104,7 +104,7 @@ with tempfile.TemporaryDirectory(prefix="negroni-ssh-test-") as temporary:
                 "oneplus@127.0.0.1", "id -un && cat /etc/hostname",
             ], encoding="utf-8", timeout=30)
             client.expect(r"(?i)password:")
-            client.sendline(credentials["password"])
+            client.sendline(password)
             client.expect(pexpect.EOF)
             output = client.before.replace("\r", "")
             client.close()

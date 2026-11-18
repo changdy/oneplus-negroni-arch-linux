@@ -42,12 +42,7 @@ EOF
 if ! chroot "$target_dir" id oneplus >/dev/null 2>&1; then
     chroot "$target_dir" useradd -m -G wheel,audio,video,input -s /bin/bash oneplus
 fi
-python3 - "$target_dir" <<'PY'
-import json,subprocess,sys
-with open('image-credentials.json') as f:
-    c=json.load(f)
-subprocess.run(['chroot',sys.argv[1],'chpasswd'],input=f"{c['username']}:{c['password']}\nroot:{c['root_password']}\n",text=True,check=True)
-PY
+python3 -B "$project_dir/scripts/image_credentials.py" "$target_dir"
 install -d -m 750 "$target_dir/etc/sudoers.d"
 printf '%%wheel ALL=(ALL:ALL) ALL\n' > "$target_dir/etc/sudoers.d/10-wheel"
 chmod 440 "$target_dir/etc/sudoers.d/10-wheel"

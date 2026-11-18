@@ -71,7 +71,7 @@ A 槽曾因缺少成功标记而耗尽重试次数、进入 recovery，现已恢
 ssh oneplus@手机IP
 ```
 
-密码为构建时本地 `image-credentials.json` 中的 `password`；也支持为 `oneplus` 配置 SSH 公钥。root 远程登录和空密码登录被禁用，主机密钥在首次启动时生成。镜像未预置 Wi-Fi 凭据。USB 数据线 SSH 由 `configure-usb-debug.sh` 装进下一次构建的镜像；此前构建的镜像仍需按 [USB 调试通道](usb-debug.md) 补装。
+登录使用[构建时设置的 `oneplus` 初始密码](building.md#4-创建本地登录凭据)，也支持为 `oneplus` 配置 SSH 公钥。root 远程登录和空密码登录被禁用，主机密钥在首次启动时生成。镜像未预置 Wi-Fi 凭据。USB 数据线 SSH 由 `configure-usb-debug.sh` 装进下一次构建的镜像；此前构建的镜像仍需按 [USB 调试通道](usb-debug.md) 补装。
 
 ## 已知问题与配置取舍
 

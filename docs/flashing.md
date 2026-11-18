@@ -145,7 +145,7 @@ fastboot -s "$DEVICE_SERIAL" reboot
 
 ## 4. 首次启动
 
-预期进入 SDDM，默认会话为 Plasma Mobile，账号为 `oneplus`。密码从本地 `image-credentials.json` 读取；网络连接和 SSH 说明见[设备状态](status.md)。
+预期进入 SDDM，默认会话为 Plasma Mobile，账号为 `oneplus`。初始密码取自[构建时的密码配置](building.md#4-创建本地登录凭据)。网络连接和 SSH 说明见[设备状态](status.md)。
 
 在手机终端记录：
 
