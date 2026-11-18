@@ -140,6 +140,8 @@ if [[ $with_kernel == true ]]; then
     python3 -B tests/test-gpu-recovery.py
     printf 'Running Wi-Fi regulatory intersection checks...\n'
     python3 -B tests/test-wifi-regulatory.py
+    printf 'Running S5KJN1 sensor selection checks...\n'
+    python3 -B tests/test-s5kjn1-selection.py
     printf 'Checking Docker configuration in fresh and existing kernel outputs...\n'
     python3 -B tests/test-docker-config.py
 fi

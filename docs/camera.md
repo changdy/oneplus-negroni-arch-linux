@@ -1,14 +1,55 @@
 # 相机调试
 
-资料整理：2026-11-15；最近实机证据：2026-11-14。当前固定内核与恢复包见[内核提交说明](../patches/linux/README.md)。
+最近实机验证为 2026-11-18。当前固定内核与恢复包见[内核提交说明](../patches/linux/README.md)。
 
-四摄均取得 RAW。超广角已有 Snapshot 预览和短录像（带声音），主摄/长焦/前摄仍是实验采集路径。CSID、C-PHY 和 GDSC 修复后，候选测试 58 次启停和随后运行模块 16 次四摄启停通过；长时间、冷启动、睡眠交叉与空闲功耗未测。完整成像、AF/OIS、应用切换尚未完成。
+四摄在 NE2210 上均取得 RAW。超广角已用 Snapshot 预览、录过带声音的短片，也通过独立脚本生成过软件 JPEG。主摄、长焦和前摄仍通过实验模块按需采集。CSID、C-PHY 和 GDSC 修复后的历史记录为候选模块 58 次启停通过、实机安装模块四轮 16 次启停通过。四摄长时间运行、冷启动、睡眠恢复和空闲功耗待验收。
 
-超广角 JN1 的出流设备树在内核 `463b5ac2be3b`：PM8010J 的 L1 1.056 V、L3 2.8 V，CSI PHY2，MCLK 24 MHz，GPIO24 低有效复位，EEPROM 在 `0x50`。`0x51` 没有应答。主摄、长焦、前摄不放进板级设备树。`scripts/build-extra-camera-modules.sh` 交叉编译 `imx615.ko`、`negroni_extra_sensors.ko`、`negroni_camera_overlay.ko` 和四摄测试 overlay，装到 `/usr/lib/negroni/camera/`，不自动加载。采集脚本装到 `/usr/local/bin/`。libcamera 用的 system dma-heap udev 规则一并安装。默认启用以稳定性和功耗证据为准；这三颗的开机自动加载、休眠和空闲功耗尚未验证，暂保留手动入口。打包路径已接入，新镜像未构建、未刷入。
+| 镜头 | 已实测路径 | 主要待办 |
+| --- | --- | --- |
+| S5KJN1 超广角 | 4080×3072 RAW10、GRBG；1080p 应用路径；独立 JPEG 和持续补光 | libcamera 裁剪区实机复测、曝光时序、颜色校准和长时运行 |
+| IMX789 主摄 | 4000×3008 RAW10、BGGR、三组 C-PHY；单帧实拍 | 正常拍摄模式、标准曝光/增益控制、AF/OIS |
+| OV08A10 长焦 | 3264×1836 RAW10、两通道 D-PHY；单帧实拍 | 确认 Bayer 相位、标准曝光/增益控制、AF/OIS |
+| IMX615 前摄 | 3280×2464 RAW10、RGGB；色条与实拍 | 用交付入口复测、应用枚举及前后摄切换 |
+
+新镜像安装四摄实验入口、应用依赖及运行配置。2026-11-18 这台手机的 rootfs 仍在使用此前手工安装的应用与配置，未找到镜像提供的扩展模块目录和脚本。完整新镜像未构建、未刷入。
+
+## 相机优化与修复专项
+
+以超广角日常预览、拍照和录像为第一阶段。底层切换、应用接入和颜色调校分别用可重复的实机结果验收。
+
+| 顺序 | 工作 | 验收依据 |
+| --- | --- | --- |
+| 1 | 完成 JN1 裁剪区复测，将已验证的 libcamera 曝光修复纳入软件包 | 同一 1080p 流从两种初始 sensor 模式进入时，四个 selection 查询正确，曝光微秒值与当前模式行长一致，正常出帧并释放供电 |
+| 2 | 改善 JN1 自动曝光、白平衡和色彩 | 先核对增益换算与生效延迟，再用同光照下的 RAW、灰卡/色卡和应用输出对照。记录暗部、亮部裁剪及不同光照下的偏色 |
+| 3 | 验收启停、休眠和功耗 | 先测 JN1，再用交付入口逐镜头捕获和卸载。记录帧序号及间隔、停流后各设备 runtime PM、同条件空闲功耗、启动 ID、CCI/CSID/SMMU 错误；另做冷启动及休眠后的首开 |
+| 4 | 接入其余三摄与 AF/OIS | 先补标准 V4L2 控制，再验相机应用枚举与前后摄切换。对照本机原厂正常模式、执行器供电及固件，逐项验证对焦、防抖和高分辨率模式 |
+
+专项复核了本地 Codex 对话《继续推送摄像头驱动》《移植安卓相机驱动》《分析刷回一加系统对驱动的帮助》。Cursor 的重启、应用和功能补齐讨论沿用此前的[项目对话清单](../artifacts/project-audit-20261115/conversations.json)。旧对话中的硬重启结论见[后续 CSID 修复](#启停硬重启修复2026-11-14-下午)。偏绿的早期预览已用同帧白平衡对照定位，Snapshot 的曝光和色彩仍需独立验证。原厂回采优先沿已有 sensormodule、tuning、DNG 矩阵及 EEPROM 解析继续，回到 Android 采集运行时数据作为本地资料不足时的备选。原厂 5.10 模块保留作离线参考。[颜色核查](#预览偏绿的离线核查2026-11-13) · [原厂资料](stock-hardware.md#相机)
+
+## JN1 裁剪区与曝光时序（2026-11-18）
+
+通过 USB SSH 在内核 `#8`、CAMSS 模块 `e8d3b218…` 和 libcamera 0.7.2 上复测。WirePlumber 枚举一颗 JN1，Video 无活动流，桌面用户可访问 system dma-heap。使用 `cam -c 1 --capture=90 --stream=role=viewfinder,width=1920,height=1080 --metadata` 做两次有限采集，无图像文件落盘。
+
+四次运行均使用 4080×3072 GRBG RAW10 输入，输出 1920×1080 ABGR8888。每次帧序号均为 0–89。
+
+| libcamera | 切换前的 sensor 格式 | 1080p 平均交付率 | 最大曝光行数对应的应用元数据 |
+| --- | --- | --- | --- |
+| 系统 0.7.2 | 8160×6144 | 30.002 fps | 66183 µs |
+| 系统 0.7.2 | 4080×3072 | 30.007 fps | 33152 µs |
+| 0.7.2 候选 | 8160×6144 | 30.017 fps | 33152 µs |
+| 0.7.2 候选 | 4080×3072 | 30.016 fps | 33152 µs |
+
+四次运行处于同一 boot ID。系统版第二次及候选版最后一次停流后确认 JN1、CCI、CAMSS、CAMCC 都是 `auto / suspended`。冷启动、系统休眠和实际功耗未测。原始输出留在本机忽略的 `logs/camera-20261118/`。
+
+- **裁剪区。** 旧驱动用模式宽度填入裁剪矩形的高度，缺少 `CROP_DEFAULT`，libcamera 在全分辨率初始格式下报 `PixelArraySize=8160x8160`。两套现有寄存器表的模拟读出均为 `(0, 0)/8192×6176`，数字偏移换算回传感器坐标均裁去四边各 16 像素。修复后 `CROP`、`CROP_BOUNDS` 和 `NATIVE_SIZE` 报告完整读出，`CROP_DEFAULT` 报告 `(16, 16)/8160×6144`。这两个尺寸在 ACTIVE 与 TRY 中都固定，输出分辨率仍由 pad format 决定。ARM64 `s5kjn1.ko` 的 `W=1` 构建和真实回调的主机回归通过，模块尚未换到手机。 [libcamera 驱动要求](https://docs.libcamera.org/master/sensor_driver_requirements.html)
+- **曝光元数据。** 4080 模式行长为 4352 像素，像素率为 560 MHz，4266 行曝光为约 33152 µs。66183 µs 对应全分辨率模式的 8688 像素行长。v0.7.2 Software ISP 初始化时读取 `sensorInfo`，配置时更新曝光控制范围却沿用初始化的行长。v0.8.0 软件 ISP 的配置路径也沿用初始化缓存的时序，尚未在本机运行。候选补丁在设置 ACTIVE 格式后读取当前 `sensorInfo`，随配置传给 IPA。候选在 WSL 和手机临时目录均编译成功，两种初始模式的曝光读数一致。 [v0.7.2 Software ISP](https://github.com/libcamera-org/libcamera/blob/v0.7.2/src/libcamera/software_isp/software_isp.cpp#L153) · [v0.7.2 IPA](https://github.com/libcamera-org/libcamera/blob/v0.7.2/src/ipa/simple/soft_simple.cpp#L202) · [v0.8.0 IPA](https://github.com/libcamera-org/libcamera/blob/v0.8.0/src/ipa/softisp/softisp.cpp#L192)
+- **色彩。** 四次采集均使用 `uncalibrated.yaml`，静态属性、增益 helper 与控制生效延迟的警告仍在。曝光读数的修复已经验证，成像标定仍在专项内继续。
+
+[曝光补丁](../artifacts/camera-20261118/libcamera-v0.7.2-active-sensor-timing.patch)以 libcamera v0.7.2 的 `191e202178f02430b5942397c70d215cdd2056fa` 为基准。它改动 IPA IPC 配置结构，测试时使用同一次构建的 libcamera、simple IPA 和 `cam`。系统包、WirePlumber 和 Snapshot 沿用原安装，候选暂未接入默认打包。验收软件包时还需检查 Snapshot 预览、拍照、录像及两种初始模式，确保 PipeWire 加载匹配的 IPA。
 
 ## 镜像交付与操作入口（2026-11-15）
 
-`configure-camera.sh` 调用扩展模块构建器，安装采集/测光/预览工具、显式加载入口、dma-heap 权限和系统级 WirePlumber 配置。基础清单安装 Snapshot、libcamera/IPA/PipeWire 接入、v4l-utils、FFmpeg、NumPy 与 Pillow。设备树里的 JN1 默认探测，另外三摄按需加载：
+`configure-camera.sh` 调用扩展模块构建器，安装采集/测光/预览工具、显式加载入口、dma-heap 权限和系统级 WirePlumber 配置。基础清单安装 Snapshot、libcamera/IPA/PipeWire 接入、v4l-utils、FFmpeg、NumPy 与 Pillow。内核 `463b5ac2be3b` 的板级设备树默认探测 JN1。另三颗由 `imx615.ko`、`negroni_extra_sensors.ko`、`negroni_camera_overlay.ko` 和 DT overlay 提供，装在 `/usr/lib/negroni/camera/`，按需加载。
 
 ```sh
 # 手机上，先关闭相机应用和正在运行的预览：
@@ -34,14 +75,14 @@ sudo negroni-camera-extra.sh unload
 
 - `cam -l` 识别为 `Internal back camera`，simple pipeline + 软件 ISP；`cam` 默认选 8152×6144 ABGR8888，约 10 fps，20 帧采集正常。
 - Snapshot 经 KDE 相机门户授权后预览 1920×1080 BGRx；用户录得 1.63 s、49 帧、1920×1080 30 fps VP8 + Vorbis 的 WebM，竖屏方向正确、场景可辨认，但偏亮发灰、饱和度低。全程 boot ID `77beb172` 未变，未硬重启。
-- libcamera 警告：传感器驱动缺少裁剪矩形（PixelArrayActiveAreas 被默认为整幅）、没有 `s5kjn1` 的静态属性与 sensor helper，IPA 使用 `uncalibrated.yaml`。这些是颜色、曝光不准的直接原因。
+- libcamera 警告涉及裁剪区、静态属性及 sensor helper，IPA 使用 `uncalibrated.yaml`。裁剪区和模式切换时的曝光读数见[后续定位](#jn1-裁剪区与曝光时序2026-11-18)。偏亮发灰的程度还需用受控光照与色卡验证。
 - 同时段另一会话向 S5KJN1 的 runtime PM `power/control` 写入时出现 `cam_cc_mclk1_clk status stuck at 'off'` 与 CCI 超时，与 Snapshot 无关，但说明多会话同时操作相机会互相干扰。
 
-未测：Snapshot 拍照、长时间预览/录像、前后摄切换（需其余三颗进入开机加载）、睡眠唤醒后再开相机。
+未测：Snapshot 拍照、长时间预览/录像、其余三颗被应用枚举后的镜头切换、睡眠唤醒后再开相机。
 
 ## 启停硬重启修复（2026-11-14 下午）
 
-**四颗相机均已取得 RAW，主摄、长焦、前摄也已解包出真实场景。2026-11-14 下午修正 CSID 顶层配置与停流路径后，候选模块连续 58 次四摄切换/重复启停未再硬重启；该修正已提交为内核 `a7d9e945d961`，并已编入 `/opt/negroni-build/images/7.3`。2026-11-14 17:03 经同意只写 `boot_b` 并换上对应的 `qcom-camss.ko` 后重启，内核变为 `#5`（16:24:56 构建），模块哈希 `9ca488a3…`，B 槽仍为 Active / Successful / Bootable。17:10 那份只有 CSID 修复的模块不认识 C-PHY，四摄 overlay 探测失败；超广角随后因 `titan_top_gdsc` 卡在 off 而无法再次上电。随后把 C-PHY、gen2 PHY、GDSC 保持和连续 DMA 提交为内核 `d1ca2f4d48c2` 并写入 `boot_b`。17:34 重启为内核 `#6`（17:16:58 构建），模块 `e8d3b218…`，B 槽仍成功。17:35 用这份模块跑主摄→长焦→前摄→超广角共 4 轮、16 次启停全部出帧，`failures=0`，没有 GDSC 卡住，也没有硬重启，boot ID `a8d22d68`。测试结束已卸掉 overlay。长时间运行和睡眠交叉仍未测，尚不可作为日常相机使用。** 当前手机上仍是手动配置的实验采集路径，未接入相机应用。
+**四颗相机均已取得 RAW，主摄、长焦、前摄也已解包出真实场景。2026-11-14 下午修正 CSID 顶层配置与停流路径后，候选模块连续 58 次四摄切换/重复启停未再硬重启；该修正已提交为内核 `a7d9e945d961`，并已编入 `/opt/negroni-build/images/7.3`。2026-11-14 17:03 经同意只写 `boot_b` 并换上对应的 `qcom-camss.ko` 后重启，内核变为 `#5`（16:24:56 构建），模块哈希 `9ca488a3…`，B 槽仍为 Active / Successful / Bootable。17:10 那份只有 CSID 修复的模块不认识 C-PHY，四摄 overlay 探测失败；超广角随后因 `titan_top_gdsc` 卡在 off 而无法再次上电。随后把 C-PHY、gen2 PHY、GDSC 保持和连续 DMA 提交为内核 `d1ca2f4d48c2` 并写入 `boot_b`。17:34 重启为内核 `#6`（17:16:58 构建），模块 `e8d3b218…`，B 槽仍成功。17:35 用这份模块跑主摄→长焦→前摄→超广角共 4 轮、16 次启停全部出帧，`failures=0`，没有 GDSC 卡住，也没有硬重启，boot ID `a8d22d68`。测试结束已卸掉 overlay。长时间运行和睡眠交叉仍未测，尚不可作为日常相机使用。** 该轮额外三摄使用手动加载的实验采集入口，超广角应用接入见上节。
 
 对照原厂 `cam_ife_csid_hw_ver2.c`、`cam_ife_csid680.h` / `cam_ife_csid_lite680.h` 后，在主线 CSID 680 及公共流程中确认三处代码缺陷：
 
@@ -139,7 +180,7 @@ sudo bash negroni-camera-capture.sh /tmp/jn1.raw 1 0 3840 8
 
 输出是带行尾 padding 的 MIPI RAW10，不是 JPEG。每行仅前 5100 字节为 4080 个像素，余下 4 字节为 padding；必须按 5104 的 stride 解包。传感器旋转属性为 90°，上述文件未自动旋转。保存拍摄文件后先 `sync` 并复制到电脑，避免后续开发中的硬重启丢失缓存内容。
 
-8160×6144 模式、libcamera、实时预览、录像、长时间温控和全新完整镜像均**未测**；其余三颗镜头的后续 RAW 进展见上文。超广角的软件曝光、白平衡和 JPEG 见下一节，尚未在本轮实机跑通。
+这条单次 RAW 工具固定用 4080×3072。较晚的全分辨率软件 ISP 短测、应用预览与录像见[Snapshot 记录](#相机应用-snapshot2026-11-14-晚)，软件曝光、白平衡和 JPEG 见下一节。长时间温控及全新完整镜像未测。
 
 ## 静态照片、闪光灯与模组 EEPROM（2026-11-14）
 
@@ -190,6 +231,6 @@ python scripts/negroni-camera-raw-preview.py jn1.raw preview-roi.png --wb-roi 24
 
 ## 镜像与回退材料
 
-2026-11-13 用户同意该轮刷写和重启，当日只写 `boot_b` 并安装相机模块，`vendor_boot_b` 保持不变；原 initramfs、启动参数与当前根 UUID 均保留。2026-11-14 没有再刷写或主动重启。测试 boot 的 SHA-256 为 `8030cb0e2fc81c01a3dbeaf1f7f6d200b2ec4f9c2563a0503b9765435cd87f4b`，当前安装的连续 DMA 模块为 `0c78430b93a2e20b3fe9d1b0866e61ef214d9d2b07ca5e800b78a947090d3fd4`。
+2026-11-13 经同意更新 `boot_b` 和相机模块，`vendor_boot_b` 保持不变，保留当时的 initramfs、启动参数和根 UUID。该轮 boot 哈希为 `8030cb0e2fc81c01a3dbeaf1f7f6d200b2ec4f9c2563a0503b9765435cd87f4b`，CAMSS 模块为 `0c78430b93a2e20b3fe9d1b0866e61ef214d9d2b07ca5e800b78a947090d3fd4`。2026-11-14 后续两次经同意更新 `boot_b`，详见[启停硬重启修复](#启停硬重启修复2026-11-14-下午)。2026-11-18 核对到旧版 JN1 仍在运行，已安装 CAMSS 模块哈希为 `e8d3b21826ed71b669d788ddc0e52b79415b582f2ab9b02cad658f46420379bc`。
 
 原分区备份分别在电脑 `logs/camera-20261113/` 和手机 `~/camtest/20261113/`，原模块及 `/boot` 文件也保存在手机该目录。备份、镜像、RAW、实拍预览和原始日志均不纳入 Git。回退若要写分区或重启，仍须先按 [AGENTS.md](../AGENTS.md) 征得用户同意。

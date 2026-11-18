@@ -29,6 +29,7 @@ artifacts/usb2-gadget-20261113/*.patch text eol=lf whitespace=-blank-at-eol,-bla
 /artifacts/camera-20261114/** text eol=lf
 artifacts/camera-20261113/*.patch text eol=lf whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab
 artifacts/camera-20261114/*.patch whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab
+artifacts/camera-20261118/*.patch text eol=lf whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab
 config/gnss/sources.txt text eol=lf
 config/gnss/runtime/ModemManager binary
 config/gnss/runtime/*.so.* binary
