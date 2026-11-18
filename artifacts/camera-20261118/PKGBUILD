@@ -1,0 +1,110 @@
+# Runtime splits follow the Arch Linux ARM libcamera 0.7.2-4 recipe.
+# https://github.com/archlinuxarm/PKGBUILDs/tree/b064ac7c9bf6ad5b163b3635e6b5add6f2a07309/extra/libcamera
+pkgbase=libcamera
+pkgname=(libcamera libcamera-ipa libcamera-tools gst-plugin-libcamera)
+pkgver=0.7.2
+pkgrel=4.1
+pkgdesc='Camera support library with the active-mode Software ISP timing fix'
+arch=(aarch64)
+url=https://libcamera.org/
+options=(!debug !lto)
+license=(
+  Apache-2.0 BSD-2-Clause CC0-1.0 CC-BY-4.0 CC-BY-SA-4.0
+  GPL-2.0-or-later LGPL-2.1-or-later
+  'GPL-2.0-only WITH Linux-syscall-note'
+  'GPL-2.0-or-later WITH Linux-syscall-note OR BSD-3-Clause'
+  'GPL-2.0-or-later WITH Linux-syscall-note OR MIT'
+)
+makedepends=(
+  glib2 gnutls gst-plugins-base gtest libdrm libelf libevent libglvnd
+  libjpeg-turbo libpisp libtiff libunwind libyaml libyuv meson
+  openssl python-jinja python-ply python-pyyaml qt6-base qt6-tools sdl2 systemd
+)
+_commit=191e202178f02430b5942397c70d215cdd2056fa
+_source_dir=libcamera-$_commit
+source=(
+  "libcamera-$pkgver.tar.gz::https://codeload.github.com/libcamera-org/libcamera/tar.gz/$_commit"
+  libcamera-v0.7.2-active-sensor-timing.patch
+)
+sha256sums=(
+  cb26396dfc8c5359ccdff8670ad6972a663f46d029f6aba0feb543039059dde7
+  0ffb7861c9a8e4756716cc16be49d1e18888125a53a84fb239a00b057fca33e4
+)
+
+prepare() {
+  cd "$_source_dir"
+  patch --batch --forward -p1 -i "$srcdir/libcamera-v0.7.2-active-sensor-timing.patch"
+  printf '%s\n' "$pkgver" > .tarball-version
+}
+
+build() {
+  # GCC 16 reports array-bounds in the libstdc++ shared_ptr logging code.
+  arch-meson "$_source_dir" build \
+    -D pipelines=imx8-isi,mali-c55,rkisp1,rpi/pisp,rpi/vc4,simple,uvcvideo,vimc,virtual \
+    -D v4l2=enabled -D softisp-gpu=enabled -D tracing=disabled \
+    -D rpi-awb-nn=disabled -D documentation=disabled -D pycamera=disabled -D test=false \
+    -D cpp_args=-Wno-error=array-bounds
+  meson compile -C build -j "${NEGRONI_BUILD_JOBS:-2}"
+}
+
+# Move the runtime splits out of the base staging tree before makepkg strips it.
+_split() {
+  local package=$1 path
+  shift
+  for path; do
+    mkdir -p "$srcdir/$package/$(dirname "$path")"
+    mv -T "$pkgdir/$path" "$srcdir/$package/$path"
+  done
+}
+
+package_libcamera() {
+  depends=(glibc gnutls "libcamera-ipa=$pkgver-$pkgrel" libelf libgcc libglvnd
+           libpisp libstdc++ libunwind libyaml libyuv sh systemd-libs libudev.so)
+  optdepends=('gst-plugin-libcamera: GStreamer plugin' 'libcamera-tools: for applications')
+  provides=(libcamera.so libcamera-base.so)
+  meson install -C build --no-rebuild --destdir "$pkgdir"
+  install -Dm644 "$_source_dir"/LICENSES/{BSD-3-Clause,Linux-syscall-note,MIT}.txt \
+    -t "$pkgdir/usr/share/licenses/$pkgname/"
+  _split libcamera-ipa usr/lib/libcamera
+  _split libcamera-tools usr/bin/{cam,libcamera-bug-report,lc-compliance,qcam}
+  _split gst-plugin-libcamera usr/lib/gstreamer-1.0
+}
+
+package_libcamera-ipa() {
+  pkgdesc+=' - signed IPA'
+  depends=(glibc "libcamera=$pkgver-$pkgrel" libcamera.so libcamera-base.so libgcc libstdc++)
+  options+=(!strip)
+  local key=build/src/ipa-priv-key.pem module
+  local -a modules
+  shopt -s nullglob
+  modules=("$srcdir/libcamera-ipa/usr/lib/libcamera/ipa"/ipa_*.so
+           "$srcdir/libcamera-ipa/usr/lib/libcamera/v4l2-compat.so")
+  (( ${#modules[@]} > 1 )) || return 1
+  strip --strip-unneeded "$srcdir/libcamera-ipa/usr/lib/libcamera/"*_ipa_proxy
+  for module in "${modules[@]}"; do
+    strip --strip-unneeded "$module"
+    "$_source_dir/src/ipa/ipa-sign.sh" "$key" "$module" "$module.sign"
+  done
+  mv "$srcdir/libcamera-ipa/usr" "$pkgdir/"
+  install -Dm644 "$_source_dir/LICENSES/BSD-2-Clause.txt" \
+    "$pkgdir/usr/share/licenses/$pkgname/BSD-2-Clause.txt"
+}
+
+package_libcamera-tools() {
+  pkgdesc+=' - tools'
+  depends=(glibc gtest "libcamera=$pkgver-$pkgrel" libcamera.so libcamera-base.so libdrm
+           libevent libevent-2.1.so libevent_pthreads-2.1.so libgcc libjpeg-turbo
+           libjpeg.so libstdc++ libtiff libtiff.so libyaml qt6-base sdl2)
+  conflicts=("$pkgbase-tests<0.0.1-2")
+  replaces=("$pkgbase-tests<0.0.1-2")
+  mv "$srcdir/libcamera-tools/usr" "$pkgdir/"
+  install -Dm644 "$_source_dir/LICENSES/BSD-2-Clause.txt" \
+    "$pkgdir/usr/share/licenses/$pkgname/BSD-2-Clause.txt"
+}
+
+package_gst-plugin-libcamera() {
+  pkgdesc='GStreamer plugin for libcamera with the active-mode timing fix'
+  depends=(glib2 libglib-2.0.so libgobject-2.0.so glibc gst-plugins-base-libs gstreamer
+           "libcamera=$pkgver-$pkgrel" libcamera.so libcamera-base.so libgcc libstdc++)
+  mv "$srcdir/gst-plugin-libcamera/usr" "$pkgdir/"
+}

@@ -6,7 +6,7 @@
 
 | 镜头 | 已实测路径 | 主要待办 |
 | --- | --- | --- |
-| S5KJN1 超广角 | 4080×3072 RAW10、GRBG；1080p 应用路径；独立 JPEG 和持续补光；两种模式的裁剪区实机通过 | 曝光软件包、颜色校准和长时运行 |
+| S5KJN1 超广角 | 4080×3072 RAW10、GRBG；1080p 应用路径；独立 JPEG 和持续补光；裁剪区和曝光软件包已在本机实测 | Snapshot 完整验收、颜色校准和长时运行 |
 | IMX789 主摄 | 4000×3008 RAW10、BGGR、三组 C-PHY；单帧实拍 | 正常拍摄模式、标准曝光/增益控制、AF/OIS |
 | OV08A10 长焦 | 3264×1836 RAW10、两通道 D-PHY；单帧实拍 | 确认 Bayer 相位、标准曝光/增益控制、AF/OIS |
 | IMX615 前摄 | 3280×2464 RAW10、RGGB；色条与实拍 | 用交付入口复测、应用枚举及前后摄切换 |
@@ -19,7 +19,7 @@
 
 | 顺序 | 工作 | 验收依据 |
 | --- | --- | --- |
-| 1 | JN1 裁剪区已部署，将已验证的 libcamera 曝光修复纳入软件包 | 两种 sensor 模式已通过四个 selection 查询。完整软件包需要复测两种初始模式下的曝光微秒值、桌面出帧及停流后的 runtime PM |
+| 1 | 已部署 JN1 裁剪区和 libcamera 曝光软件包 | 两种 sensor 模式的 selection、曝光微秒值、PipeWire 出帧及停流后的 runtime PM 已验。Snapshot 拍照、录像及新镜像集成待验 |
 | 2 | 改善 JN1 自动曝光、白平衡和色彩 | 先核对增益换算与生效延迟，再用同光照下的 RAW、灰卡/色卡和应用输出对照。记录暗部、亮部裁剪及不同光照下的偏色 |
 | 3 | 验收启停、休眠和功耗 | 先测 JN1，再用交付入口逐镜头捕获和卸载。记录帧序号及间隔、停流后各设备 runtime PM、同条件空闲功耗、启动 ID、CCI/CSID/SMMU 错误；另做冷启动及休眠后的首开 |
 | 4 | 接入其余三摄与 AF/OIS | 先补标准 V4L2 控制，再验相机应用枚举与前后摄切换。对照本机原厂正常模式、执行器供电及固件，逐项验证对焦、防抖和高分辨率模式 |
@@ -45,7 +45,7 @@
 - **曝光元数据。** 4080 模式行长为 4352 像素，像素率为 560 MHz，4266 行曝光为约 33152 µs。66183 µs 对应全分辨率模式的 8688 像素行长。v0.7.2 Software ISP 初始化时读取 `sensorInfo`，配置时更新曝光控制范围却沿用初始化的行长。v0.8.0 软件 ISP 的配置路径也沿用初始化缓存的时序，尚未在本机运行。候选补丁在设置 ACTIVE 格式后读取当前 `sensorInfo`，随配置传给 IPA。候选在 WSL 和手机临时目录均编译成功，两种初始模式的曝光读数一致。 [v0.7.2 Software ISP](https://github.com/libcamera-org/libcamera/blob/v0.7.2/src/libcamera/software_isp/software_isp.cpp#L153) · [v0.7.2 IPA](https://github.com/libcamera-org/libcamera/blob/v0.7.2/src/ipa/simple/soft_simple.cpp#L202) · [v0.8.0 IPA](https://github.com/libcamera-org/libcamera/blob/v0.8.0/src/ipa/softisp/softisp.cpp#L192)
 - **色彩。** 四次采集均使用 `uncalibrated.yaml`，静态属性、增益 helper 与控制生效延迟的警告仍在。曝光读数的修复已经验证，成像标定仍在专项内继续。
 
-[曝光补丁](../artifacts/camera-20261118/libcamera-v0.7.2-active-sensor-timing.patch)以 libcamera v0.7.2 的 `191e202178f02430b5942397c70d215cdd2056fa` 为基准。它改动 IPA IPC 配置结构，测试时使用同一次构建的 libcamera、simple IPA 和 `cam`。系统包、WirePlumber 和 Snapshot 沿用原安装，候选暂未接入默认打包。验收软件包时还需检查 Snapshot 预览、拍照、录像及两种初始模式，确保 PipeWire 加载匹配的 IPA。
+[曝光补丁](../artifacts/camera-20261118/libcamera-v0.7.2-active-sensor-timing.patch)以 libcamera v0.7.2 的 `191e202178f02430b5942397c70d215cdd2056fa` 为基准。它改动 IPA IPC 配置结构，初次验证使用临时目录中同一次构建的 libcamera、simple IPA 和 `cam`。正式软件包验证见下文。
 
 ### JN1 裁剪区实机部署（2026-11-18 上午）
 
@@ -55,7 +55,17 @@
 - `cam` 的 1080p 短测连续交付 90 帧。WirePlumber 恢复后重新枚举相机及音频设备，PipeWire → GStreamer 路径再以 1080p、30 fps 协商连续做三轮各 90 帧采集，均正常到达 EOS。每轮停流后 JN1、CCI、CAMSS、CAMCC 均回到 runtime suspend。启动 ID 一致，未刷写或重启。
 - 卸载旧模块时出现一次 `cam_cc_mclk1_clk status stuck at 'off'`。调用栈经过 `unbind_store → device_release_driver_internal → rpm_resume → s5kjn1_power_on`，发生在旧模块解绑前的 runtime resume。随后正常采集和停流通过。该告警的电源与时钟恢复顺序仍待定位。
 
-新模块已持久安装，重启加载、冷启动及系统休眠仍未测。原始日志保存在忽略的 `logs/camera-20261118/`。
+10:28 系统日志记录了另一条 `systemctl reboot` 发起的有序重启。内核 `#10` 启动后自动加载相同哈希的 JN1 模块，libcamera 再次读回正确的两个像素区。完全断电冷启动与系统休眠仍未测。原始日志保存在忽略的 `logs/camera-20261118/`。
+
+### libcamera 曝光软件包实机部署（2026-11-18 上午）
+
+用 [PKGBUILD](../artifacts/camera-20261118/PKGBUILD) 在 NE2210 原生构建并成组安装 `libcamera`、`libcamera-ipa`、`libcamera-tools` 和 `gst-plugin-libcamera` 0.7.2-4.1。与已安装的 Arch Linux ARM 0.7.2-4 四个包逐项核对文件清单，保留 VIMC 和 V4L2 兼容组件。确认系统版 simple IPA 签名有效，GStreamer 的 `libcamerasrc` 可加载，四包完整性核对均为零改动。GCC 16 编译保留 `array-bounds` 告警级别。[libcamera 上游讨论](https://lists.libcamera.org/pipermail/libcamera-devel/2026-June/058976.html)
+
+- 两种初始 sensor 模式分别运行系统 `cam` 采集 90 帧 1080p，帧序号连续，曝光首值均为 29842 µs、最大值均为 33152 µs。
+- 等 WirePlumber 的实际 Video/Source 出现后，PipeWire → GStreamer 1080p/30 三次各 90 帧采集均到达 EOS。每轮停流后 JN1、CCI、CAMSS、CAMCC 都回到 runtime suspend，启动 ID 一致。首次部署因验证脚本只等到设备、尚未等到视频源而回滚，修正等待条件后通过。
+- 当前手机保留四个补丁包，与原始发行包分开存放。构建产物在手机 `~/camtest/libcamera-pkg.RHsOqa/`，原四个 0.7.2-4 发行包及签名仍在 `/var/cache/pacman/pkg/`。需要回退时应在相机空闲时一次恢复四个原包。
+
+在配好 Arch Linux ARM `base-devel` 和配方声明的依赖后，把 `PKGBUILD` 及同目录的曝光补丁复制到同一构建目录，用普通用户运行 `makepkg --verifysource` 和 `makepkg`。包的源码与补丁有固定 SHA-256。该配方针对本轮 0.7.2，新的发行版本需重新核对补丁及 IPA。当前已验证系统包的命令行与 PipeWire 路径，Snapshot 界面拍照和录像、长期运行、默认镜像接入和整机休眠仍待验收。 [makepkg 手册](https://man.archlinux.org/man/makepkg.8.en)
 
 ## 镜像交付与操作入口（2026-11-15）
 
