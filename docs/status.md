@@ -42,7 +42,7 @@ Satellite 退出后 GPS 开关的控制程序已实机验证 `关 → 开 → �
 
 ## 源码、镜像和实机
 
-当前内核源码为 `7.3`，固定到 `e0f04ee5b6752bcc21a7d4aad1aeeb0bc30d92a3`，包含 GPU 恢复死锁修复、Wi-Fi 国家规则交集修复、NFC 冷态中断修复及此前的三段拨杆、电池、CPU、标准振动反馈、LPASS 录音状态、USB/PD、角色切换修复、AudioReach 通话语音图、超广角 JN1 出流设备树、SN100 参考时钟、SMEM 光线距离项、NFC-A 被动监听和 DMIC3/DMIC4 麦克风路由，历史未合并 `7.3-rc2`。2026-11-17 从干净的已跟踪内核树构建 Image.gz，仅刷 `boot_b` 并启动内核 `#8`；原 ramdisk、vendor_boot 与已安装模块保持原样，Module.symvers 未变化。GPU 自动省电复测见上文；这不代表完整新 rootfs 镜像已构建、刷入，也不代替其他子系统各自的验收。
+当前内核源码为 `7.3`，固定到 `0948d67289306333f07d920b6892ad9968fa5497`，包含内屏原生 WQHD+ DSC 修复、GPU 恢复死锁修复、Wi-Fi 国家规则交集修复、NFC 冷态中断修复及此前的三段拨杆、电池、CPU、标准振动反馈、LPASS 录音状态、USB/PD、角色切换修复、AudioReach 通话语音图、超广角 JN1 出流设备树、SN100 参考时钟、SMEM 光线距离项、NFC-A 被动监听和 DMIC3/DMIC4 麦克风路由，历史未合并 `7.3-rc2`。2026-11-17 从干净的已跟踪内核树构建 Image.gz，仅刷 `boot_b` 并启动内核 `#8`；原 ramdisk、vendor_boot 与已安装模块保持原样，Module.symvers 未变化。GPU 自动省电复测见上文；这不代表完整新 rootfs 镜像已构建、刷入，也不代替其他子系统各自的验收。
 
 带 PD 的 Hub 已验证 USB2 接收器、RTL8153 网卡和充电同时工作，重启后可自动枚举。物理热插拔仍出现过 SMMU `IOVA=0x0c` 与 xHCI 挂死，后续成功拔插不能证明故障消除。电脑端 gadget 的最新实测见下表；无外接供电 OTG、其他 Hub、DP 显示与完整系统深度睡眠仍未覆盖。
 
@@ -106,7 +106,7 @@ ssh oneplus@手机IP
 | NFC 读标签 | SN100 可重复启停，读到 Classic UID；控制器接受过被动监听配置，外部读卡器未验证。四个工具、时钟配置及续建/检查已接通，NDEF/扇区认证未完成，见[NFC](nfc.md) |
 | 自动旋转、光线与距离 | 11 月 17 日补齐 SMEM 和 IMU 就绪检查。一次正常重启后加速度、陀螺仪、光线、距离均实测出数，桌面代理与陀螺仪服务零重试。此前遮挡实测 FAR → NEAR → FAR。本轮未测手持转屏、完全断电启动、睡眠、实际自动亮度、通话熄屏和功耗。[传感器](sensors.md) |
 | 红外遥控 | NE2210 没有红外发射器：无 `oplus,kookong` 节点，SPI 未启用，无 `/dev/lirc`。原厂 kookong 模块不能绑定。TCS3701 的红外 LED 只做距离感应。镜像不包含遥控驱动，见[红外](infrared.md) |
-| 内屏分辨率 | 2026-11-12 只读实机核查：屏幕原生为 1440×3216，当前 DRM/KWin 仅提供 1080×2412 @ 60/90/120 Hz，选择 120 Hz。面板驱动的 DSC 分块宽度固定为 540，内核日志确认 1440 宽模式无法通过整除校验；原生分辨率恢复与 4:3 串流未测，见 [GPU/显示说明](gpu.md) |
+| 内屏分辨率 | 已从本机原厂 DTBO 校对并实现 1440×3216 的 DSC、PPS、TE 和三档时序，1080×2412 @ 120 Hz 仍为首选。ARM64 测试内核待刷入，WQHD+ 实机未测，见 [GPU/显示说明](gpu.md) |
 | 显示、触摸、Wi-Fi 综合验证 | 仍需对当前完整镜像逐项记录，已有桌面或 SSH 使用记录不能替代完整兼容性测试 |
 
 SDDM 默认使用 Plasma Mobile、Wayland 与 Breeze；后续镜像的系统语言设为 `zh_CN.UTF-8`，时区为 `Asia/Shanghai`。2026-11-17 手机已安装 Dolphin、KClock、Kalk、Koko、KDE Connect，并生成中文 locale；应用图形操作、KDE Connect 配对和闹钟唤醒未测，新完整镜像未构建、未刷入。配置来源见 [默认语言](../config/locale/locale.conf)、[config/sddm/10-mobile.conf](../config/sddm/10-mobile.conf)、[SSH 配置](../config/ssh/00-negroni.conf)和[软件清单](../config/packages/common-tools.txt)。
