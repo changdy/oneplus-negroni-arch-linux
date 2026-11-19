@@ -111,7 +111,7 @@ sudo systemctl enable --now sshd
 
 以上两条命令使用 Arch 的默认 SSH 配置，已支持普通账号密码登录；完整镜像另外限定为 `oneplus` 账号并禁用 root 登录。
 
-常用软件统一维护在 [config/packages/common-tools.txt](../config/packages/common-tools.txt)：`nano`、`zip`、`unzip`、`curl`、`wget`、`htop`、`rsync`、`git`、`less`、`file`、`tree`、`jq`、`tmux`、`ripgrep`、`fd`、`bash-completion`、`lsof`、`strace`、`which`。`build.sh` 在 SSH 配置之后、打包之前调用 [scripts/install-common-tools-image.sh](../scripts/install-common-tools-image.sh)，为最终 rootfs 安装软件并执行 ARM64/QEMU 检查。
+常用软件统一维护在 [config/packages/common-tools.txt](../config/packages/common-tools.txt)。`build.sh` 在基础软件安装后、`finalize-rootfs.sh` 前调用 [scripts/install-common-tools-image.sh](../scripts/install-common-tools-image.sh)。该阶段安装并检查 ARM64 软件包，确保运行时配置能找到 `bluez-utils` 的 `btmgmt` 和 `feedbackd` 的相关程序。安装时从临时挂载的 `/run` 提供 DNS。
 
 2026-11-17 将 `dolphin`、`kclock`、`kalk`、`koko`、`kdeconnect` 加入同一默认清单。安装阶段核对五个应用的入口程序，封装前 `verify-desktop-image.py` 核对软件包数据库。手机已通过 USB SSH 安装并用 `pacman -Q` 确认五包存在；图形启动、触屏操作、KDE Connect 配对和闹钟唤醒尚未实测。新完整镜像尚未构建、刷入。
 

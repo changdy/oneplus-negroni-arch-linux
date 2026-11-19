@@ -28,10 +28,15 @@ mount --rbind /dev "$target_dir/dev"
 mount --make-rslave "$target_dir/dev"
 mount -t tmpfs tmpfs "$target_dir/run"
 mount --bind "$project_dir/alarm/var/cache/pacman/pkg" "$target_dir/var/cache/pacman/pkg"
-# The image uses NetworkManager's resolver. Provide DNS only in temporary /run.
-[[ $(readlink "$target_dir/etc/resolv.conf") == /run/NetworkManager/resolv.conf ]]
-mkdir -p "$target_dir/run/NetworkManager"
-cp -L /etc/resolv.conf "$target_dir/run/NetworkManager/resolv.conf"
+# Set up the resolver link for fresh images before finalization. The host DNS
+# settings live in the temporary /run mount for both fresh and existing images.
+resolver=/run/NetworkManager/resolv.conf
+if [[ ! -f "$log_dir/rootfs.complete" ]]; then
+    ln -sfnT "$resolver" "$target_dir/etc/resolv.conf"
+fi
+[[ $(readlink "$target_dir/etc/resolv.conf") == "$resolver" ]]
+mkdir -p "$(dirname "$target_dir$resolver")"
+cp -L /etc/resolv.conf "$target_dir$resolver"
 for marker in images.complete common-tools.list; do
     if [[ -f "$log_dir/$marker" ]]; then
         mv "$log_dir/$marker" "$log_dir/$marker.before-tools"
@@ -74,6 +79,10 @@ test -x /usr/bin/set-wireless-regdom
 test -r /usr/share/bash-completion/bash_completion
 fc-list :lang=zh family | grep -q 'Noto.*CJK'
 test -x /usr/bin/angelfish
+for tool in /usr/bin/btmgmt /usr/bin/fbcli /usr/lib/feedbackd /usr/lib/fbd-alert-slider; do
+    test -x "$tool" || { printf 'Missing runtime dependency: %s\n' "$tool" >&2; exit 1; }
+done
+test -r /usr/lib/systemd/user/fbd-alert-slider.service
 for app in dolphin kclock kalk koko kdeconnect-app krdpserver; do
     test -x "/usr/bin/$app"
 done

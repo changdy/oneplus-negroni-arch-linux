@@ -27,6 +27,10 @@ bash scripts/build-kernel.sh
 if [[ ! -f "$log_dir/rootfs.packages-complete" ]]; then
     sudo env IMAGE_DIR="$image_dir" LOG_DIR="$log_dir" bash scripts/prepare-rootfs.sh
 fi
+# Runtime configuration checks executables provided by the common packages.
+if ! cmp -s config/packages/common-tools.txt "$log_dir/common-tools.list"; then
+    sudo env IMAGE_DIR="$image_dir" LOG_DIR="$log_dir" bash scripts/install-common-tools-image.sh
+fi
 if [[ ! -f "$log_dir/rootfs.complete" ]]; then
     sudo env IMAGE_DIR="$image_dir" LOG_DIR="$log_dir" bash scripts/finalize-rootfs.sh
 fi
@@ -57,9 +61,6 @@ fi
 if [[ ! -f "$log_dir/cpu-performance-sources.sha256" ]] ||
    ! sha256sum --check --status "$log_dir/cpu-performance-sources.sha256"; then
     sudo env IMAGE_DIR="$image_dir" LOG_DIR="$log_dir" bash scripts/update-cpu-performance-image.sh
-fi
-if ! cmp -s config/packages/common-tools.txt "$log_dir/common-tools.list"; then
-    sudo env IMAGE_DIR="$image_dir" LOG_DIR="$log_dir" bash scripts/install-common-tools-image.sh
 fi
 if [[ ! -f "$log_dir/locale-sources.sha256" ]] ||
    ! sha256sum --check --status "$log_dir/locale-sources.sha256"; then
