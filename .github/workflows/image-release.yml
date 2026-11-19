@@ -78,7 +78,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             git curl ca-certificates python3 build-essential bc cpio kmod rsync zstd xz-utils \
-            e2fsprogs util-linux file gcc-aarch64-linux-gnu flex bison libssl-dev libelf-dev \
+            e2fsprogs util-linux file gcc-aarch64-linux-gnu libc6-dev-arm64-cross \
+            flex bison libssl-dev libelf-dev \
             device-tree-compiler pahole qemu-user qemu-user-binfmt binfmt-support \
             mkbootimg android-sdk-libsparse-utils
           sudo apt-get clean

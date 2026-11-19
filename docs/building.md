@@ -10,12 +10,13 @@
 sudo apt-get update
 sudo apt-get install -y \
   git curl ca-certificates python3 build-essential bc cpio kmod rsync zstd xz-utils \
-  e2fsprogs util-linux file gcc-aarch64-linux-gnu flex bison libssl-dev libelf-dev \
+  e2fsprogs util-linux file gcc-aarch64-linux-gnu libc6-dev-arm64-cross \
+  flex bison libssl-dev libelf-dev \
   device-tree-compiler pahole qemu-user qemu-user-binfmt binfmt-support \
   mkbootimg android-sdk-libsparse-utils
 ```
 
-刷机主机另需 `adb` 和 `fastboot`。完整构建主机不能是禁止 mount/unshare 的受限容器。
+`libc6-dev-arm64-cross` 提供交叉编译 NFC 用户态工具所需的 ARM64 glibc 头文件和库。刷机主机另需 `adb` 和 `fastboot`。完整构建主机不能是禁止 mount/unshare 的受限容器。
 
 ## 2. 初始化源码
 
