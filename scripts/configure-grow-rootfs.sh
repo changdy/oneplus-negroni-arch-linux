@@ -25,5 +25,5 @@ systemctl --root="$target_dir" enable negroni-grow-rootfs.service
 cd "$project_dir"
 sha256sum config/grow-rootfs/negroni-grow-rootfs config/systemd/negroni-grow-rootfs.service \
     scripts/configure-grow-rootfs.sh scripts/update-grow-rootfs-image.sh \
-    scripts/verify-grow-rootfs-image.py > "$log_dir/grow-rootfs-sources.sha256"
+    scripts/verify-grow-rootfs-image.py scripts/image_feature.py > "$log_dir/grow-rootfs-sources.sha256"
 chown "${SUDO_UID:-1000}:${SUDO_GID:-1000}" "$log_dir/grow-rootfs-sources.sha256"

@@ -2,7 +2,7 @@
 import hashlib
 import re
 import subprocess
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 PROJECT = Path(__file__).resolve().parents[1]
 
@@ -45,6 +45,25 @@ class Image:
         if data != (PROJECT / source).read_bytes():
             raise RuntimeError(f"image/source mismatch: {path}")
         return sha256(data)
+
+    def executable(self, path):
+        target = PurePosixPath(path)
+        # Resolve package symlinks in the image, including absolute targets.
+        for _ in range(41):  # Linux follows up to 40 symlinks.
+            metadata = self.query(f"stat {target}", missing_ok=True)
+            if metadata is None:
+                break
+            metadata = metadata.decode()
+            mode = re.search(r"Type:\s+regular\s+Mode:\s+([0-7]+)", metadata)
+            if mode and int(mode[1], 8) & 0o111 and self.read(target):
+                return
+            if "Type: symlink" not in metadata:
+                break
+            # debugfs stat reports inline links; cat reads block-backed links.
+            inline = re.search(r'Fast link dest: "([^"]+)"', metadata)
+            destination = inline[1] if inline else self.read(target).decode()
+            target = target.parent / destination
+        raise RuntimeError(f"{path}: expected a non-empty executable file, checked {target}")
 
     def link(self, path, target):
         meta = self.query(f"stat {path}").decode()

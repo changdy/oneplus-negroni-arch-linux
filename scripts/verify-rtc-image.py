@@ -18,8 +18,8 @@ def verify(image_dir, log_dir):
         files[path] = image.source(path, f"config/systemd/{unit}")
     image.enabled("negroni-rtc-sync.path")
     image.enabled("negroni-rtc-restore.service", "sysinit.target")
-    image.file("/usr/bin/python3")
-    image.file("/usr/lib/systemd/systemd-timesyncd")
+    image.executable("/usr/bin/python3")
+    image.executable("/usr/lib/systemd/systemd-timesyncd")
     report = {
         "image": str(image.path),
         "unit_sha256": files,

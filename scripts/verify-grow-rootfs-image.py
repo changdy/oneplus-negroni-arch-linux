@@ -2,10 +2,12 @@
 """Verify first-boot expansion is installed and armed in an offline ext4 image."""
 import hashlib
 import json
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 import re
 import subprocess
 import sys
+
+from image_feature import Image
 
 PROJECT = Path(__file__).resolve().parents[1]
 UNIT = 'negroni-grow-rootfs.service'
@@ -52,20 +54,9 @@ def verify(image_dir, log_dir):
     if debugfs(f'stat {MARKER}', missing_ok=True) is not None:
         raise RuntimeError('Image must not contain a root expansion completion marker')
 
+    rootfs = Image(image_dir)
     for name in DEPENDENCIES:
-        target = PurePosixPath('/usr/bin') / name
-        # Python's public interpreter name is a symlink on Arch Linux ARM.
-        for _ in range(8):
-            metadata = debugfs(f'stat {target}').decode()
-            mode = re.search(r'Type:\s+regular\s+Mode:\s+([0-7]+)', metadata)
-            if mode and int(mode[1], 8) & 0o111:
-                break
-            destination = re.search(r'Fast link dest: "([^"]+)"', metadata)
-            if 'Type: symlink' not in metadata or not destination:
-                raise RuntimeError(f'Missing executable root expansion dependency: {name}')
-            target = target.parent / destination[1]
-        else:
-            raise RuntimeError(f'Unresolved root expansion dependency: {name}')
+        rootfs.executable(f'/usr/bin/{name}')
 
     result = {
         'image': str(image), 'service': UNIT, 'service_enabled': True,

@@ -27,5 +27,6 @@ systemctl --root="$target_dir" enable negroni-rtc-sync.path negroni-rtc-restore.
 cd "$project_dir"
 sha256sum config/rtc/negroni-rtc-clock config/systemd/negroni-rtc-sync.path \
     config/systemd/negroni-rtc-sync.service config/systemd/negroni-rtc-restore.service \
-    scripts/configure-rtc.sh scripts/update-rtc-image.sh > "$log_dir/rtc-sources.sha256"
+    scripts/configure-rtc.sh scripts/update-rtc-image.sh \
+    scripts/verify-rtc-image.py scripts/image_feature.py > "$log_dir/rtc-sources.sha256"
 chown "${SUDO_UID:-1000}:${SUDO_GID:-1000}" "$log_dir/rtc-sources.sha256"
